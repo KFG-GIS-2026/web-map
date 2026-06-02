@@ -5,136 +5,258 @@ const basemaps = {
   satellite: `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPTILER_KEY}`
 };
 
-const TYPE_MAP = [
-  { key: "fountain",         match: (p) => p.amenity === "fountain",         emoji: "⛲", label: "Brunnen",             cat: "fountain"   },
-  { key: "drinking_water",   match: (p) => p.amenity === "drinking_water",    emoji: "🚰", label: "Trinkwasser",         cat: "drinking"   },
-  { key: "bench",            match: (p) => p.amenity === "bench",             emoji: "🪑", label: "Bank",                cat: "bench"      },
-  { key: "library",          match: (p) => p.amenity === "library",           emoji: "📚", label: "Bibliothek",          cat: "building"   },
-  { key: "community_centre", match: (p) => p.amenity === "community_centre",  emoji: "🏛️", label: "Gemeinschaftszentr.", cat: "building"   },
-  { key: "playground",       match: (p) => p.leisure === "playground",        emoji: "🛝", label: "Spielplatz",          cat: "playground" },
-  { key: "park",             match: (p) => p.leisure === "park",              emoji: "🏞️", label: "Park",                cat: "park"       },
-  { key: "forest",           match: (p) => p.landuse === "forest",            emoji: "🌲", label: "Wald",                cat: "forest"     },
-  { key: "water",            match: (p) => p.natural === "water",             emoji: "💧", label: "Wasserfläche",        cat: "water"      },
-  { key: "river",            match: (p) => p.waterway === "river",            emoji: "🌊", label: "Fluss",               cat: "water"      },
-  { key: "bus_stop",         match: (p) => p.highway === "bus_stop",          emoji: "🚌", label: "Bushaltestelle",      cat: "busstop"    },
+// Shadow image extent in WGS84 coordinates
+const SHADOW_COORDS = [
+  [8.793322316, 49.385219820],
+  [8.797466933, 49.385219820],
+  [8.797466933, 49.382514018],
+  [8.793322316, 49.382514018]
 ];
-const FALLBACK = { key: "other", emoji: "📍", label: "Ort", cat: "other" };
+
+let shadowVisible = true;
+let currentShadowHour = null;
+
+// Typ-Definitionen mit je eigener Farbe
+const TYPE_MAP = [
+  { key: "fountain",         match: (p) => p.amenity === "fountain",         emoji: "⛲", label: "Brunnen",             cat: "fountain",   color: "#2196F3" },
+  { key: "drinking_water",   match: (p) => p.amenity === "drinking_water",    emoji: "🚰", label: "Trinkwasser",         cat: "drinking",   color: "#29B6F6" },
+  { key: "bench",            match: (p) => p.amenity === "bench",             emoji: "🪑", label: "Bank",                cat: "bench",      color: "#8D6E63" },
+  { key: "library",          match: (p) => p.amenity === "library",           emoji: "📚", label: "Bibliothek",          cat: "building",   color: "#AB47BC" },
+  { key: "community_centre", match: (p) => p.amenity === "community_centre",  emoji: "🏛️", label: "Gemeinschaftszentr.", cat: "building",   color: "#FF9800" },
+  { key: "playground",       match: (p) => p.leisure === "playground",        emoji: "🛝", label: "Spielplatz",          cat: "playground", color: "#FF7043" },
+  { key: "park",             match: (p) => p.leisure === "park",              emoji: "🏞️", label: "Park",                cat: "park",       color: "#66BB6A" },
+  { key: "forest",           match: (p) => p.landuse === "forest",            emoji: "🌲", label: "Wald",                cat: "forest",     color: "#2E7D32" },
+  { key: "water",            match: (p) => p.natural === "water",             emoji: "💧", label: "Wasserfläche",        cat: "water",      color: "#1E88E5" },
+  { key: "river",            match: (p) => p.waterway === "river",            emoji: "🌊", label: "Fluss",               cat: "water",      color: "#039BE5" },
+  { key: "bus_stop",         match: (p) => p.highway === "bus_stop",          emoji: "🚌", label: "Bushaltestelle",      cat: "busstop",    color: "#FFB300" },
+];
+const FALLBACK = { key: "other", emoji: "📍", label: "Ort", cat: "other", color: "#607D8B" };
 
 function getType(props) {
   return TYPE_MAP.find((t) => t.match(props)) || FALLBACK;
 }
 
-// Render emoji as colored canvas image – explicit emoji font stack
-function emojiToImageData(emoji, size = 48) {
-  const canvas = document.createElement("canvas");
-  canvas.width  = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-
-  // Explicit emoji font stack → prevents fallback black glyphs
-  ctx.font = `${Math.floor(size * 0.78)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
-  ctx.textAlign    = "center";
-  ctx.textBaseline = "middle";
-  ctx.clearRect(0, 0, size, size);
-  ctx.fillText(emoji, size / 2, size / 2 + 1);
-
-  return ctx.getImageData(0, 0, size, size);
-}
-
-function loadEmojiImages(map) {
-  [...TYPE_MAP, FALLBACK].forEach(({ key, emoji }) => {
-    if (!map.hasImage(key)) {
-      // Add emoji as sprite image
-      map.addImage(key, emojiToImageData(emoji, 48), { pixelRatio: 2 });
-    }
-  });
-}
-
+// GeoJSON annotieren + _id vergeben
 function annotateGeoJSON(geojson) {
-  geojson.features.forEach((f) => {
+  geojson.features.forEach((f, i) => {
     const t = getType(f.properties);
-    // Attach computed icon/category/label to feature
     f.properties._icon  = t.key;
     f.properties._cat   = t.cat;
     f.properties._label = t.label;
+    f.properties._id    = f.properties["@id"] || `poi-${i}`;
   });
   return geojson;
 }
 
-function buildFilter() {
-  // Collect all active categories from checkboxes
-  const active = Array.from(document.querySelectorAll(".filter-cb:checked"))
-    .map((cb) => cb.dataset.cat);
-
-  // If nothing selected → hide everything
-  if (active.length === 0) return ["==", "_cat", "__none__"];
-
-  // Build OR filter for all selected categories
-  return ["any", ...active.map((cat) => ["==", ["get", "_cat"], cat])];
+// Gefiltertes GeoJSON für die Source (Cluster zählt nur noch aktive POIs)
+function getFilteredGeoJSON() {
+  if (!geojsonData) return { type: "FeatureCollection", features: [] };
+  const active = new Set(
+    Array.from(document.querySelectorAll(".filter-cb:checked")).map((cb) => cb.dataset.cat)
+  );
+  return {
+    ...geojsonData,
+    features: geojsonData.features.filter((f) => active.has(f.properties._cat))
+  };
 }
 
-// Create cluster circle as canvas image
-function makeClusterImage(map) {
-  if (map.hasImage("cluster-circle")) return;
-
-  const size = 48;
-  const canvas = document.createElement("canvas");
-  canvas.width  = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-
-  // Green circle with white border
-  ctx.beginPath();
-  ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2);
-  ctx.fillStyle   = "#2d7a45";
-  ctx.fill();
-  ctx.strokeStyle = "#ffffff";
-  ctx.lineWidth   = 3;
-  ctx.stroke();
-
-  map.addImage("cluster-circle", ctx.getImageData(0, 0, size, size), { pixelRatio: 2 });
-}
-
+// --- State ---
 let geojsonData = null;
+let allMarkers  = []; // { marker, el, id, cat }
+let rafPending  = false;
 
-function setupLayers(map) {
-  loadEmojiImages(map);
-  makeClusterImage(map);
+// HTML-Marker Element erstellen (farbiger Kreis + Emoji)
+function createMarkerEl(t) {
+  const el = document.createElement("div");
+  el.className = "poi-marker";
+  el.style.backgroundColor = t.color;
+  el.textContent = t.emoji;
+  return el;
+}
 
-  // Add or update POI source
+function getInitialShadowHour() {
+  const hour = new Date().getHours();
+
+  if (hour < 6) return 6;
+  if (hour > 20) return 20;
+
+  return hour;
+}
+
+function getShadowFile(hour) {
+  return `data/shadows/shadow_${String(hour).padStart(2, "0")}00.png`;
+}
+
+function updateShadowLabel(hour) {
+  document.getElementById("shadow-time").textContent =
+    `${String(hour).padStart(2, "0")}:00`;
+}
+
+function createShadowLayer() {
+
+  const initialHour = getInitialShadowHour();
+
+  currentShadowHour = initialHour;
+
+  map.addSource("shadow", {
+    type: "image",
+    url: getShadowFile(initialHour),
+    coordinates: SHADOW_COORDS
+  });
+
+  map.addLayer({
+    id: "shadow-layer",
+    type: "raster",
+    source: "shadow",
+    paint: {
+      "raster-opacity": 0.85
+    }
+  });
+
+  document.getElementById("shadow-slider").value = initialHour;
+
+  updateShadowLabel(initialHour);
+}
+
+function setShadowHour(hour) {
+
+  currentShadowHour = hour;
+
+  updateShadowLabel(hour);
+
+  const source = map.getSource("shadow");
+
+  if (!source) return;
+
+  source.updateImage({
+    url: getShadowFile(hour),
+    coordinates: SHADOW_COORDS
+  });
+}
+
+function showShadowLayer() {
+
+  shadowVisible = true;
+
+  if (map.getLayer("shadow-layer")) {
+    map.setLayoutProperty(
+      "shadow-layer",
+      "visibility",
+      "visible"
+    );
+  }
+}
+
+function hideShadowLayer() {
+
+  shadowVisible = false;
+
+  if (map.getLayer("shadow-layer")) {
+    map.setLayoutProperty(
+      "shadow-layer",
+      "visibility",
+      "none"
+    );
+  }
+}
+// Alle HTML-Marker anlegen
+function createMarkers() {
+  allMarkers.forEach(({ marker }) => marker.remove());
+  allMarkers = [];
+
+  geojsonData.features.forEach((f) => {
+    if (f.geometry.type !== "Point") return;
+
+    const t    = getType(f.properties);
+    const el   = createMarkerEl(t);
+    const name = f.properties.name || f.properties.ref || "Unbenannter Ort";
+
+    const extra = [];
+    if (f.properties.opening_hours) extra.push(`🕐 ${f.properties.opening_hours}`);
+    if (f.properties.wheelchair === "yes") extra.push("♿ Rollstuhlgerecht");
+    if (f.properties.website)
+      extra.push(`<a href="${f.properties.website}" target="_blank" style="color:#1a6b3c">🔗 Website</a>`);
+    if (f.properties.leaf_type) extra.push(`🍃 Laubtyp: ${f.properties.leaf_type}`);
+
+    const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: false })
+      .setHTML(`
+        <div style="font-family:sans-serif;font-size:13px;line-height:1.6">
+          <div style="font-size:26px;text-align:center;margin-bottom:2px">${t.emoji}</div>
+          <strong style="font-size:14px">${name}</strong><br>
+          <span style="color:#666">📌 ${t.label}</span>
+          ${extra.length ? "<hr style='margin:5px 0;border-color:#eee'>" + extra.join("<br>") : ""}
+        </div>
+      `);
+
+    const marker = new maplibregl.Marker({ element: el, anchor: "center" })
+      .setLngLat(f.geometry.coordinates)
+      .setPopup(popup)
+      .addTo(map);
+
+    // Marker standardmäßig verstecken bis syncMarkers läuft
+    el.style.display = "none";
+
+    allMarkers.push({ marker, el, id: f.properties._id, cat: f.properties._cat });
+  });
+}
+
+// Marker-Sichtbarkeit mit Cluster-Zustand abgleichen
+function syncMarkers() {
+  if (!map.getSource("pois") || !map.isSourceLoaded("pois")) return;
+
+  // IDs aller aktuell NICHT geclusterten Features holen
+  const unclusteredIds = new Set(
+    map.querySourceFeatures("pois", {
+      filter: ["!", ["has", "point_count"]]
+    }).map((f) => f.properties._id)
+  );
+
+  const activeCats = new Set(
+    Array.from(document.querySelectorAll(".filter-cb:checked")).map((cb) => cb.dataset.cat)
+  );
+
+  allMarkers.forEach(({ el, id, cat }) => {
+    const show = activeCats.has(cat) && unclusteredIds.has(id);
+    el.style.display = show ? "flex" : "none";
+  });
+}
+
+// Cluster-Layer
+function setupLayers() {
+  // POI Source mit Clustering
   if (!map.getSource("pois")) {
     map.addSource("pois", {
       type: "geojson",
-      data: geojsonData || { type: "FeatureCollection", features: [] },
+      data: getFilteredGeoJSON(),
       cluster: true,
-      clusterMaxZoom: 14,   // Disable clustering above zoom 14
+      clusterMaxZoom: 14,
       clusterRadius: 50
     });
-  } else if (geojsonData) {
-    map.getSource("pois").setData(geojsonData);
   }
 
-  // --- Cluster circle layer ---
+  // Cluster-Kreise via circle-Layer (kein Sprite nötig)
   if (!map.getLayer("clusters")) {
     map.addLayer({
       id: "clusters",
-      type: "symbol",
+      type: "circle",
       source: "pois",
       filter: ["has", "point_count"],
-      layout: {
-        "icon-image": "cluster-circle",
-        "icon-size": [
+      paint: {
+        "circle-color": "#2d7a45",
+        "circle-radius": [
           "step", ["get", "point_count"],
-          0.9,   // < 10
-          10,  1.1,  // 10–29
-          30,  1.3   // ≥ 30
+          18,  // < 10
+          10, 22,  // 10–29
+          30, 28   // ≥ 30
         ],
-        "icon-allow-overlap": true,
+        "circle-stroke-width": 3,
+        "circle-stroke-color": "#ffffff",
+        "circle-opacity": 0.92
       }
     });
   }
 
-  // --- Cluster count text ---
+  // Cluster-Zahl
   if (!map.getLayer("cluster-count")) {
     map.addLayer({
       id: "cluster-count",
@@ -144,81 +266,28 @@ function setupLayers(map) {
       layout: {
         "text-field": ["get", "point_count_abbreviated"],
         "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-        "text-size": 13,
-        "text-allow-overlap": true,
+        "text-size": 14,
+        "text-allow-overlap": true
       },
-      paint: {
-        "text-color": "#ffffff"
-      }
-    });
-  }
-
-  // --- Individual POIs ---
-  if (!map.getLayer("pois-layer")) {
-    map.addLayer({
-      id: "pois-layer",
-      type: "symbol",
-      source: "pois",
-      filter: ["!", ["has", "point_count"]],
-      layout: {
-        "icon-image": ["get", "_icon"],
-        "icon-size": 1,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-      },
-      filter: ["all",
-        ["!", ["has", "point_count"]],
-        buildFilter()
-      ]
+      paint: { "text-color": "#ffffff" }
     });
   }
 }
 
-function attachPopup(map) {
-  const popup = new maplibregl.Popup({ closeButton: false, offset: 14, maxWidth: "240px" });
-
-  // Click on cluster → zoom into cluster
+function attachClusterEvents() {
+  // Klick auf Cluster → reinzoomen
   map.on("click", "clusters", (e) => {
-    const features = map.queryRenderedFeatures(e.point, { layers: ["clusters"] });
-    const clusterId = features[0].properties.cluster_id;
-
-    map.getSource("pois").getClusterExpansionZoom(clusterId, (err, zoom) => {
-      if (err) return;
-      map.easeTo({ center: features[0].geometry.coordinates, zoom });
+    const f = map.queryRenderedFeatures(e.point, { layers: ["clusters"] })[0];
+    if (!f) return;
+    map.getSource("pois").getClusterExpansionZoom(f.properties.cluster_id, (err, zoom) => {
+      if (!err) map.easeTo({ center: f.geometry.coordinates, zoom: zoom + 0.5 });
     });
   });
-
-  // Click on individual POI → show popup
-  map.on("click", "pois-layer", (e) => {
-    const props  = e.features[0].properties;
-    const coords = e.features[0].geometry.coordinates.slice();
-    const t      = getType(props);
-    const name   = props.name || props.ref || "Unbenannter Ort";
-
-    const extra = [];
-    if (props.opening_hours) extra.push(`🕐 ${props.opening_hours}`);
-    if (props.wheelchair === "yes") extra.push("♿ Rollstuhlgerecht");
-    if (props.website) extra.push(`<a href="${props.website}" target="_blank">🔗 Website</a>`);
-    if (props.leaf_type) extra.push(`🍃 Laubtyp: ${props.leaf_type}`);
-
-    popup.setLngLat(coords).setHTML(`
-      <div style="font-family:sans-serif;font-size:13px;line-height:1.6">
-        <div style="font-size:24px;text-align:center;margin-bottom:2px">${t.emoji}</div>
-        <strong>${name}</strong><br>
-        <span style="color:#666">📌 ${t.label}</span>
-        ${extra.length ? "<hr style='margin:5px 0;border-color:#eee'>" + extra.join("<br>") : ""}
-      </div>
-    `).addTo(map);
-  });
-
-  // Cursor changes
-  map.on("mouseenter", "clusters",   () => { map.getCanvas().style.cursor = "pointer"; });
-  map.on("mouseleave", "clusters",   () => { map.getCanvas().style.cursor = ""; });
-  map.on("mouseenter", "pois-layer", () => { map.getCanvas().style.cursor = "pointer"; });
-  map.on("mouseleave", "pois-layer", () => { map.getCanvas().style.cursor = ""; });
+  map.on("mouseenter", "clusters", () => { map.getCanvas().style.cursor = "pointer"; });
+  map.on("mouseleave", "clusters", () => { map.getCanvas().style.cursor = ""; });
 }
 
-// --- Initialize map ---
+// --- Karte initialisieren ---
 const map = new maplibregl.Map({
   container: "map",
   style: basemaps.streets,
@@ -229,35 +298,94 @@ const map = new maplibregl.Map({
   canvasContextAttributes: { antialias: true }
 });
 
-// Add controls
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true, showCompass: true }));
-map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }));
+map.addControl(
+  new maplibregl.NavigationControl({
+    visualizePitch: true,
+    showZoom: true,
+    showCompass: true
+  }),
+  "bottom-right"
+);
+
+map.addControl(
+  new maplibregl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true
+    },
+    trackUserLocation: true
+  }),
+  "bottom-right"
+);
 
 map.on("load", () => {
+  createShadowLayer();
   fetch("data/pois.geojson")
     .then((r) => r.json())
     .then((raw) => {
       geojsonData = annotateGeoJSON(raw);
-      setupLayers(map);
-      attachPopup(map);
+      setupLayers();
+      createMarkers();
+      attachClusterEvents();
+
+      // Marker-Sync bei jedem Render-Frame (gedrosselt via RAF)
+      map.on("render", () => {
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(() => { syncMarkers(); rafPending = false; });
+      });
     })
-    .catch((err) => console.error("GeoJSON load error:", err));
+    .catch((err) => console.error("GeoJSON Ladefehler:", err));
 });
 
-// Basemap switcher
+// Kartenstil wechseln
 document.getElementById("basemap-select").addEventListener("change", (e) => {
   map.setStyle(basemaps[e.target.value]);
-  map.once("styledata", () => setupLayers(map));
+  map.once("styledata", () => {
+    setupLayers();
+    attachClusterEvents();
+  });
 });
 
-// Filter checkboxes
+// Filter: Source-Daten neu setzen → Cluster zählt korrekt neu
 document.querySelectorAll(".filter-cb").forEach((cb) => {
   cb.addEventListener("change", () => {
-    if (map.getLayer("pois-layer")) {
-      map.setFilter("pois-layer", ["all",
-        ["!", ["has", "point_count"]],
-        buildFilter()
-      ]);
+    if (map.getSource("pois")) {
+      map.getSource("pois").setData(getFilteredGeoJSON());
     }
   });
 });
+
+// =========================
+// Shadow controls
+// =========================
+
+document
+  .getElementById("shadow-toggle")
+  .addEventListener("click", () => {
+
+    document
+      .getElementById("shadow-panel")
+      .classList.toggle("hidden");
+  });
+
+document
+  .getElementById("shadow-hide")
+  .addEventListener("click", () => {
+
+    hideShadowLayer();
+
+    document
+      .getElementById("shadow-panel")
+      .classList.add("hidden");
+  });
+
+document
+  .getElementById("shadow-slider")
+  .addEventListener("input", (e) => {
+
+    const hour = Number(e.target.value);
+
+    showShadowLayer();
+
+    setShadowHour(hour);
+  });
