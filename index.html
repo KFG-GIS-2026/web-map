@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet"href="style.css"/>
+  <link rel="stylesheet" href="src/css/style.css" />
 </head>
 <body>
- 
+
   <div id="sidebar">
     <h2>Kühle Orte</h2>
- 
+
     <h3>Natur</h3>
     <label class="filter-item" id="lbl-forest">
       <input type="checkbox" class="filter-cb" data-cat="forest" checked />
@@ -28,7 +28,7 @@
       <span class="legend-icon" style="background:#66BB6A">🏞️</span>
       <span class="filter-label">Parks</span>
     </label>
- 
+
     <h3>Freizeit</h3>
     <label class="filter-item" id="lbl-playground">
       <input type="checkbox" class="filter-cb" data-cat="playground" checked />
@@ -40,7 +40,7 @@
       <span class="legend-icon" style="background:#8D6E63">🪑</span>
       <span class="filter-label">Bänke</span>
     </label>
- 
+
     <h3>Wasser / Brunnen</h3>
     <label class="filter-item" id="lbl-fountain">
       <input type="checkbox" class="filter-cb" data-cat="fountain" checked />
@@ -52,7 +52,7 @@
       <span class="legend-icon" style="background:#29B6F6">🚰</span>
       <span class="filter-label">Trinkwasser</span>
     </label>
- 
+
     <h3>Verkehr &amp; Gebäude</h3>
     <label class="filter-item" id="lbl-busstop">
       <input type="checkbox" class="filter-cb" data-cat="busstop" checked />
@@ -64,41 +64,28 @@
       <span class="legend-icon" style="background:#FF9800">🏛️</span>
       <span class="filter-label">Öffentl. Gebäude</span>
     </label>
- 
+
     <h3>Kartenstil</h3>
     <select id="basemap-select">
       <option value="streets">Streets</option>
       <option value="satellite">Satellite</option>
     </select>
   </div>
- 
+
   <div id="map"></div>
 
-  <div id="shadow-control">
-  <button id="shadow-toggle" title="Shadow layer">
-    🕒
-  </button>
-
-  <div id="shadow-panel" class="hidden">
-
-    <div class="shadow-header">
-      <strong>Shadow</strong>
-      <button id="shadow-hide">✕</button>
+  <!-- Shadow bar at the bottom -->
+  <div id="shadow-bar">
+    <button id="shadow-bar-toggle" title="Schattenebene ein-/ausblenden">
+      🕒 Schatten
+    </button>
+    <div id="shadow-panel">
+      <span id="shadow-time"></span>
+      <input type="range" id="shadow-slider" min="6" max="20" step="1" />
+      <button id="shadow-hide" title="Schließen">✕</button>
     </div>
-
-    <input
-      type="range"
-      id="shadow-slider"
-      min="6"
-      max="20"
-      step="1"
-    >
-
-    <div id="shadow-time"></div>
-
   </div>
-</div>
- 
+
   <a id="gh-link" href="https://github.com/leonfallair/kuehle-karte-neckarg" target="_blank" rel="noopener">
     <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
@@ -113,8 +100,11 @@
     GitHub
   </a>
 
-
   <script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"></script>
-  <script src="app.js"></script>
+  <!-- Module-Reihenfolge: config → shadow → pois → map (Einstiegspunkt) -->
+  <script src="src/js/config.js"></script>
+  <script src="src/js/shadow.js"></script>
+  <script src="src/js/pois.js"></script>
+  <script src="src/js/map.js"></script>
 </body>
 </html>
