@@ -1,5 +1,8 @@
 # Kühle Karte Neckargemünd
 
+erreichbar unter
+https://kfg-gis-2026.github.io/web-map/
+
 ## lokale Entwicklung
 
 - vs code mit Live Server extension
