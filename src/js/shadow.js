@@ -1,8 +1,12 @@
 // ============================================================
-// shadow.js – Schattenlayer + Zeitsteuerung
+// shadow.js – Shadow layer + time control with animation
 // ============================================================
 
-let currentShadowHour = 16;
+let currentShadowHour = 12;
+let _animationTimer = null;
+let _animationRunning = false;
+
+const SHADOW_HOURS = Array.from({ length: 15 }, (_, i) => i + 6); // 6..20
 
 function getShadowImage(hour) {
   const h = String(hour).padStart(2, "0");
@@ -10,30 +14,21 @@ function getShadowImage(hour) {
 }
 
 function createShadowLayer(map) {
-  if (map.getLayer("shadow-layer")) {
-    map.removeLayer("shadow-layer");
-  }
+  // Remove existing layer/source if present
+  if (map.getLayer("shadow-layer")) map.removeLayer("shadow-layer");
+  if (map.getSource("shadow"))      map.removeSource("shadow");
 
-  if (map.getSource("shadow")) {
-    map.removeSource("shadow");
-  }
-
+  // Add new image source
   map.addSource("shadow", {
     type: "image",
     url: getShadowImage(currentShadowHour),
     coordinates: SHADOW_COORDS
   });
 
-  // Schatten UNTER den Gebäuden
-  let beforeLayerId = null;
-
-  const layers = map.getStyle().layers;
-
-  for (const layer of layers) {
-    if (
-      layer.type === "fill-extrusion" ||
-      layer.id === "building-3d"
-    ) {
+  // Insert shadow below 3D building layers
+  let beforeLayerId;
+  for (const layer of map.getStyle().layers) {
+    if (layer.type === "fill-extrusion" || layer.id === "building-3d") {
       beforeLayerId = layer.id;
       break;
     }
@@ -44,10 +39,7 @@ function createShadowLayer(map) {
       id: "shadow-layer",
       type: "raster",
       source: "shadow",
-      paint: {
-        "raster-opacity": 0.55,
-        "raster-fade-duration": 0
-      }
+      paint: { "raster-opacity": 0.55, "raster-fade-duration": 0 }
     },
     beforeLayerId
   );
@@ -55,48 +47,115 @@ function createShadowLayer(map) {
 
 function updateShadowLayer(map, hour) {
   currentShadowHour = hour;
-
   const source = map.getSource("shadow");
-
-  if (!source) return;
-
-  source.updateImage({
-    url: getShadowImage(hour),
-    coordinates: SHADOW_COORDS
-  });
-
-  updateShadowTime(hour);
+  if (source) {
+    source.updateImage({ url: getShadowImage(hour), coordinates: SHADOW_COORDS });
+  }
+  _syncTimeDisplay(hour);
+  _syncSlider(hour);
 }
 
-function updateShadowTime(hour) {
+function _syncTimeDisplay(hour) {
   const el = document.getElementById("shadow-time");
-
-  if (!el) return;
-
-  el.textContent = `${hour}:00 Uhr`;
+  if (el) el.textContent = `${String(hour).padStart(2, "0")}:00 Uhr`;
 }
+
+function _syncSlider(hour) {
+  const slider = document.getElementById("shadow-slider");
+  if (slider) slider.value = SHADOW_HOURS.indexOf(hour);
+}
+
+// ── Animation ──────────────────────────────────────────────
+
+function _getAnimSpeed() {
+  const sel = document.getElementById("shadow-speed");
+  return sel ? Number(sel.value) : 1000;
+}
+
+function _startAnimation(map) {
+  _animationRunning = true;
+  document.getElementById("shadow-play").textContent = "⏸";
+
+  function tick() {
+    if (!_animationRunning) return;
+    const nextIdx = (SHADOW_HOURS.indexOf(currentShadowHour) + 1) % SHADOW_HOURS.length;
+    updateShadowLayer(map, SHADOW_HOURS[nextIdx]);
+    _animationTimer = setTimeout(tick, _getAnimSpeed());
+  }
+
+  _animationTimer = setTimeout(tick, _getAnimSpeed());
+}
+
+function _stopAnimation() {
+  _animationRunning = false;
+  clearTimeout(_animationTimer);
+  _animationTimer = null;
+  const btn = document.getElementById("shadow-play");
+  if (btn) btn.textContent = "▶";
+}
+
+// ── Visibility ───────────────────────────────────────────
+
+function showShadowLayer(map) {
+  if (map.getLayer("shadow-layer"))
+    map.setLayoutProperty("shadow-layer", "visibility", "visible");
+}
+
+function hideShadowLayer(map) {
+  _stopAnimation();
+  if (map.getLayer("shadow-layer"))
+    map.setLayoutProperty("shadow-layer", "visibility", "none");
+}
+
+// ── UI Events ──────────────────────────────────────────────
 
 function initShadowControls(map) {
-  const slider = document.getElementById("shadow-slider");
-  const panel = document.getElementById("shadow-panel");
-  const toggle = document.getElementById("shadow-bar-toggle");
-  const hide = document.getElementById("shadow-hide");
+  const slider  = document.getElementById("shadow-slider");
+  const panel   = document.getElementById("shadow-panel");
+  const toggle  = document.getElementById("shadow-bar-toggle");
+  const hideBtn = document.getElementById("shadow-hide");
+  const playBtn = document.getElementById("shadow-play");
 
-  if (!slider || !panel || !toggle || !hide) return;
+  if (!slider || !panel || !toggle || !hideBtn || !playBtn) {
+    console.warn("Shadow controls: DOM elements not found");
+    return;
+  }
 
-  slider.value = currentShadowHour;
+  // Initial display
+  slider.max   = SHADOW_HOURS.length - 1;
+  slider.value = SHADOW_HOURS.indexOf(currentShadowHour);
+  _syncTimeDisplay(currentShadowHour);
 
-  updateShadowTime(currentShadowHour);
-
+  // Slider event
   slider.addEventListener("input", (e) => {
-    updateShadowLayer(map, Number(e.target.value));
+    _stopAnimation();
+    updateShadowLayer(map, SHADOW_HOURS[Number(e.target.value)]);
   });
 
+  // Play/Pause
+  playBtn.addEventListener("click", () => {
+    if (_animationRunning) {
+      _stopAnimation();
+    } else {
+      _startAnimation(map);
+    }
+  });
+
+  // Toggle button (open/close panel + show/hide shadow)
   toggle.addEventListener("click", () => {
-    panel.classList.toggle("hidden");
+    const isOpen = !panel.classList.contains("hidden");
+    if (isOpen) {
+      panel.classList.add("hidden");
+      hideShadowLayer(map);
+    } else {
+      panel.classList.remove("hidden");
+      showShadowLayer(map);
+    }
   });
 
-  hide.addEventListener("click", () => {
+  // Close button
+  hideBtn.addEventListener("click", () => {
     panel.classList.add("hidden");
+    hideShadowLayer(map);
   });
 }

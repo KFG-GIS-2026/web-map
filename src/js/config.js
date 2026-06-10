@@ -1,5 +1,5 @@
 // ============================================================
-// config.js – Gemeinsame Konstanten & Typ-Definitionen
+// config.js – shared configuration and type defintions
 // ============================================================
 
 const MAPTILER_KEY = "KO43aEajGhsdMubLPP2X";
@@ -9,7 +9,7 @@ const BASEMAPS = {
   satellite: `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPTILER_KEY}`
 };
 
-// Bildbereich des Schattenrasters in WGS84
+// imagearea of shadowgrid in WGS84
 const SHADOW_COORDS = [
   [8.793322316, 49.385219820],
   [8.797466933, 49.385219820],
@@ -17,7 +17,7 @@ const SHADOW_COORDS = [
   [8.793322316, 49.382514018]
 ];
 
-// POI-Typen mit Kategorie, Farbe und Emoji
+// POI-Types with category and color
 const TYPE_MAP = [
   { key: "fountain",         match: (p) => p.amenity === "fountain",        emoji: "⛲", label: "Brunnen",             cat: "fountain",   color: "#2196F3" },
   { key: "drinking_water",   match: (p) => p.amenity === "drinking_water",   emoji: "🚰", label: "Trinkwasser",         cat: "drinking",   color: "#29B6F6" },

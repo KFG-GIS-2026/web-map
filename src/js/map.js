@@ -1,5 +1,5 @@
 // ============================================================
-// map.js
+// map.js – Map initialization, style switching, sidebar logic
 // ============================================================
 
 const map = new maplibregl.Map({
@@ -21,50 +21,44 @@ map.addControl(
   "top-right"
 );
 
-function add3DBuildings() {
-  if (map.getLayer("building-3d")) return;
-  const layers = map.getStyle().layers;
-  let labelLayerId;
-  for (const l of layers) {
-    if (l.type === "symbol" && l.layout?.["text-field"]) { labelLayerId = l.id; break; }
-  }
-  const sources = map.getStyle().sources;
-  let buildingSource;
-  for (const id of Object.keys(sources)) {
-    if (sources[id].type === "vector" && layers.some(l => l.source === id && l["source-layer"] === "building")) {
-      buildingSource = id; break;
-    }
-  }
-  if (!buildingSource) return;
+// ── Sidebar collapse ──────────────────────────────────────
 
-  map.addLayer({
-    id: "building-3d",
-    type: "fill-extrusion",
-    source: buildingSource,
-    "source-layer": "building",
-    minzoom: 14,
-    filter: ["!=", ["get", "hide_3d"], true],
-    paint: {
-      "fill-extrusion-color": ["interpolate", ["linear"], ["get", "render_height"], 0, "#e8e0d8", 100, "#d0c8be"],
-      "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 14, 0, 16, ["coalesce", ["get", "render_height"], 10]],
-      "fill-extrusion-base": ["case", [">=", ["zoom"], 16], ["coalesce", ["get", "render_min_height"], 0], 0],
-      "fill-extrusion-opacity": 1.0
-    }
-  }, labelLayerId);
+function initSidebar() {
+  const sidebar       = document.getElementById("sidebar");
+  const openBtn       = document.getElementById("sidebar-open");
+  const toggleBtn     = document.getElementById("sidebar-toggle");
+
+  function closeSidebar() {
+    sidebar.classList.add("collapsed");
+    openBtn.classList.add("visible");
+  }
+  function openSidebar() {
+    sidebar.classList.remove("collapsed");
+    openBtn.classList.remove("visible");
+  }
+
+  toggleBtn.addEventListener("click", closeSidebar);
+  openBtn.addEventListener("click", openSidebar);
+
+  // Auto-collapse on mobile
+  if (window.innerWidth < 600) closeSidebar();
 }
 
+// ── Map load ──────────────────────────────────────────────
+
 map.on("load", () => {
-  add3DBuildings();
+  initSidebar();
   createShadowLayer(map);
   initShadowControls(map);
   loadPOIs(map);
   initFilterControls(map);
 });
 
+// ── Basemap switching ─────────────────────────────────────
+
 document.getElementById("basemap-select").addEventListener("change", (e) => {
   map.setStyle(BASEMAPS[e.target.value]);
   map.once("styledata", () => {
-    add3DBuildings();
     createShadowLayer(map);
     setupPOILayers(map);
     attachClusterEvents(map);

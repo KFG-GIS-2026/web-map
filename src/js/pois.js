@@ -1,12 +1,12 @@
 // ============================================================
-// pois.js – POI-Daten, Marker, Cluster
+// pois.js – POI data, markers, clusters
 // ============================================================
 
 let geojsonData = null;
 let allMarkers  = [];   // { marker, el, id, cat }
 let rafPending  = false;
 
-// GeoJSON annotieren: _icon, _cat, _label, _id
+// Annotate GeoJSON: _icon, _cat, _label, _id
 function annotateGeoJSON(geojson) {
   geojson.features.forEach((f, i) => {
     const t = getType(f.properties);
@@ -18,7 +18,7 @@ function annotateGeoJSON(geojson) {
   return geojson;
 }
 
-// Nur aktive Kategorien zurückgeben (für Cluster-Source)
+// Return only active categories (for cluster source)
 function getFilteredGeoJSON() {
   if (!geojsonData) return { type: "FeatureCollection", features: [] };
   const active = new Set(
@@ -30,7 +30,7 @@ function getFilteredGeoJSON() {
   };
 }
 
-// HTML-Element für einen Marker erzeugen
+// Create HTML element for a marker
 function createMarkerEl(t) {
   const el = document.createElement("div");
   el.className = "poi-marker";
@@ -39,7 +39,7 @@ function createMarkerEl(t) {
   return el;
 }
 
-// Alle Marker anlegen (initial unsichtbar)
+// Create all markers (initially hidden)
 function createMarkers(map) {
   allMarkers.forEach(({ marker }) => marker.remove());
   allMarkers = [];
@@ -49,14 +49,14 @@ function createMarkers(map) {
 
     const t    = getType(f.properties);
     const el   = createMarkerEl(t);
-    const name = f.properties.name || f.properties.ref || "Unbenannter Ort";
+    const name = f.properties.name || f.properties.ref || "Unnamed place";
 
     const extra = [];
     if (f.properties.opening_hours) extra.push(`🕐 ${f.properties.opening_hours}`);
-    if (f.properties.wheelchair === "yes") extra.push("♿ Rollstuhlgerecht");
+    if (f.properties.wheelchair === "yes") extra.push("♿ Wheelchair accessible");
     if (f.properties.website)
       extra.push(`<a href="${f.properties.website}" target="_blank" style="color:#1a6b3c">🔗 Website</a>`);
-    if (f.properties.leaf_type) extra.push(`🍃 Laubtyp: ${f.properties.leaf_type}`);
+    if (f.properties.leaf_type) extra.push(`🍃 Leaf type: ${f.properties.leaf_type}`);
 
     const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: false })
       .setHTML(`
@@ -78,7 +78,7 @@ function createMarkers(map) {
   });
 }
 
-// Marker-Sichtbarkeit mit Cluster-Zustand abgleichen
+// Sync marker visibility with cluster state
 function syncMarkers(map) {
   if (!map.getSource("pois") || !map.isSourceLoaded("pois")) return;
 
@@ -98,7 +98,7 @@ function syncMarkers(map) {
   });
 }
 
-// Source + Cluster-Layer anlegen
+// Create source + cluster layers
 function setupPOILayers(map) {
   if (!map.getSource("pois")) {
     map.addSource("pois", {
@@ -143,7 +143,7 @@ function setupPOILayers(map) {
   }
 }
 
-// Klick auf Cluster → reinzoomen
+// Click on cluster → zoom in
 function attachClusterEvents(map) {
   map.on("click", "clusters", (e) => {
     const f = map.queryRenderedFeatures(e.point, { layers: ["clusters"] })[0];
@@ -156,7 +156,7 @@ function attachClusterEvents(map) {
   map.on("mouseleave", "clusters", () => { map.getCanvas().style.cursor = ""; });
 }
 
-// GeoJSON laden & alles initialisieren
+// Load GeoJSON & initialize everything
 function loadPOIs(map) {
   fetch("data/pois.geojson")
     .then((r) => r.json())
@@ -172,10 +172,10 @@ function loadPOIs(map) {
         requestAnimationFrame(() => { syncMarkers(map); rafPending = false; });
       });
     })
-    .catch((err) => console.error("GeoJSON Ladefehler:", err));
+    .catch((err) => console.error("GeoJSON load error:", err));
 }
 
-// Filter-Checkboxen: Source neu befüllen
+// Filter checkboxes: update source data
 function initFilterControls(map) {
   document.querySelectorAll(".filter-cb").forEach((cb) => {
     cb.addEventListener("change", () => {
