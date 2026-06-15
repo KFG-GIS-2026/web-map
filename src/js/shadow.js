@@ -6,7 +6,7 @@ let currentShadowHour = 12;
 let _animationTimer = null;
 let _animationRunning = false;
 
-const SHADOW_HOURS = Array.from({ length: 15 }, (_, i) => i + 6); // 6..20
+const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
 
 function getShadowImage(hour) {
   const h = String(hour).padStart(2, "0");
