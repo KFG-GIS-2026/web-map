@@ -1,9 +1,15 @@
 // ============================================================
 // shadow.js – Shadow layer + time control with animation
 // ============================================================
+// Layer order in the map style:
+//   ... basemap fill layers ... → shadow-layer → 3d-buildings → label layers
+// The shadow is inserted before the first symbol/label layer.
+// add3DBuildings() in map.js then inserts the building extrusion
+// directly after the shadow, so buildings always render on top.
+// ============================================================
 
 let currentShadowHour = 12;
-let _animationTimer = null;
+let _animationTimer   = null;
 let _animationRunning = false;
 
 const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
@@ -14,21 +20,22 @@ function getShadowImage(hour) {
 }
 
 function createShadowLayer(map) {
-  // Remove existing layer/source if present
+  // Clean up existing layer and source (e.g. after basemap switch)
   if (map.getLayer("shadow-layer")) map.removeLayer("shadow-layer");
   if (map.getSource("shadow"))      map.removeSource("shadow");
 
-  // Add new image source
   map.addSource("shadow", {
     type: "image",
     url: getShadowImage(currentShadowHour),
     coordinates: SHADOW_COORDS
   });
 
-  // Insert shadow below 3D building layers
+  // Insert shadow before the first symbol layer (labels).
+  // add3DBuildings() will then insert "3d-buildings" also before that same
+  // label layer → "3d-buildings" ends up directly above "shadow-layer".
   let beforeLayerId;
   for (const layer of map.getStyle().layers) {
-    if (layer.type === "fill-extrusion" || layer.id === "building-3d") {
+    if (layer.type === "symbol" && layer.layout?.["text-field"]) {
       beforeLayerId = layer.id;
       break;
     }
@@ -43,6 +50,9 @@ function createShadowLayer(map) {
     },
     beforeLayerId
   );
+
+  // Start hidden; becomes visible when the panel is opened
+  map.setLayoutProperty("shadow-layer", "visibility", "none");
 }
 
 function updateShadowLayer(map, hour) {
@@ -65,7 +75,7 @@ function _syncSlider(hour) {
   if (slider) slider.value = SHADOW_HOURS.indexOf(hour);
 }
 
-// ── Animation ──────────────────────────────────────────────
+// ── Animation ─────────────────────────────────────────────
 
 function _getAnimSpeed() {
   const sel = document.getElementById("shadow-speed");
@@ -94,7 +104,7 @@ function _stopAnimation() {
   if (btn) btn.textContent = "▶";
 }
 
-// ── Visibility ───────────────────────────────────────────
+// ── Visibility ────────────────────────────────────────────
 
 function showShadowLayer(map) {
   if (map.getLayer("shadow-layer"))
@@ -107,7 +117,7 @@ function hideShadowLayer(map) {
     map.setLayoutProperty("shadow-layer", "visibility", "none");
 }
 
-// ── UI Events ──────────────────────────────────────────────
+// ── UI Events ─────────────────────────────────────────────
 
 function initShadowControls(map) {
   const slider  = document.getElementById("shadow-slider");
@@ -121,27 +131,20 @@ function initShadowControls(map) {
     return;
   }
 
-  // Initial display
   slider.max   = SHADOW_HOURS.length - 1;
   slider.value = SHADOW_HOURS.indexOf(currentShadowHour);
   _syncTimeDisplay(currentShadowHour);
 
-  // Slider event
   slider.addEventListener("input", (e) => {
     _stopAnimation();
     updateShadowLayer(map, SHADOW_HOURS[Number(e.target.value)]);
   });
 
-  // Play/Pause
   playBtn.addEventListener("click", () => {
-    if (_animationRunning) {
-      _stopAnimation();
-    } else {
-      _startAnimation(map);
-    }
+    if (_animationRunning) _stopAnimation();
+    else _startAnimation(map);
   });
 
-  // Toggle button (open/close panel + show/hide shadow)
   toggle.addEventListener("click", () => {
     const isOpen = !panel.classList.contains("hidden");
     if (isOpen) {
@@ -153,7 +156,6 @@ function initShadowControls(map) {
     }
   });
 
-  // Close button
   hideBtn.addEventListener("click", () => {
     panel.classList.add("hidden");
     hideShadowLayer(map);

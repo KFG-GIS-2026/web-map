@@ -1,15 +1,12 @@
 // ============================================================
-// config.js – shared configuration and type defintions
+// config.js – shared configuration and type definitions
 // ============================================================
 
-const MAPTILER_KEY = "KO43aEajGhsdMubLPP2X";
+// Base map style: OpenFreeMap bright (no API key required, OSM data)
+const MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
 
-const BASEMAPS = {
-  streets:   `https://api.maptiler.com/maps/streets-v2/style.json?key=${MAPTILER_KEY}`,
-  satellite: `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPTILER_KEY}`
-};
-
-// imagearea of shadowgrid in WGS84
+// Image extent of the shadow raster in WGS84 coordinates
+// Order: [NW, NE, SE, SW]
 const SHADOW_COORDS = [
   [8.73803182321166, 49.41863840982511],
   [8.9035906286068, 49.41863840982511],
@@ -17,7 +14,7 @@ const SHADOW_COORDS = [
   [8.73803182321166, 49.3644124949337]
 ];
 
-// POI-Types with category and color
+// POI types with category, color and emoji
 const TYPE_MAP = [
   { key: "fountain",         match: (p) => p.amenity === "fountain",        emoji: "⛲", label: "Brunnen",             cat: "fountain",   color: "#2196F3" },
   { key: "drinking_water",   match: (p) => p.amenity === "drinking_water",   emoji: "🚰", label: "Trinkwasser",         cat: "drinking",   color: "#29B6F6" },

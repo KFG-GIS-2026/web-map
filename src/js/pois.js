@@ -6,7 +6,7 @@ let geojsonData = null;
 let allMarkers  = [];   // { marker, el, id, cat }
 let rafPending  = false;
 
-// Annotate GeoJSON: _icon, _cat, _label, _id
+// Annotate GeoJSON features with type info
 function annotateGeoJSON(geojson) {
   geojson.features.forEach((f, i) => {
     const t = getType(f.properties);
@@ -18,7 +18,7 @@ function annotateGeoJSON(geojson) {
   return geojson;
 }
 
-// Return only active categories (for cluster source)
+// Return only features from currently active filter categories
 function getFilteredGeoJSON() {
   if (!geojsonData) return { type: "FeatureCollection", features: [] };
   const active = new Set(
@@ -30,7 +30,7 @@ function getFilteredGeoJSON() {
   };
 }
 
-// Create HTML element for a marker
+// Create the DOM element for a map marker
 function createMarkerEl(t) {
   const el = document.createElement("div");
   el.className = "poi-marker";
@@ -39,7 +39,7 @@ function createMarkerEl(t) {
   return el;
 }
 
-// Create all markers (initially hidden)
+// Create all markers (initially hidden, shown via syncMarkers)
 function createMarkers(map) {
   allMarkers.forEach(({ marker }) => marker.remove());
   allMarkers = [];
@@ -49,14 +49,14 @@ function createMarkers(map) {
 
     const t    = getType(f.properties);
     const el   = createMarkerEl(t);
-    const name = f.properties.name || f.properties.ref || "Unnamed place";
+    const name = f.properties.name || f.properties.ref || "Unbenannter Ort";
 
     const extra = [];
     if (f.properties.opening_hours) extra.push(`🕐 ${f.properties.opening_hours}`);
-    if (f.properties.wheelchair === "yes") extra.push("♿ Wheelchair accessible");
+    if (f.properties.wheelchair === "yes") extra.push("♿ Rollstuhlgerecht");
     if (f.properties.website)
       extra.push(`<a href="${f.properties.website}" target="_blank" style="color:#1a6b3c">🔗 Website</a>`);
-    if (f.properties.leaf_type) extra.push(`🍃 Leaf type: ${f.properties.leaf_type}`);
+    if (f.properties.leaf_type) extra.push(`🍃 Laubtyp: ${f.properties.leaf_type}`);
 
     const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: false })
       .setHTML(`
@@ -78,7 +78,7 @@ function createMarkers(map) {
   });
 }
 
-// Sync marker visibility with cluster state
+// Show/hide markers based on zoom cluster state and active filters
 function syncMarkers(map) {
   if (!map.getSource("pois") || !map.isSourceLoaded("pois")) return;
 
@@ -93,12 +93,11 @@ function syncMarkers(map) {
   );
 
   allMarkers.forEach(({ el, id, cat }) => {
-    const show = activeCats.has(cat) && unclusteredIds.has(id);
-    el.style.display = show ? "flex" : "none";
+    el.style.display = (activeCats.has(cat) && unclusteredIds.has(id)) ? "flex" : "none";
   });
 }
 
-// Create source + cluster layers
+// Create the GeoJSON source and cluster layers
 function setupPOILayers(map) {
   if (!map.getSource("pois")) {
     map.addSource("pois", {
@@ -134,7 +133,8 @@ function setupPOILayers(map) {
       filter: ["has", "point_count"],
       layout: {
         "text-field": ["get", "point_count_abbreviated"],
-        "text-font":  ["Open Sans Bold", "Arial Unicode MS Bold"],
+        // Use fonts available in OpenFreeMap (Noto Sans, not Open Sans)
+        "text-font":  ["Noto Sans Bold", "Noto Sans Regular"],
         "text-size":  14,
         "text-allow-overlap": true
       },
@@ -143,7 +143,7 @@ function setupPOILayers(map) {
   }
 }
 
-// Click on cluster → zoom in
+// Zoom into cluster on click
 function attachClusterEvents(map) {
   map.on("click", "clusters", (e) => {
     const f = map.queryRenderedFeatures(e.point, { layers: ["clusters"] })[0];
@@ -156,7 +156,7 @@ function attachClusterEvents(map) {
   map.on("mouseleave", "clusters", () => { map.getCanvas().style.cursor = ""; });
 }
 
-// Load GeoJSON & initialize everything
+// Load GeoJSON file and initialize all POI layers and markers
 function loadPOIs(map) {
   fetch("data/pois.geojson")
     .then((r) => r.json())
@@ -175,7 +175,7 @@ function loadPOIs(map) {
     .catch((err) => console.error("GeoJSON load error:", err));
 }
 
-// Filter checkboxes: update source data
+// Update source data when filter checkboxes change
 function initFilterControls(map) {
   document.querySelectorAll(".filter-cb").forEach((cb) => {
     cb.addEventListener("change", () => {
