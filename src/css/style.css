@@ -135,14 +135,6 @@ body { margin: 0; padding: 0; overflow: hidden; font-family: sans-serif; }
 .filter-item.disabled .legend-icon  { opacity: 0.35; filter: grayscale(0.6); }
 .filter-item.disabled .filter-label { color: #aaa; }
 
-#basemap-select {
-  width: 100%;
-  padding: 4px 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 13px;
-  margin-top: 2px;
-}
 
 /* ── POI markers ── */
 .poi-marker {
