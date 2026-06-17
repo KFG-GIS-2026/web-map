@@ -2,6 +2,18 @@
 // config.js – shared configuration and type definitions
 // ============================================================
 
+let simpleMode = false;
+
+const COMPLEX_CAMERA = {
+  pitch: 45,
+  bearing: -17.6
+};
+
+const SIMPLE_CAMERA = {
+  pitch: 0,
+  bearing: 0
+};
+
 // Base map style: OpenFreeMap bright (no API key required, OSM data)
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
 
@@ -33,4 +45,74 @@ const FALLBACK_TYPE = { key: "other", emoji: "📍", label: "Ort", cat: "other",
 
 function getType(props) {
   return TYPE_MAP.find((t) => t.match(props)) || FALLBACK_TYPE;
+}
+
+
+function initDisplayMode(map) {
+  const toggle = document.getElementById("mode-toggle");
+  const simpleLabel = document.querySelector(".mode-label:first-child");
+  const complexLabel = document.querySelector(".mode-label:last-child");
+  const shadowBar = document.getElementById("shadow-bar");
+  const shadowPanel = document.getElementById("shadow-panel");
+
+  if (!toggle || !shadowBar) return;
+
+  function setLabelState(isComplex) {
+    simpleLabel?.classList.toggle("active", !isComplex);
+    simpleLabel?.classList.toggle("inactive", isComplex);
+    complexLabel?.classList.toggle("active", isComplex);
+    complexLabel?.classList.toggle("inactive", !isComplex);
+  }
+
+  function setBuildingVisibility(visibility) {
+    if (map.getLayer("3d-buildings")) {
+      map.setLayoutProperty("3d-buildings", "visibility", visibility);
+    }
+  }
+
+  function setMapPerspective(camera) {
+    map.easeTo({
+      pitch: camera.pitch,
+      bearing: camera.bearing,
+      duration: 500
+    });
+  }
+
+  function setMapTiltEnabled(enabled) {
+    if (enabled) {
+      map.dragRotate.enable();
+      map.touchZoomRotate.enableRotation();
+    } else {
+      map.dragRotate.disable();
+      map.touchZoomRotate.disableRotation();
+    }
+  }
+
+  function applyMode(isComplex) {
+    simpleMode = !isComplex;
+    toggle.checked = isComplex;
+    setLabelState(isComplex);
+
+    if (isComplex) {
+      shadowBar.style.display = "flex";
+      shadowPanel?.classList.remove("hidden");
+      showShadowLayer(map);
+      setBuildingVisibility("visible");
+      setMapTiltEnabled(true);
+      setMapPerspective(COMPLEX_CAMERA);
+    } else {
+      shadowBar.style.display = "none";
+      shadowPanel?.classList.add("hidden");
+      hideShadowLayer(map);
+      setBuildingVisibility("none");
+      setMapTiltEnabled(false);
+      setMapPerspective(SIMPLE_CAMERA);
+    }
+  }
+
+  toggle.addEventListener("change", () => {
+    applyMode(toggle.checked);
+  });
+
+  applyMode(!simpleMode);
 }

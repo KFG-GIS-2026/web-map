@@ -96,10 +96,19 @@ function initSidebar() {
 // ── Map load ──────────────────────────────────────────────
 
 map.on("load", () => {
-  createShadowLayer(map);   // shadow first — buildings rendered on top
+
+  createShadowLayer(map);
+
   add3DBuildings();
+
   initSidebar();
+
   initShadowControls(map);
+
   loadPOIs(map);
+
   initFilterControls(map);
+
+  initDisplayMode(map);
+
 });

@@ -9,6 +9,18 @@
 </head>
 <body>
 
+
+<div id="mode-switch-container">
+  <span class="mode-label inactive">Einfach</span>
+
+  <label class="switch">
+    <input type="checkbox" id="mode-toggle">
+    <span class="slider"></span>
+  </label>
+
+  <span class="mode-label active">Komplex</span>
+</div>
+
   <!-- ── Sidebar ── -->
   <div id="sidebar">
     <!-- Collapse toggle (visible on mobile, hidden on desktop) -->
@@ -17,6 +29,15 @@
       <button id="sidebar-toggle" title="Legende ein-/ausblenden" aria-label="Legende ein-/ausblenden">
         ✕
       </button>
+    </div>
+
+    <div id="shadow-date-section">
+      <h3>Schattenzeit</h3>
+      <label class="shadow-date-control" for="shadow-date">
+        <span>Datum</span>
+        <input type="date" id="shadow-date" title="Datum auswählen" />
+      </label>
+      <button id="shadow-today" title="Auf heute springen">Heute</button>
     </div>
 
     <div id="sidebar-content">
@@ -95,13 +116,6 @@
       <button id="shadow-play" title="Animation starten/stoppen">▶</button>
 
       <input type="range" id="shadow-slider" min="0" max="14" step="1" value="6" />
-
-      <select id="shadow-speed" title="Animationsgeschwindigkeit">
-        <option value="2000">0.5×</option>
-        <option value="1000" selected>1×</option>
-        <option value="666">1.5×</option>
-        <option value="500">2×</option>
-      </select>
 
       <button id="shadow-hide" title="Schließen">✕</button>
 
