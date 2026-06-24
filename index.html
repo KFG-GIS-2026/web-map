@@ -23,7 +23,6 @@
 
   <!-- ── Sidebar ── -->
   <div id="sidebar">
-    <!-- Collapse toggle (visible on mobile, hidden on desktop) -->
     <div id="sidebar-header">
       <h2>Kühle Orte</h2>
       <button id="sidebar-toggle" title="Legende ein-/ausblenden" aria-label="Legende ein-/ausblenden">
@@ -41,57 +40,55 @@
     </div>
 
     <div id="sidebar-content">
-      <h3>Natur</h3>
-      <label class="filter-item" id="lbl-forest">
-        <input type="checkbox" class="filter-cb" data-cat="forest" checked />
-        <span class="legend-icon" style="background:#2E7D32">🌲</span>
-        <span class="filter-label">Wälder</span>
-      </label>
-      <label class="filter-item" id="lbl-water">
-        <input type="checkbox" class="filter-cb" data-cat="water" checked />
-        <span class="legend-icon" style="background:#1E88E5">💧</span>
-        <span class="filter-label">Wasser &amp; Flüsse</span>
+      <h3>Freizeit &amp; Erholung</h3>
+      <label class="filter-item" id="lbl-playground">
+        <input type="checkbox" class="filter-cb" data-cat="playground" checked />
+        <span class="legend-icon"><img src="data/poi_symbols/001-slide.png" alt="" /></span>
+        <span class="filter-label">Spielplatz</span>
       </label>
       <label class="filter-item" id="lbl-park">
         <input type="checkbox" class="filter-cb" data-cat="park" checked />
-        <span class="legend-icon" style="background:#66BB6A">🏞️</span>
-        <span class="filter-label">Parks</span>
-      </label>
-
-      <h3>Freizeit</h3>
-      <label class="filter-item" id="lbl-playground">
-        <input type="checkbox" class="filter-cb" data-cat="playground" checked />
-        <span class="legend-icon" style="background:#FF7043">🛝</span>
-        <span class="filter-label">Spielplätze</span>
+        <span class="legend-icon"><img src="data/poi_symbols/002-park.png" alt="" /></span>
+        <span class="filter-label">Park</span>
       </label>
       <label class="filter-item" id="lbl-bench">
         <input type="checkbox" class="filter-cb" data-cat="bench" checked />
-        <span class="legend-icon" style="background:#8D6E63">🪑</span>
-        <span class="filter-label">Bänke</span>
+        <span class="legend-icon"><img src="data/poi_symbols/003-bank.png" alt="" /></span>
+        <span class="filter-label">Sitzbank</span>
       </label>
 
-      <h3>Wasser / Brunnen</h3>
-      <label class="filter-item" id="lbl-fountain">
-        <input type="checkbox" class="filter-cb" data-cat="fountain" checked />
-        <span class="legend-icon" style="background:#2196F3">⛲</span>
-        <span class="filter-label">Brunnen</span>
-      </label>
+      <h3>Wasser</h3>
       <label class="filter-item" id="lbl-drinking">
         <input type="checkbox" class="filter-cb" data-cat="drinking" checked />
-        <span class="legend-icon" style="background:#29B6F6">🚰</span>
+        <span class="legend-icon"><img src="data/poi_symbols/004-water.png" alt="" /></span>
         <span class="filter-label">Trinkwasser</span>
       </label>
-
-      <h3>Verkehr &amp; Gebäude</h3>
-      <label class="filter-item" id="lbl-busstop">
-        <input type="checkbox" class="filter-cb" data-cat="busstop" checked />
-        <span class="legend-icon" style="background:#FFB300">🚌</span>
-        <span class="filter-label">Bushaltestellen</span>
+      <label class="filter-item" id="lbl-fountain">
+        <input type="checkbox" class="filter-cb" data-cat="fountain" checked />
+        <span class="legend-icon"><img src="data/poi_symbols/007-fountain.png" alt="" /></span>
+        <span class="filter-label">Brunnen</span>
       </label>
-      <label class="filter-item" id="lbl-building">
-        <input type="checkbox" class="filter-cb" data-cat="building" />
-        <span class="legend-icon" style="background:#FF9800">🏛️</span>
-        <span class="filter-label">Öffentl. Gebäude</span>
+
+      <h3>Gebäude</h3>
+      <label class="filter-item" id="lbl-toilet">
+        <input type="checkbox" class="filter-cb" data-cat="toilet" checked />
+        <span class="legend-icon"><img src="data/poi_symbols/005-toilet.png" alt="" /></span>
+        <span class="filter-label">Toilette</span>
+      </label>
+      <label class="filter-item" id="lbl-church">
+        <input type="checkbox" class="filter-cb" data-cat="church" checked />
+        <span class="legend-icon"><img src="data/poi_symbols/006-church.png" alt="" /></span>
+        <span class="filter-label">Kirche</span>
+      </label>
+      <label class="filter-item" id="lbl-library">
+        <input type="checkbox" class="filter-cb" data-cat="library" checked />
+        <span class="legend-icon"><img src="data/poi_symbols/008-open-book.png" alt="" /></span>
+        <span class="filter-label">Bücherei</span>
+      </label>
+      <label class="filter-item" id="lbl-museum">
+        <input type="checkbox" class="filter-cb" data-cat="museum" checked />
+        <span class="legend-icon"><img src="data/poi_symbols/009-museum-art.png" alt="" /></span>
+        <span class="filter-label">Museum</span>
       </label>
     </div>
   </div>
@@ -100,7 +97,7 @@
   <button id="sidebar-open" title="Legende öffnen" aria-label="Legende öffnen">
     🗂️
   </button>
-
+  
   <div id="map"></div>
 
   <div id="three-d-hint" aria-label="Hinweis zur 3D Steuerung">
@@ -129,15 +126,10 @@
     </button>
 
     <div id="shadow-panel" class="hidden">
-
       <span id="shadow-time">12:00 Uhr</span>
-
       <button id="shadow-play" title="Animation starten/stoppen">▶</button>
-
       <input type="range" id="shadow-slider" min="0" max="14" step="1" value="6" />
-
       <button id="shadow-hide" title="Schließen">✕</button>
-
     </div>
   </div>
 

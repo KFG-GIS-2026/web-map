@@ -223,10 +223,14 @@ input:checked + .slider::before {
   width: 30px; height: 30px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
   flex-shrink: 0;
+}
+.legend-icon img {
+  width: 16px; height: 16px;
+  object-fit: contain;
 }
 .filter-item.disabled .legend-icon  { opacity: 0.35; filter: grayscale(0.6); }
 .filter-item.disabled .filter-label { color: #aaa; }
@@ -234,16 +238,21 @@ input:checked + .slider::before {
 
 /* ── POI markers ── */
 .poi-marker {
-  width: 30px; height: 30px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px;
+  background: #ffffff;
   border: 2.5px solid #fff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.28);
   cursor: pointer;
   user-select: none;
 }
-.poi-marker:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.45); }
+.poi-marker:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.45); transform: scale(1.08); }
+.poi-marker-icon {
+  width: 20px; height: 20px;
+  object-fit: contain;
+  pointer-events: none;
+}
 
 /* ── Popups ── */
 .maplibregl-popup-content {
