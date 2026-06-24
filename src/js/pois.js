@@ -2,10 +2,32 @@
 // pois.js – POI data, markers, clusters
 // ============================================================
 
+const SOLAR_BENCH_DATA_URL = "data/neckargemuend_baenke_dummy.geojson";
+const SOLAR_BENCH_THRESHOLD = 50;
+
 let geojsonData = null;
 let allMarkers  = [];   // { marker, el, id, cat }
 let rafPending  = false;
 
+// Annotate GeoJSON features with type info
+function annotateGeoJSON(geojson, options = {}) {
+  const source = options.source || "pois";
+  const idPrefix = options.idPrefix || "";
+
+  geojson.features.forEach((f, i) => {
+    if (source === "solar-benches" && !f.properties.amenity) {
+      f.properties.amenity = "bench";
+    }
+
+    const t = getType(f.properties);
+    f.properties._icon  = t.key;
+    f.properties._cat   = t.cat;
+    f.properties._label = t.label;
+    f.properties._source = source;
+    f.properties._id    = idPrefix + (f.properties["@id"] || f.properties.id || `poi-${i}`);
+  });
+}
+  
 // Returns the feature's real name, or null if it has none.
 // Callers fall back to the category label when null.
 function getFeatureName(props) {
@@ -43,6 +65,18 @@ async function loadAllPOIs() {
   return { type: "FeatureCollection", features: results.flat() };
 }
 
+function getSolarPropertyName(hour) {
+  return `solar_${String(hour).padStart(2, "0")}`;
+}
+
+function isSolarBenchVisible(feature) {
+  if (feature.properties._source !== "solar-benches") return true;
+  if (simpleMode) return false;
+
+  const solarValue = Number(feature.properties[getSolarPropertyName(currentShadowHour)]);
+  return Number.isFinite(solarValue) && solarValue <= SOLAR_BENCH_THRESHOLD;
+}
+
 // Return only features from currently active filter categories
 function getFilteredGeoJSON() {
   if (!geojsonData) return { type: "FeatureCollection", features: [] };
@@ -51,7 +85,9 @@ function getFilteredGeoJSON() {
   );
   return {
     ...geojsonData,
-    features: geojsonData.features.filter((f) => active.has(f.properties._cat))
+    features: geojsonData.features.filter((f) => (
+      active.has(f.properties._cat) && isSolarBenchVisible(f)
+    ))
   };
 }
 
@@ -118,8 +154,12 @@ function createMarkers(map) {
       .setPopup(popup)
       .addTo(map);
 
+    popup.on("open", () => {
+      updateSolarPopupValue(popup, f);
+    });
+
     el.style.display = "none";
-    allMarkers.push({ marker, el, id: f.properties._id, cat: f.properties._cat });
+    allMarkers.push({ marker, el, id: f.properties._id, cat: f.properties._cat, feature: f });
   });
 }
 

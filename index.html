@@ -5,9 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260621-5" />
 </head>
 <body>
+
+
+<div id="mode-switch-container">
+  <span class="mode-label inactive">Einfach</span>
+
+  <label class="switch">
+    <input type="checkbox" id="mode-toggle">
+    <span class="slider"></span>
+  </label>
+
+  <span class="mode-label active">Komplex</span>
+</div>
 
   <!-- ── Sidebar ── -->
   <div id="sidebar">
@@ -16,6 +28,15 @@
       <button id="sidebar-toggle" title="Legende ein-/ausblenden" aria-label="Legende ein-/ausblenden">
         ✕
       </button>
+    </div>
+
+    <div id="shadow-date-section">
+      <h3>Schattenzeit</h3>
+      <label class="shadow-date-control" for="shadow-date">
+        <span>Datum</span>
+        <input type="date" id="shadow-date" title="Datum auswählen" />
+      </label>
+      <button id="shadow-today" title="Auf heute springen">Heute</button>
     </div>
 
     <div id="sidebar-content">
@@ -79,6 +100,25 @@
   
   <div id="map"></div>
 
+  <div id="three-d-hint" aria-label="Hinweis zur 3D Steuerung">
+    <button id="three-d-hint-toggle" type="button" aria-expanded="true" title="3D Hinweis ein-/ausklappen">
+      <span class="three-d-toggle-label">❯</span>
+    </button>
+
+    <div class="three-d-hint-content">
+      <div class="three-d-preview" aria-hidden="true">
+        <div class="preview-ground"></div>
+        <div class="preview-building building-a"></div>
+        <div class="preview-building building-b"></div>
+        <div class="preview-building building-c"></div>
+      </div>
+      <div class="three-d-hint-text">
+        <strong>3D drehen</strong>
+        <span>Rechte Maustaste halten u. ziehen.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Shadow Bar ── -->
   <div id="shadow-bar">
     <button id="shadow-bar-toggle" title="Schatten ein-/ausblenden">
@@ -109,9 +149,10 @@
   </a>
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-  <script src="src/js/config.js"></script>
-  <script src="src/js/shadow.js"></script>
-  <script src="src/js/pois.js"></script>
-  <script src="src/js/map.js"></script>
+  <script src="src/js/config.js?v=20260621-5"></script>
+  <script src="src/js/boundary.js?v=20260621-5"></script>
+  <script src="src/js/shadow.js?v=20260621-5"></script>
+  <script src="src/js/pois.js?v=20260621-5"></script>
+  <script src="src/js/map.js?v=20260621-5"></script>
 </body>
 </html>

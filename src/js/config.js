@@ -2,6 +2,18 @@
 // config.js – shared configuration and type definitions
 // ============================================================
 
+let simpleMode = false;
+
+const COMPLEX_CAMERA = {
+  pitch: 0,
+  bearing: 0
+};
+
+const SIMPLE_CAMERA = {
+  pitch: 0,
+  bearing: 0
+};
+
 // Base map style: OpenFreeMap bright (no API key required, OSM data)
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
 
@@ -29,6 +41,104 @@ const POI_CATEGORIES = [
   { cat: "museum",      file: "Museum.geojson",              icon: "009-museum-art.png",  label: "Museum",             color: "#FF9800" }
 ];
 
+
 function getCategoryByKey(cat) {
   return POI_CATEGORIES.find((c) => c.cat === cat) || null;
+}
+
+
+const FALLBACK_TYPE = { key: "other", emoji: "📍", label: "Ort", cat: "other", color: "#607D8B" };
+
+function getType(props) {
+  return TYPE_MAP.find((t) => t.match(props)) || FALLBACK_TYPE;
+}
+
+
+function initDisplayMode(map) {
+  const toggle = document.getElementById("mode-toggle");
+  const simpleLabel = document.querySelector(".mode-label:first-child");
+  const complexLabel = document.querySelector(".mode-label:last-child");
+  const shadowBar = document.getElementById("shadow-bar");
+  const shadowPanel = document.getElementById("shadow-panel");
+  const threeDHint = document.getElementById("three-d-hint");
+  const threeDHintToggle = document.getElementById("three-d-hint-toggle");
+
+  if (!toggle || !shadowBar) return;
+
+  function syncThreeDHintToggle() {
+    if (!threeDHint || !threeDHintToggle) return;
+    const isCollapsed = threeDHint.classList.contains("collapsed");
+    const label = threeDHintToggle.querySelector(".three-d-toggle-label");
+    if (label) label.innerHTML = isCollapsed ? "❮ 3D" : "❯";
+    threeDHintToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  }
+
+  function setLabelState(isComplex) {
+    simpleLabel?.classList.toggle("active", !isComplex);
+    simpleLabel?.classList.toggle("inactive", isComplex);
+    complexLabel?.classList.toggle("active", isComplex);
+    complexLabel?.classList.toggle("inactive", !isComplex);
+  }
+
+  function setBuildingVisibility(visibility) {
+    if (map.getLayer("3d-buildings")) {
+      map.setLayoutProperty("3d-buildings", "visibility", visibility);
+    }
+  }
+
+  function setMapPerspective(camera) {
+    map.easeTo({
+      pitch: camera.pitch,
+      bearing: camera.bearing,
+      duration: 500
+    });
+  }
+
+  function setMapTiltEnabled(enabled) {
+    if (enabled) {
+      map.dragRotate.enable();
+      map.touchZoomRotate.enableRotation();
+    } else {
+      map.dragRotate.disable();
+      map.touchZoomRotate.disableRotation();
+    }
+  }
+
+  function applyMode(isComplex) {
+    simpleMode = !isComplex;
+    toggle.checked = isComplex;
+    setLabelState(isComplex);
+
+    if (isComplex) {
+      shadowBar.style.display = "flex";
+      threeDHint?.classList.remove("hidden");
+      shadowPanel?.classList.remove("hidden");
+      showShadowLayer(map);
+      setBuildingVisibility("visible");
+      setMapTiltEnabled(true);
+      setMapPerspective(COMPLEX_CAMERA);
+    } else {
+      shadowBar.style.display = "none";
+      threeDHint?.classList.add("hidden");
+      shadowPanel?.classList.add("hidden");
+      hideShadowLayer(map);
+      setBuildingVisibility("none");
+      setMapTiltEnabled(false);
+      setMapPerspective(SIMPLE_CAMERA);
+    }
+
+    if (typeof updatePOISource === "function") updatePOISource(map);
+  }
+
+  toggle.addEventListener("change", () => {
+    applyMode(toggle.checked);
+  });
+
+  threeDHintToggle?.addEventListener("click", () => {
+    threeDHint?.classList.toggle("collapsed");
+    syncThreeDHintToggle();
+  });
+
+  applyMode(!simpleMode);
+  syncThreeDHintToggle();
 }
