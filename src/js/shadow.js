@@ -82,6 +82,7 @@ function updateShadowLayer(map, hour) {
   }
   _syncTimeDisplay(hour);
   _syncSlider(hour);
+  if (typeof updatePOISource === "function") updatePOISource(map);
 }
 
 function _syncTimeDisplay(hour) {

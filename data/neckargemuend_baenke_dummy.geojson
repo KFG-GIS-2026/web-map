@@ -1,0 +1,2905 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.793753745574822,
+          49.3714898609719
+        ]
+      },
+      "properties": {
+        "id": 1,
+        "typ": "Bank",
+        "solar_06": 81,
+        "solar_07": 14,
+        "solar_08": 3,
+        "solar_09": 94,
+        "solar_10": 35,
+        "solar_11": 31,
+        "solar_12": 28,
+        "solar_13": 17,
+        "solar_14": 94,
+        "solar_15": 13,
+        "solar_16": 86,
+        "solar_17": 94,
+        "solar_18": 69,
+        "solar_19": 11,
+        "solar_20": 75
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.782255256658452,
+          49.413465016039645
+        ]
+      },
+      "properties": {
+        "id": 2,
+        "typ": "Bank",
+        "solar_06": 27,
+        "solar_07": 29,
+        "solar_08": 64,
+        "solar_09": 77,
+        "solar_10": 3,
+        "solar_11": 71,
+        "solar_12": 25,
+        "solar_13": 91,
+        "solar_14": 83,
+        "solar_15": 89,
+        "solar_16": 69,
+        "solar_17": 53,
+        "solar_18": 28,
+        "solar_19": 57,
+        "solar_20": 75
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.827799549307796,
+          49.40018630156835
+        ]
+      },
+      "properties": {
+        "id": 3,
+        "typ": "Bank",
+        "solar_06": 97,
+        "solar_07": 20,
+        "solar_08": 89,
+        "solar_09": 54,
+        "solar_10": 43,
+        "solar_11": 35,
+        "solar_12": 19,
+        "solar_13": 27,
+        "solar_14": 97,
+        "solar_15": 43,
+        "solar_16": 13,
+        "solar_17": 11,
+        "solar_18": 48,
+        "solar_19": 12,
+        "solar_20": 45
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.765564411905899,
+          49.40306316592839
+        ]
+      },
+      "properties": {
+        "id": 4,
+        "typ": "Bank",
+        "solar_06": 5,
+        "solar_07": 93,
+        "solar_08": 58,
+        "solar_09": 68,
+        "solar_10": 15,
+        "solar_11": 48,
+        "solar_12": 10,
+        "solar_13": 70,
+        "solar_14": 37,
+        "solar_15": 80,
+        "solar_16": 79,
+        "solar_17": 46,
+        "solar_18": 73,
+        "solar_19": 24,
+        "solar_20": 90
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.78135822576393,
+          49.416832729385625
+        ]
+      },
+      "properties": {
+        "id": 5,
+        "typ": "Bank",
+        "solar_06": 98,
+        "solar_07": 37,
+        "solar_08": 10,
+        "solar_09": 29,
+        "solar_10": 12,
+        "solar_11": 48,
+        "solar_12": 35,
+        "solar_13": 58,
+        "solar_14": 81,
+        "solar_15": 46,
+        "solar_16": 20,
+        "solar_17": 47,
+        "solar_18": 45,
+        "solar_19": 26,
+        "solar_20": 85
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.777569213917621,
+          49.38621413672077
+        ]
+      },
+      "properties": {
+        "id": 6,
+        "typ": "Bank",
+        "solar_06": 82,
+        "solar_07": 9,
+        "solar_08": 77,
+        "solar_09": 81,
+        "solar_10": 21,
+        "solar_11": 68,
+        "solar_12": 93,
+        "solar_13": 31,
+        "solar_14": 20,
+        "solar_15": 59,
+        "solar_16": 48,
+        "solar_17": 34,
+        "solar_18": 81,
+        "solar_19": 88,
+        "solar_20": 71
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.799938500759382,
+          49.41423415769434
+        ]
+      },
+      "properties": {
+        "id": 7,
+        "typ": "Bank",
+        "solar_06": 98,
+        "solar_07": 99,
+        "solar_08": 7,
+        "solar_09": 29,
+        "solar_10": 4,
+        "solar_11": 40,
+        "solar_12": 51,
+        "solar_13": 34,
+        "solar_14": 8,
+        "solar_15": 27,
+        "solar_16": 72,
+        "solar_17": 91,
+        "solar_18": 40,
+        "solar_19": 27,
+        "solar_20": 83
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.78895971549709,
+          49.419866288899456
+        ]
+      },
+      "properties": {
+        "id": 8,
+        "typ": "Bank",
+        "solar_06": 82,
+        "solar_07": 58,
+        "solar_08": 18,
+        "solar_09": 33,
+        "solar_10": 17,
+        "solar_11": 31,
+        "solar_12": 95,
+        "solar_13": 71,
+        "solar_14": 68,
+        "solar_15": 33,
+        "solar_16": 95,
+        "solar_17": 74,
+        "solar_18": 54,
+        "solar_19": 74,
+        "solar_20": 51
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.790529542920522,
+          49.419806069012004
+        ]
+      },
+      "properties": {
+        "id": 9,
+        "typ": "Bank",
+        "solar_06": 17,
+        "solar_07": 65,
+        "solar_08": 63,
+        "solar_09": 11,
+        "solar_10": 96,
+        "solar_11": 6,
+        "solar_12": 14,
+        "solar_13": 19,
+        "solar_14": 80,
+        "solar_15": 20,
+        "solar_16": 87,
+        "solar_17": 54,
+        "solar_18": 76,
+        "solar_19": 8,
+        "solar_20": 49
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.783480010291793,
+          49.37790788771723
+        ]
+      },
+      "properties": {
+        "id": 10,
+        "typ": "Bank",
+        "solar_06": 67,
+        "solar_07": 32,
+        "solar_08": 70,
+        "solar_09": 1,
+        "solar_10": 87,
+        "solar_11": 92,
+        "solar_12": 14,
+        "solar_13": 87,
+        "solar_14": 68,
+        "solar_15": 96,
+        "solar_16": 34,
+        "solar_17": 98,
+        "solar_18": 82,
+        "solar_19": 43,
+        "solar_20": 14
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.77222714148397,
+          49.40812554000376
+        ]
+      },
+      "properties": {
+        "id": 11,
+        "typ": "Bank",
+        "solar_06": 0,
+        "solar_07": 92,
+        "solar_08": 92,
+        "solar_09": 33,
+        "solar_10": 64,
+        "solar_11": 97,
+        "solar_12": 22,
+        "solar_13": 64,
+        "solar_14": 13,
+        "solar_15": 80,
+        "solar_16": 38,
+        "solar_17": 81,
+        "solar_18": 64,
+        "solar_19": 77,
+        "solar_20": 25
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.835755955623839,
+          49.37428267260339
+        ]
+      },
+      "properties": {
+        "id": 12,
+        "typ": "Bank",
+        "solar_06": 69,
+        "solar_07": 99,
+        "solar_08": 67,
+        "solar_09": 0,
+        "solar_10": 76,
+        "solar_11": 41,
+        "solar_12": 62,
+        "solar_13": 2,
+        "solar_14": 14,
+        "solar_15": 46,
+        "solar_16": 39,
+        "solar_17": 30,
+        "solar_18": 7,
+        "solar_19": 30,
+        "solar_20": 72
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.837149032480596,
+          49.41644567465011
+        ]
+      },
+      "properties": {
+        "id": 13,
+        "typ": "Bank",
+        "solar_06": 62,
+        "solar_07": 8,
+        "solar_08": 97,
+        "solar_09": 68,
+        "solar_10": 98,
+        "solar_11": 16,
+        "solar_12": 16,
+        "solar_13": 84,
+        "solar_14": 60,
+        "solar_15": 70,
+        "solar_16": 21,
+        "solar_17": 33,
+        "solar_18": 67,
+        "solar_19": 77,
+        "solar_20": 54
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.777975786962525,
+          49.38690427810737
+        ]
+      },
+      "properties": {
+        "id": 14,
+        "typ": "Bank",
+        "solar_06": 96,
+        "solar_07": 93,
+        "solar_08": 88,
+        "solar_09": 25,
+        "solar_10": 91,
+        "solar_11": 39,
+        "solar_12": 51,
+        "solar_13": 85,
+        "solar_14": 83,
+        "solar_15": 47,
+        "solar_16": 56,
+        "solar_17": 66,
+        "solar_18": 57,
+        "solar_19": 15,
+        "solar_20": 31
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.801132489584687,
+          49.38392386319823
+        ]
+      },
+      "properties": {
+        "id": 15,
+        "typ": "Bank",
+        "solar_06": 75,
+        "solar_07": 70,
+        "solar_08": 29,
+        "solar_09": 75,
+        "solar_10": 28,
+        "solar_11": 0,
+        "solar_12": 9,
+        "solar_13": 90,
+        "solar_14": 80,
+        "solar_15": 7,
+        "solar_16": 29,
+        "solar_17": 8,
+        "solar_18": 4,
+        "solar_19": 42,
+        "solar_20": 9
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.812718619961172,
+          49.387714878329476
+        ]
+      },
+      "properties": {
+        "id": 16,
+        "typ": "Bank",
+        "solar_06": 62,
+        "solar_07": 27,
+        "solar_08": 69,
+        "solar_09": 16,
+        "solar_10": 92,
+        "solar_11": 73,
+        "solar_12": 73,
+        "solar_13": 60,
+        "solar_14": 31,
+        "solar_15": 100,
+        "solar_16": 60,
+        "solar_17": 52,
+        "solar_18": 24,
+        "solar_19": 12,
+        "solar_20": 12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.775216712675265,
+          49.39243067739166
+        ]
+      },
+      "properties": {
+        "id": 17,
+        "typ": "Bank",
+        "solar_06": 52,
+        "solar_07": 59,
+        "solar_08": 93,
+        "solar_09": 6,
+        "solar_10": 86,
+        "solar_11": 83,
+        "solar_12": 82,
+        "solar_13": 12,
+        "solar_14": 7,
+        "solar_15": 51,
+        "solar_16": 93,
+        "solar_17": 43,
+        "solar_18": 13,
+        "solar_19": 31,
+        "solar_20": 24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.827895658753144,
+          49.37831555553019
+        ]
+      },
+      "properties": {
+        "id": 18,
+        "typ": "Bank",
+        "solar_06": 54,
+        "solar_07": 23,
+        "solar_08": 35,
+        "solar_09": 59,
+        "solar_10": 31,
+        "solar_11": 9,
+        "solar_12": 56,
+        "solar_13": 70,
+        "solar_14": 12,
+        "solar_15": 6,
+        "solar_16": 83,
+        "solar_17": 69,
+        "solar_18": 1,
+        "solar_19": 11,
+        "solar_20": 96
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.815727320288012,
+          49.406525265870776
+        ]
+      },
+      "properties": {
+        "id": 19,
+        "typ": "Bank",
+        "solar_06": 62,
+        "solar_07": 61,
+        "solar_08": 27,
+        "solar_09": 51,
+        "solar_10": 7,
+        "solar_11": 21,
+        "solar_12": 48,
+        "solar_13": 0,
+        "solar_14": 49,
+        "solar_15": 33,
+        "solar_16": 100,
+        "solar_17": 100,
+        "solar_18": 58,
+        "solar_19": 36,
+        "solar_20": 54
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.785088384781577,
+          49.3725071168632
+        ]
+      },
+      "properties": {
+        "id": 20,
+        "typ": "Bank",
+        "solar_06": 100,
+        "solar_07": 71,
+        "solar_08": 84,
+        "solar_09": 91,
+        "solar_10": 62,
+        "solar_11": 19,
+        "solar_12": 24,
+        "solar_13": 37,
+        "solar_14": 27,
+        "solar_15": 7,
+        "solar_16": 74,
+        "solar_17": 94,
+        "solar_18": 69,
+        "solar_19": 7,
+        "solar_20": 95
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.835327690178326,
+          49.39848377050691
+        ]
+      },
+      "properties": {
+        "id": 21,
+        "typ": "Bank",
+        "solar_06": 61,
+        "solar_07": 64,
+        "solar_08": 67,
+        "solar_09": 20,
+        "solar_10": 7,
+        "solar_11": 65,
+        "solar_12": 10,
+        "solar_13": 23,
+        "solar_14": 8,
+        "solar_15": 76,
+        "solar_16": 8,
+        "solar_17": 86,
+        "solar_18": 30,
+        "solar_19": 51,
+        "solar_20": 15
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.785134709023646,
+          49.38328072562657
+        ]
+      },
+      "properties": {
+        "id": 22,
+        "typ": "Bank",
+        "solar_06": 74,
+        "solar_07": 76,
+        "solar_08": 5,
+        "solar_09": 79,
+        "solar_10": 10,
+        "solar_11": 53,
+        "solar_12": 84,
+        "solar_13": 74,
+        "solar_14": 72,
+        "solar_15": 66,
+        "solar_16": 40,
+        "solar_17": 33,
+        "solar_18": 26,
+        "solar_19": 85,
+        "solar_20": 91
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.777052344981364,
+          49.38326002073752
+        ]
+      },
+      "properties": {
+        "id": 23,
+        "typ": "Bank",
+        "solar_06": 16,
+        "solar_07": 85,
+        "solar_08": 82,
+        "solar_09": 38,
+        "solar_10": 58,
+        "solar_11": 40,
+        "solar_12": 96,
+        "solar_13": 9,
+        "solar_14": 1,
+        "solar_15": 58,
+        "solar_16": 79,
+        "solar_17": 72,
+        "solar_18": 12,
+        "solar_19": 9,
+        "solar_20": 68
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.825368330809237,
+          49.38496893761
+        ]
+      },
+      "properties": {
+        "id": 24,
+        "typ": "Bank",
+        "solar_06": 44,
+        "solar_07": 8,
+        "solar_08": 31,
+        "solar_09": 47,
+        "solar_10": 36,
+        "solar_11": 20,
+        "solar_12": 56,
+        "solar_13": 69,
+        "solar_14": 90,
+        "solar_15": 38,
+        "solar_16": 78,
+        "solar_17": 83,
+        "solar_18": 67,
+        "solar_19": 1,
+        "solar_20": 85
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.776287784986197,
+          49.40171189794425
+        ]
+      },
+      "properties": {
+        "id": 25,
+        "typ": "Bank",
+        "solar_06": 84,
+        "solar_07": 13,
+        "solar_08": 17,
+        "solar_09": 33,
+        "solar_10": 14,
+        "solar_11": 13,
+        "solar_12": 95,
+        "solar_13": 70,
+        "solar_14": 19,
+        "solar_15": 34,
+        "solar_16": 36,
+        "solar_17": 77,
+        "solar_18": 26,
+        "solar_19": 91,
+        "solar_20": 43
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.838383836306306,
+          49.37807909881369
+        ]
+      },
+      "properties": {
+        "id": 26,
+        "typ": "Bank",
+        "solar_06": 33,
+        "solar_07": 64,
+        "solar_08": 62,
+        "solar_09": 32,
+        "solar_10": 6,
+        "solar_11": 11,
+        "solar_12": 81,
+        "solar_13": 54,
+        "solar_14": 35,
+        "solar_15": 5,
+        "solar_16": 0,
+        "solar_17": 42,
+        "solar_18": 98,
+        "solar_19": 16,
+        "solar_20": 81
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.771847502845398,
+          49.37637227596411
+        ]
+      },
+      "properties": {
+        "id": 27,
+        "typ": "Bank",
+        "solar_06": 56,
+        "solar_07": 70,
+        "solar_08": 90,
+        "solar_09": 54,
+        "solar_10": 71,
+        "solar_11": 1,
+        "solar_12": 14,
+        "solar_13": 9,
+        "solar_14": 88,
+        "solar_15": 19,
+        "solar_16": 69,
+        "solar_17": 4,
+        "solar_18": 47,
+        "solar_19": 74,
+        "solar_20": 70
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.772364267066576,
+          49.416494050784685
+        ]
+      },
+      "properties": {
+        "id": 28,
+        "typ": "Bank",
+        "solar_06": 39,
+        "solar_07": 46,
+        "solar_08": 5,
+        "solar_09": 45,
+        "solar_10": 26,
+        "solar_11": 87,
+        "solar_12": 31,
+        "solar_13": 85,
+        "solar_14": 13,
+        "solar_15": 45,
+        "solar_16": 99,
+        "solar_17": 71,
+        "solar_18": 52,
+        "solar_19": 79,
+        "solar_20": 95
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.816102255051193,
+          49.38912708612985
+        ]
+      },
+      "properties": {
+        "id": 29,
+        "typ": "Bank",
+        "solar_06": 20,
+        "solar_07": 22,
+        "solar_08": 52,
+        "solar_09": 3,
+        "solar_10": 22,
+        "solar_11": 94,
+        "solar_12": 42,
+        "solar_13": 100,
+        "solar_14": 52,
+        "solar_15": 85,
+        "solar_16": 94,
+        "solar_17": 31,
+        "solar_18": 34,
+        "solar_19": 20,
+        "solar_20": 100
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.829148235362423,
+          49.41834445520242
+        ]
+      },
+      "properties": {
+        "id": 30,
+        "typ": "Bank",
+        "solar_06": 4,
+        "solar_07": 60,
+        "solar_08": 28,
+        "solar_09": 25,
+        "solar_10": 58,
+        "solar_11": 44,
+        "solar_12": 39,
+        "solar_13": 29,
+        "solar_14": 28,
+        "solar_15": 3,
+        "solar_16": 84,
+        "solar_17": 24,
+        "solar_18": 51,
+        "solar_19": 42,
+        "solar_20": 35
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.768672203777177,
+          49.39172818792823
+        ]
+      },
+      "properties": {
+        "id": 31,
+        "typ": "Bank",
+        "solar_06": 35,
+        "solar_07": 44,
+        "solar_08": 82,
+        "solar_09": 65,
+        "solar_10": 51,
+        "solar_11": 86,
+        "solar_12": 68,
+        "solar_13": 42,
+        "solar_14": 3,
+        "solar_15": 14,
+        "solar_16": 33,
+        "solar_17": 22,
+        "solar_18": 74,
+        "solar_19": 33,
+        "solar_20": 4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.801593627885326,
+          49.41032554348501
+        ]
+      },
+      "properties": {
+        "id": 32,
+        "typ": "Bank",
+        "solar_06": 93,
+        "solar_07": 100,
+        "solar_08": 40,
+        "solar_09": 55,
+        "solar_10": 77,
+        "solar_11": 65,
+        "solar_12": 14,
+        "solar_13": 49,
+        "solar_14": 73,
+        "solar_15": 24,
+        "solar_16": 32,
+        "solar_17": 5,
+        "solar_18": 90,
+        "solar_19": 55,
+        "solar_20": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.817580341041117,
+          49.385016113410565
+        ]
+      },
+      "properties": {
+        "id": 33,
+        "typ": "Bank",
+        "solar_06": 87,
+        "solar_07": 92,
+        "solar_08": 94,
+        "solar_09": 94,
+        "solar_10": 85,
+        "solar_11": 25,
+        "solar_12": 46,
+        "solar_13": 55,
+        "solar_14": 8,
+        "solar_15": 85,
+        "solar_16": 42,
+        "solar_17": 79,
+        "solar_18": 40,
+        "solar_19": 84,
+        "solar_20": 15
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.832224443658607,
+          49.40077574579757
+        ]
+      },
+      "properties": {
+        "id": 34,
+        "typ": "Bank",
+        "solar_06": 39,
+        "solar_07": 85,
+        "solar_08": 52,
+        "solar_09": 41,
+        "solar_10": 51,
+        "solar_11": 89,
+        "solar_12": 37,
+        "solar_13": 70,
+        "solar_14": 16,
+        "solar_15": 24,
+        "solar_16": 53,
+        "solar_17": 85,
+        "solar_18": 48,
+        "solar_19": 86,
+        "solar_20": 95
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.795372783944384,
+          49.38068507004945
+        ]
+      },
+      "properties": {
+        "id": 35,
+        "typ": "Bank",
+        "solar_06": 38,
+        "solar_07": 51,
+        "solar_08": 70,
+        "solar_09": 0,
+        "solar_10": 38,
+        "solar_11": 36,
+        "solar_12": 26,
+        "solar_13": 55,
+        "solar_14": 100,
+        "solar_15": 74,
+        "solar_16": 77,
+        "solar_17": 83,
+        "solar_18": 41,
+        "solar_19": 59,
+        "solar_20": 56
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.784833557143592,
+          49.410328144728815
+        ]
+      },
+      "properties": {
+        "id": 36,
+        "typ": "Bank",
+        "solar_06": 60,
+        "solar_07": 94,
+        "solar_08": 21,
+        "solar_09": 84,
+        "solar_10": 10,
+        "solar_11": 36,
+        "solar_12": 65,
+        "solar_13": 84,
+        "solar_14": 81,
+        "solar_15": 79,
+        "solar_16": 42,
+        "solar_17": 11,
+        "solar_18": 96,
+        "solar_19": 30,
+        "solar_20": 86
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.79071827739142,
+          49.389982643143824
+        ]
+      },
+      "properties": {
+        "id": 37,
+        "typ": "Bank",
+        "solar_06": 18,
+        "solar_07": 3,
+        "solar_08": 5,
+        "solar_09": 31,
+        "solar_10": 60,
+        "solar_11": 78,
+        "solar_12": 98,
+        "solar_13": 9,
+        "solar_14": 58,
+        "solar_15": 53,
+        "solar_16": 80,
+        "solar_17": 73,
+        "solar_18": 24,
+        "solar_19": 91,
+        "solar_20": 89
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.804592463522672,
+          49.415873500722775
+        ]
+      },
+      "properties": {
+        "id": 38,
+        "typ": "Bank",
+        "solar_06": 18,
+        "solar_07": 83,
+        "solar_08": 88,
+        "solar_09": 0,
+        "solar_10": 96,
+        "solar_11": 98,
+        "solar_12": 13,
+        "solar_13": 99,
+        "solar_14": 54,
+        "solar_15": 28,
+        "solar_16": 22,
+        "solar_17": 89,
+        "solar_18": 66,
+        "solar_19": 59,
+        "solar_20": 6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.826445533577713,
+          49.39739359753054
+        ]
+      },
+      "properties": {
+        "id": 39,
+        "typ": "Bank",
+        "solar_06": 15,
+        "solar_07": 58,
+        "solar_08": 17,
+        "solar_09": 59,
+        "solar_10": 85,
+        "solar_11": 67,
+        "solar_12": 71,
+        "solar_13": 76,
+        "solar_14": 40,
+        "solar_15": 96,
+        "solar_16": 56,
+        "solar_17": 78,
+        "solar_18": 92,
+        "solar_19": 64,
+        "solar_20": 54
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.781967795753403,
+          49.37387416769324
+        ]
+      },
+      "properties": {
+        "id": 40,
+        "typ": "Bank",
+        "solar_06": 20,
+        "solar_07": 95,
+        "solar_08": 60,
+        "solar_09": 57,
+        "solar_10": 33,
+        "solar_11": 96,
+        "solar_12": 31,
+        "solar_13": 81,
+        "solar_14": 35,
+        "solar_15": 98,
+        "solar_16": 99,
+        "solar_17": 66,
+        "solar_18": 62,
+        "solar_19": 80,
+        "solar_20": 30
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.76513830805711,
+          49.39037996848333
+        ]
+      },
+      "properties": {
+        "id": 41,
+        "typ": "Bank",
+        "solar_06": 36,
+        "solar_07": 30,
+        "solar_08": 34,
+        "solar_09": 42,
+        "solar_10": 40,
+        "solar_11": 69,
+        "solar_12": 10,
+        "solar_13": 17,
+        "solar_14": 19,
+        "solar_15": 29,
+        "solar_16": 49,
+        "solar_17": 88,
+        "solar_18": 19,
+        "solar_19": 90,
+        "solar_20": 27
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.760471686686719,
+          49.38758794013359
+        ]
+      },
+      "properties": {
+        "id": 42,
+        "typ": "Bank",
+        "solar_06": 69,
+        "solar_07": 59,
+        "solar_08": 53,
+        "solar_09": 7,
+        "solar_10": 26,
+        "solar_11": 53,
+        "solar_12": 49,
+        "solar_13": 98,
+        "solar_14": 74,
+        "solar_15": 89,
+        "solar_16": 2,
+        "solar_17": 97,
+        "solar_18": 73,
+        "solar_19": 48,
+        "solar_20": 61
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.79110857625969,
+          49.40344368103115
+        ]
+      },
+      "properties": {
+        "id": 43,
+        "typ": "Bank",
+        "solar_06": 96,
+        "solar_07": 49,
+        "solar_08": 53,
+        "solar_09": 68,
+        "solar_10": 95,
+        "solar_11": 94,
+        "solar_12": 69,
+        "solar_13": 77,
+        "solar_14": 28,
+        "solar_15": 62,
+        "solar_16": 28,
+        "solar_17": 34,
+        "solar_18": 55,
+        "solar_19": 62,
+        "solar_20": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.794289021572887,
+          49.41334256777976
+        ]
+      },
+      "properties": {
+        "id": 44,
+        "typ": "Bank",
+        "solar_06": 51,
+        "solar_07": 92,
+        "solar_08": 21,
+        "solar_09": 59,
+        "solar_10": 16,
+        "solar_11": 79,
+        "solar_12": 68,
+        "solar_13": 3,
+        "solar_14": 50,
+        "solar_15": 75,
+        "solar_16": 72,
+        "solar_17": 84,
+        "solar_18": 3,
+        "solar_19": 10,
+        "solar_20": 82
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.82679287319297,
+          49.393515341810655
+        ]
+      },
+      "properties": {
+        "id": 45,
+        "typ": "Bank",
+        "solar_06": 23,
+        "solar_07": 6,
+        "solar_08": 33,
+        "solar_09": 48,
+        "solar_10": 41,
+        "solar_11": 27,
+        "solar_12": 58,
+        "solar_13": 41,
+        "solar_14": 43,
+        "solar_15": 97,
+        "solar_16": 48,
+        "solar_17": 35,
+        "solar_18": 96,
+        "solar_19": 53,
+        "solar_20": 32
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.809706852526892,
+          49.381927247094445
+        ]
+      },
+      "properties": {
+        "id": 46,
+        "typ": "Bank",
+        "solar_06": 95,
+        "solar_07": 69,
+        "solar_08": 6,
+        "solar_09": 44,
+        "solar_10": 28,
+        "solar_11": 83,
+        "solar_12": 8,
+        "solar_13": 99,
+        "solar_14": 83,
+        "solar_15": 5,
+        "solar_16": 96,
+        "solar_17": 3,
+        "solar_18": 31,
+        "solar_19": 25,
+        "solar_20": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.769162629710312,
+          49.410965058715554
+        ]
+      },
+      "properties": {
+        "id": 47,
+        "typ": "Bank",
+        "solar_06": 60,
+        "solar_07": 85,
+        "solar_08": 14,
+        "solar_09": 72,
+        "solar_10": 27,
+        "solar_11": 59,
+        "solar_12": 89,
+        "solar_13": 32,
+        "solar_14": 98,
+        "solar_15": 47,
+        "solar_16": 21,
+        "solar_17": 77,
+        "solar_18": 77,
+        "solar_19": 95,
+        "solar_20": 91
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.77942795044297,
+          49.40485965012479
+        ]
+      },
+      "properties": {
+        "id": 48,
+        "typ": "Bank",
+        "solar_06": 39,
+        "solar_07": 13,
+        "solar_08": 74,
+        "solar_09": 3,
+        "solar_10": 39,
+        "solar_11": 73,
+        "solar_12": 86,
+        "solar_13": 48,
+        "solar_14": 50,
+        "solar_15": 91,
+        "solar_16": 25,
+        "solar_17": 9,
+        "solar_18": 75,
+        "solar_19": 88,
+        "solar_20": 80
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.787298493988903,
+          49.41247878134998
+        ]
+      },
+      "properties": {
+        "id": 49,
+        "typ": "Bank",
+        "solar_06": 38,
+        "solar_07": 87,
+        "solar_08": 76,
+        "solar_09": 15,
+        "solar_10": 72,
+        "solar_11": 100,
+        "solar_12": 5,
+        "solar_13": 44,
+        "solar_14": 68,
+        "solar_15": 54,
+        "solar_16": 84,
+        "solar_17": 47,
+        "solar_18": 8,
+        "solar_19": 64,
+        "solar_20": 82
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.82465593750454,
+          49.39690864532241
+        ]
+      },
+      "properties": {
+        "id": 50,
+        "typ": "Bank",
+        "solar_06": 62,
+        "solar_07": 13,
+        "solar_08": 55,
+        "solar_09": 46,
+        "solar_10": 81,
+        "solar_11": 58,
+        "solar_12": 90,
+        "solar_13": 19,
+        "solar_14": 55,
+        "solar_15": 22,
+        "solar_16": 93,
+        "solar_17": 66,
+        "solar_18": 83,
+        "solar_19": 34,
+        "solar_20": 78
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.808826536338442,
+          49.38894946520641
+        ]
+      },
+      "properties": {
+        "id": 51,
+        "typ": "Bank",
+        "solar_06": 61,
+        "solar_07": 59,
+        "solar_08": 55,
+        "solar_09": 93,
+        "solar_10": 75,
+        "solar_11": 34,
+        "solar_12": 41,
+        "solar_13": 31,
+        "solar_14": 11,
+        "solar_15": 35,
+        "solar_16": 57,
+        "solar_17": 31,
+        "solar_18": 96,
+        "solar_19": 59,
+        "solar_20": 72
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.801330180137194,
+          49.379552821176354
+        ]
+      },
+      "properties": {
+        "id": 52,
+        "typ": "Bank",
+        "solar_06": 3,
+        "solar_07": 63,
+        "solar_08": 41,
+        "solar_09": 23,
+        "solar_10": 62,
+        "solar_11": 27,
+        "solar_12": 45,
+        "solar_13": 33,
+        "solar_14": 43,
+        "solar_15": 35,
+        "solar_16": 76,
+        "solar_17": 89,
+        "solar_18": 35,
+        "solar_19": 71,
+        "solar_20": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.783538846505639,
+          49.3902200564339
+        ]
+      },
+      "properties": {
+        "id": 53,
+        "typ": "Bank",
+        "solar_06": 30,
+        "solar_07": 92,
+        "solar_08": 52,
+        "solar_09": 62,
+        "solar_10": 71,
+        "solar_11": 97,
+        "solar_12": 30,
+        "solar_13": 88,
+        "solar_14": 60,
+        "solar_15": 82,
+        "solar_16": 91,
+        "solar_17": 62,
+        "solar_18": 57,
+        "solar_19": 2,
+        "solar_20": 11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.796299621028254,
+          49.38533114956744
+        ]
+      },
+      "properties": {
+        "id": 54,
+        "typ": "Bank",
+        "solar_06": 31,
+        "solar_07": 39,
+        "solar_08": 84,
+        "solar_09": 74,
+        "solar_10": 47,
+        "solar_11": 60,
+        "solar_12": 70,
+        "solar_13": 67,
+        "solar_14": 44,
+        "solar_15": 54,
+        "solar_16": 95,
+        "solar_17": 70,
+        "solar_18": 42,
+        "solar_19": 45,
+        "solar_20": 89
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.782119970157495,
+          49.39947934529804
+        ]
+      },
+      "properties": {
+        "id": 55,
+        "typ": "Bank",
+        "solar_06": 29,
+        "solar_07": 15,
+        "solar_08": 92,
+        "solar_09": 24,
+        "solar_10": 40,
+        "solar_11": 15,
+        "solar_12": 95,
+        "solar_13": 68,
+        "solar_14": 97,
+        "solar_15": 88,
+        "solar_16": 23,
+        "solar_17": 24,
+        "solar_18": 27,
+        "solar_19": 94,
+        "solar_20": 61
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.78194490614266,
+          49.41871474655514
+        ]
+      },
+      "properties": {
+        "id": 56,
+        "typ": "Bank",
+        "solar_06": 97,
+        "solar_07": 67,
+        "solar_08": 76,
+        "solar_09": 36,
+        "solar_10": 12,
+        "solar_11": 24,
+        "solar_12": 37,
+        "solar_13": 29,
+        "solar_14": 46,
+        "solar_15": 22,
+        "solar_16": 38,
+        "solar_17": 1,
+        "solar_18": 90,
+        "solar_19": 68,
+        "solar_20": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.774749093631206,
+          49.37256883585918
+        ]
+      },
+      "properties": {
+        "id": 57,
+        "typ": "Bank",
+        "solar_06": 70,
+        "solar_07": 37,
+        "solar_08": 89,
+        "solar_09": 16,
+        "solar_10": 81,
+        "solar_11": 96,
+        "solar_12": 62,
+        "solar_13": 13,
+        "solar_14": 1,
+        "solar_15": 73,
+        "solar_16": 36,
+        "solar_17": 60,
+        "solar_18": 61,
+        "solar_19": 56,
+        "solar_20": 43
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.839513449816817,
+          49.37592257811057
+        ]
+      },
+      "properties": {
+        "id": 58,
+        "typ": "Bank",
+        "solar_06": 61,
+        "solar_07": 14,
+        "solar_08": 8,
+        "solar_09": 51,
+        "solar_10": 62,
+        "solar_11": 9,
+        "solar_12": 73,
+        "solar_13": 80,
+        "solar_14": 87,
+        "solar_15": 6,
+        "solar_16": 19,
+        "solar_17": 19,
+        "solar_18": 72,
+        "solar_19": 38,
+        "solar_20": 10
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.805490357649939,
+          49.37301151521862
+        ]
+      },
+      "properties": {
+        "id": 59,
+        "typ": "Bank",
+        "solar_06": 97,
+        "solar_07": 53,
+        "solar_08": 77,
+        "solar_09": 76,
+        "solar_10": 79,
+        "solar_11": 28,
+        "solar_12": 99,
+        "solar_13": 66,
+        "solar_14": 48,
+        "solar_15": 57,
+        "solar_16": 56,
+        "solar_17": 38,
+        "solar_18": 75,
+        "solar_19": 54,
+        "solar_20": 39
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.76021405780823,
+          49.39252518523089
+        ]
+      },
+      "properties": {
+        "id": 60,
+        "typ": "Bank",
+        "solar_06": 94,
+        "solar_07": 12,
+        "solar_08": 97,
+        "solar_09": 26,
+        "solar_10": 80,
+        "solar_11": 27,
+        "solar_12": 33,
+        "solar_13": 84,
+        "solar_14": 10,
+        "solar_15": 20,
+        "solar_16": 30,
+        "solar_17": 22,
+        "solar_18": 70,
+        "solar_19": 9,
+        "solar_20": 20
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.823299819603596,
+          49.399489479460264
+        ]
+      },
+      "properties": {
+        "id": 61,
+        "typ": "Bank",
+        "solar_06": 76,
+        "solar_07": 60,
+        "solar_08": 37,
+        "solar_09": 4,
+        "solar_10": 29,
+        "solar_11": 36,
+        "solar_12": 90,
+        "solar_13": 36,
+        "solar_14": 89,
+        "solar_15": 58,
+        "solar_16": 9,
+        "solar_17": 87,
+        "solar_18": 29,
+        "solar_19": 33,
+        "solar_20": 100
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.8259392241056,
+          49.41605962644838
+        ]
+      },
+      "properties": {
+        "id": 62,
+        "typ": "Bank",
+        "solar_06": 25,
+        "solar_07": 54,
+        "solar_08": 14,
+        "solar_09": 69,
+        "solar_10": 28,
+        "solar_11": 82,
+        "solar_12": 19,
+        "solar_13": 34,
+        "solar_14": 18,
+        "solar_15": 9,
+        "solar_16": 7,
+        "solar_17": 21,
+        "solar_18": 39,
+        "solar_19": 76,
+        "solar_20": 95
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.831153831143396,
+          49.406726696164284
+        ]
+      },
+      "properties": {
+        "id": 63,
+        "typ": "Bank",
+        "solar_06": 56,
+        "solar_07": 15,
+        "solar_08": 59,
+        "solar_09": 88,
+        "solar_10": 38,
+        "solar_11": 89,
+        "solar_12": 51,
+        "solar_13": 34,
+        "solar_14": 64,
+        "solar_15": 69,
+        "solar_16": 63,
+        "solar_17": 56,
+        "solar_18": 10,
+        "solar_19": 76,
+        "solar_20": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.820501506433004,
+          49.39352504116258
+        ]
+      },
+      "properties": {
+        "id": 64,
+        "typ": "Bank",
+        "solar_06": 77,
+        "solar_07": 32,
+        "solar_08": 3,
+        "solar_09": 11,
+        "solar_10": 29,
+        "solar_11": 86,
+        "solar_12": 73,
+        "solar_13": 75,
+        "solar_14": 2,
+        "solar_15": 97,
+        "solar_16": 86,
+        "solar_17": 34,
+        "solar_18": 73,
+        "solar_19": 5,
+        "solar_20": 97
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.768367990766604,
+          49.37804124263294
+        ]
+      },
+      "properties": {
+        "id": 65,
+        "typ": "Bank",
+        "solar_06": 83,
+        "solar_07": 56,
+        "solar_08": 35,
+        "solar_09": 23,
+        "solar_10": 74,
+        "solar_11": 55,
+        "solar_12": 81,
+        "solar_13": 62,
+        "solar_14": 11,
+        "solar_15": 60,
+        "solar_16": 44,
+        "solar_17": 52,
+        "solar_18": 42,
+        "solar_19": 41,
+        "solar_20": 85
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.837614778144687,
+          49.390208752850036
+        ]
+      },
+      "properties": {
+        "id": 66,
+        "typ": "Bank",
+        "solar_06": 52,
+        "solar_07": 88,
+        "solar_08": 63,
+        "solar_09": 36,
+        "solar_10": 84,
+        "solar_11": 51,
+        "solar_12": 97,
+        "solar_13": 70,
+        "solar_14": 4,
+        "solar_15": 58,
+        "solar_16": 11,
+        "solar_17": 40,
+        "solar_18": 32,
+        "solar_19": 41,
+        "solar_20": 14
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.820799242884881,
+          49.380177911917514
+        ]
+      },
+      "properties": {
+        "id": 67,
+        "typ": "Bank",
+        "solar_06": 65,
+        "solar_07": 0,
+        "solar_08": 84,
+        "solar_09": 69,
+        "solar_10": 59,
+        "solar_11": 52,
+        "solar_12": 6,
+        "solar_13": 24,
+        "solar_14": 66,
+        "solar_15": 46,
+        "solar_16": 79,
+        "solar_17": 96,
+        "solar_18": 63,
+        "solar_19": 80,
+        "solar_20": 56
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.761093957157284,
+          49.39039953436449
+        ]
+      },
+      "properties": {
+        "id": 68,
+        "typ": "Bank",
+        "solar_06": 70,
+        "solar_07": 16,
+        "solar_08": 36,
+        "solar_09": 56,
+        "solar_10": 89,
+        "solar_11": 62,
+        "solar_12": 15,
+        "solar_13": 3,
+        "solar_14": 80,
+        "solar_15": 77,
+        "solar_16": 30,
+        "solar_17": 90,
+        "solar_18": 20,
+        "solar_19": 39,
+        "solar_20": 70
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.779498472486011,
+          49.39756325384403
+        ]
+      },
+      "properties": {
+        "id": 69,
+        "typ": "Bank",
+        "solar_06": 28,
+        "solar_07": 14,
+        "solar_08": 59,
+        "solar_09": 15,
+        "solar_10": 82,
+        "solar_11": 19,
+        "solar_12": 63,
+        "solar_13": 91,
+        "solar_14": 37,
+        "solar_15": 65,
+        "solar_16": 90,
+        "solar_17": 34,
+        "solar_18": 53,
+        "solar_19": 61,
+        "solar_20": 60
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.782627118662626,
+          49.38492779248859
+        ]
+      },
+      "properties": {
+        "id": 70,
+        "typ": "Bank",
+        "solar_06": 49,
+        "solar_07": 24,
+        "solar_08": 76,
+        "solar_09": 65,
+        "solar_10": 95,
+        "solar_11": 17,
+        "solar_12": 8,
+        "solar_13": 35,
+        "solar_14": 98,
+        "solar_15": 53,
+        "solar_16": 43,
+        "solar_17": 100,
+        "solar_18": 64,
+        "solar_19": 34,
+        "solar_20": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.834628180457221,
+          49.413480084161705
+        ]
+      },
+      "properties": {
+        "id": 71,
+        "typ": "Bank",
+        "solar_06": 75,
+        "solar_07": 74,
+        "solar_08": 84,
+        "solar_09": 62,
+        "solar_10": 19,
+        "solar_11": 57,
+        "solar_12": 68,
+        "solar_13": 61,
+        "solar_14": 44,
+        "solar_15": 42,
+        "solar_16": 70,
+        "solar_17": 97,
+        "solar_18": 69,
+        "solar_19": 48,
+        "solar_20": 58
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.823391492855995,
+          49.40260095007003
+        ]
+      },
+      "properties": {
+        "id": 72,
+        "typ": "Bank",
+        "solar_06": 89,
+        "solar_07": 30,
+        "solar_08": 73,
+        "solar_09": 49,
+        "solar_10": 29,
+        "solar_11": 99,
+        "solar_12": 52,
+        "solar_13": 5,
+        "solar_14": 40,
+        "solar_15": 95,
+        "solar_16": 60,
+        "solar_17": 90,
+        "solar_18": 48,
+        "solar_19": 49,
+        "solar_20": 84
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.792798289579709,
+          49.40273906632139
+        ]
+      },
+      "properties": {
+        "id": 73,
+        "typ": "Bank",
+        "solar_06": 19,
+        "solar_07": 63,
+        "solar_08": 4,
+        "solar_09": 16,
+        "solar_10": 64,
+        "solar_11": 75,
+        "solar_12": 42,
+        "solar_13": 12,
+        "solar_14": 56,
+        "solar_15": 12,
+        "solar_16": 67,
+        "solar_17": 58,
+        "solar_18": 1,
+        "solar_19": 92,
+        "solar_20": 18
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.836331167409814,
+          49.4013399589504
+        ]
+      },
+      "properties": {
+        "id": 74,
+        "typ": "Bank",
+        "solar_06": 19,
+        "solar_07": 9,
+        "solar_08": 60,
+        "solar_09": 100,
+        "solar_10": 33,
+        "solar_11": 43,
+        "solar_12": 79,
+        "solar_13": 88,
+        "solar_14": 50,
+        "solar_15": 83,
+        "solar_16": 10,
+        "solar_17": 42,
+        "solar_18": 86,
+        "solar_19": 68,
+        "solar_20": 48
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.820829575439541,
+          49.40519454146645
+        ]
+      },
+      "properties": {
+        "id": 75,
+        "typ": "Bank",
+        "solar_06": 97,
+        "solar_07": 62,
+        "solar_08": 69,
+        "solar_09": 4,
+        "solar_10": 79,
+        "solar_11": 8,
+        "solar_12": 30,
+        "solar_13": 80,
+        "solar_14": 87,
+        "solar_15": 36,
+        "solar_16": 29,
+        "solar_17": 95,
+        "solar_18": 11,
+        "solar_19": 55,
+        "solar_20": 12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.8024933054519,
+          49.3982964030958
+        ]
+      },
+      "properties": {
+        "id": 76,
+        "typ": "Bank",
+        "solar_06": 12,
+        "solar_07": 56,
+        "solar_08": 21,
+        "solar_09": 88,
+        "solar_10": 38,
+        "solar_11": 3,
+        "solar_12": 5,
+        "solar_13": 41,
+        "solar_14": 7,
+        "solar_15": 37,
+        "solar_16": 45,
+        "solar_17": 47,
+        "solar_18": 55,
+        "solar_19": 18,
+        "solar_20": 31
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.780318187153084,
+          49.38276633540796
+        ]
+      },
+      "properties": {
+        "id": 77,
+        "typ": "Bank",
+        "solar_06": 23,
+        "solar_07": 21,
+        "solar_08": 22,
+        "solar_09": 10,
+        "solar_10": 78,
+        "solar_11": 48,
+        "solar_12": 79,
+        "solar_13": 87,
+        "solar_14": 30,
+        "solar_15": 63,
+        "solar_16": 74,
+        "solar_17": 18,
+        "solar_18": 29,
+        "solar_19": 59,
+        "solar_20": 81
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.796546865013422,
+          49.385106083526914
+        ]
+      },
+      "properties": {
+        "id": 78,
+        "typ": "Bank",
+        "solar_06": 1,
+        "solar_07": 59,
+        "solar_08": 36,
+        "solar_09": 86,
+        "solar_10": 69,
+        "solar_11": 20,
+        "solar_12": 9,
+        "solar_13": 56,
+        "solar_14": 44,
+        "solar_15": 75,
+        "solar_16": 38,
+        "solar_17": 81,
+        "solar_18": 54,
+        "solar_19": 88,
+        "solar_20": 32
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.760647837260919,
+          49.41325336988486
+        ]
+      },
+      "properties": {
+        "id": 79,
+        "typ": "Bank",
+        "solar_06": 49,
+        "solar_07": 61,
+        "solar_08": 13,
+        "solar_09": 30,
+        "solar_10": 48,
+        "solar_11": 73,
+        "solar_12": 45,
+        "solar_13": 73,
+        "solar_14": 37,
+        "solar_15": 89,
+        "solar_16": 37,
+        "solar_17": 2,
+        "solar_18": 84,
+        "solar_19": 50,
+        "solar_20": 35
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.78005014400349,
+          49.40777886618709
+        ]
+      },
+      "properties": {
+        "id": 80,
+        "typ": "Bank",
+        "solar_06": 99,
+        "solar_07": 95,
+        "solar_08": 6,
+        "solar_09": 77,
+        "solar_10": 95,
+        "solar_11": 63,
+        "solar_12": 36,
+        "solar_13": 99,
+        "solar_14": 29,
+        "solar_15": 77,
+        "solar_16": 45,
+        "solar_17": 28,
+        "solar_18": 81,
+        "solar_19": 24,
+        "solar_20": 79
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.818588781435139,
+          49.37450666878731
+        ]
+      },
+      "properties": {
+        "id": 81,
+        "typ": "Bank",
+        "solar_06": 98,
+        "solar_07": 84,
+        "solar_08": 87,
+        "solar_09": 17,
+        "solar_10": 80,
+        "solar_11": 12,
+        "solar_12": 80,
+        "solar_13": 82,
+        "solar_14": 5,
+        "solar_15": 39,
+        "solar_16": 100,
+        "solar_17": 56,
+        "solar_18": 4,
+        "solar_19": 74,
+        "solar_20": 46
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.833123916283064,
+          49.417209390804864
+        ]
+      },
+      "properties": {
+        "id": 82,
+        "typ": "Bank",
+        "solar_06": 37,
+        "solar_07": 41,
+        "solar_08": 95,
+        "solar_09": 53,
+        "solar_10": 22,
+        "solar_11": 25,
+        "solar_12": 16,
+        "solar_13": 100,
+        "solar_14": 69,
+        "solar_15": 46,
+        "solar_16": 67,
+        "solar_17": 64,
+        "solar_18": 34,
+        "solar_19": 21,
+        "solar_20": 32
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.767224230045487,
+          49.389728728016436
+        ]
+      },
+      "properties": {
+        "id": 83,
+        "typ": "Bank",
+        "solar_06": 37,
+        "solar_07": 95,
+        "solar_08": 43,
+        "solar_09": 14,
+        "solar_10": 59,
+        "solar_11": 9,
+        "solar_12": 18,
+        "solar_13": 96,
+        "solar_14": 28,
+        "solar_15": 86,
+        "solar_16": 92,
+        "solar_17": 86,
+        "solar_18": 50,
+        "solar_19": 71,
+        "solar_20": 46
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.778705752176926,
+          49.37125123248232
+        ]
+      },
+      "properties": {
+        "id": 84,
+        "typ": "Bank",
+        "solar_06": 33,
+        "solar_07": 68,
+        "solar_08": 15,
+        "solar_09": 58,
+        "solar_10": 47,
+        "solar_11": 86,
+        "solar_12": 95,
+        "solar_13": 86,
+        "solar_14": 33,
+        "solar_15": 74,
+        "solar_16": 48,
+        "solar_17": 81,
+        "solar_18": 47,
+        "solar_19": 13,
+        "solar_20": 86
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.835700922630556,
+          49.3852182292178
+        ]
+      },
+      "properties": {
+        "id": 85,
+        "typ": "Bank",
+        "solar_06": 71,
+        "solar_07": 41,
+        "solar_08": 78,
+        "solar_09": 28,
+        "solar_10": 82,
+        "solar_11": 8,
+        "solar_12": 81,
+        "solar_13": 59,
+        "solar_14": 89,
+        "solar_15": 38,
+        "solar_16": 83,
+        "solar_17": 52,
+        "solar_18": 14,
+        "solar_19": 17,
+        "solar_20": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.819381521181224,
+          49.37772614512049
+        ]
+      },
+      "properties": {
+        "id": 86,
+        "typ": "Bank",
+        "solar_06": 63,
+        "solar_07": 14,
+        "solar_08": 12,
+        "solar_09": 30,
+        "solar_10": 68,
+        "solar_11": 17,
+        "solar_12": 49,
+        "solar_13": 58,
+        "solar_14": 47,
+        "solar_15": 85,
+        "solar_16": 95,
+        "solar_17": 89,
+        "solar_18": 69,
+        "solar_19": 53,
+        "solar_20": 75
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.76794836996849,
+          49.404284013274065
+        ]
+      },
+      "properties": {
+        "id": 87,
+        "typ": "Bank",
+        "solar_06": 53,
+        "solar_07": 83,
+        "solar_08": 12,
+        "solar_09": 62,
+        "solar_10": 78,
+        "solar_11": 52,
+        "solar_12": 35,
+        "solar_13": 4,
+        "solar_14": 88,
+        "solar_15": 47,
+        "solar_16": 27,
+        "solar_17": 56,
+        "solar_18": 56,
+        "solar_19": 30,
+        "solar_20": 46
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.8376874649652,
+          49.37252892553314
+        ]
+      },
+      "properties": {
+        "id": 88,
+        "typ": "Bank",
+        "solar_06": 69,
+        "solar_07": 82,
+        "solar_08": 45,
+        "solar_09": 7,
+        "solar_10": 50,
+        "solar_11": 35,
+        "solar_12": 24,
+        "solar_13": 15,
+        "solar_14": 58,
+        "solar_15": 11,
+        "solar_16": 84,
+        "solar_17": 27,
+        "solar_18": 82,
+        "solar_19": 81,
+        "solar_20": 76
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.771804334395314,
+          49.41502655178159
+        ]
+      },
+      "properties": {
+        "id": 89,
+        "typ": "Bank",
+        "solar_06": 42,
+        "solar_07": 31,
+        "solar_08": 16,
+        "solar_09": 100,
+        "solar_10": 72,
+        "solar_11": 26,
+        "solar_12": 8,
+        "solar_13": 97,
+        "solar_14": 70,
+        "solar_15": 26,
+        "solar_16": 75,
+        "solar_17": 27,
+        "solar_18": 29,
+        "solar_19": 42,
+        "solar_20": 99
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.807108233764035,
+          49.37078905417555
+        ]
+      },
+      "properties": {
+        "id": 90,
+        "typ": "Bank",
+        "solar_06": 0,
+        "solar_07": 35,
+        "solar_08": 18,
+        "solar_09": 16,
+        "solar_10": 69,
+        "solar_11": 32,
+        "solar_12": 22,
+        "solar_13": 14,
+        "solar_14": 84,
+        "solar_15": 3,
+        "solar_16": 16,
+        "solar_17": 1,
+        "solar_18": 45,
+        "solar_19": 100,
+        "solar_20": 30
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.768724320800308,
+          49.39519193448929
+        ]
+      },
+      "properties": {
+        "id": 91,
+        "typ": "Bank",
+        "solar_06": 33,
+        "solar_07": 6,
+        "solar_08": 16,
+        "solar_09": 94,
+        "solar_10": 53,
+        "solar_11": 67,
+        "solar_12": 14,
+        "solar_13": 95,
+        "solar_14": 8,
+        "solar_15": 60,
+        "solar_16": 57,
+        "solar_17": 99,
+        "solar_18": 46,
+        "solar_19": 65,
+        "solar_20": 75
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.768636946374338,
+          49.405620065744856
+        ]
+      },
+      "properties": {
+        "id": 92,
+        "typ": "Bank",
+        "solar_06": 78,
+        "solar_07": 5,
+        "solar_08": 93,
+        "solar_09": 100,
+        "solar_10": 84,
+        "solar_11": 66,
+        "solar_12": 38,
+        "solar_13": 58,
+        "solar_14": 82,
+        "solar_15": 3,
+        "solar_16": 7,
+        "solar_17": 61,
+        "solar_18": 51,
+        "solar_19": 54,
+        "solar_20": 87
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.790472351905482,
+          49.39986959275996
+        ]
+      },
+      "properties": {
+        "id": 93,
+        "typ": "Bank",
+        "solar_06": 56,
+        "solar_07": 9,
+        "solar_08": 10,
+        "solar_09": 41,
+        "solar_10": 77,
+        "solar_11": 18,
+        "solar_12": 8,
+        "solar_13": 16,
+        "solar_14": 35,
+        "solar_15": 79,
+        "solar_16": 81,
+        "solar_17": 74,
+        "solar_18": 70,
+        "solar_19": 91,
+        "solar_20": 41
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.796124393277223,
+          49.381424678718226
+        ]
+      },
+      "properties": {
+        "id": 94,
+        "typ": "Bank",
+        "solar_06": 37,
+        "solar_07": 58,
+        "solar_08": 64,
+        "solar_09": 77,
+        "solar_10": 55,
+        "solar_11": 12,
+        "solar_12": 89,
+        "solar_13": 14,
+        "solar_14": 83,
+        "solar_15": 83,
+        "solar_16": 98,
+        "solar_17": 70,
+        "solar_18": 92,
+        "solar_19": 27,
+        "solar_20": 55
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.765370664650932,
+          49.41158859442374
+        ]
+      },
+      "properties": {
+        "id": 95,
+        "typ": "Bank",
+        "solar_06": 43,
+        "solar_07": 58,
+        "solar_08": 51,
+        "solar_09": 53,
+        "solar_10": 93,
+        "solar_11": 12,
+        "solar_12": 40,
+        "solar_13": 54,
+        "solar_14": 40,
+        "solar_15": 85,
+        "solar_16": 32,
+        "solar_17": 47,
+        "solar_18": 19,
+        "solar_19": 87,
+        "solar_20": 60
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.792864690633772,
+          49.413680368611715
+        ]
+      },
+      "properties": {
+        "id": 96,
+        "typ": "Bank",
+        "solar_06": 11,
+        "solar_07": 55,
+        "solar_08": 12,
+        "solar_09": 95,
+        "solar_10": 94,
+        "solar_11": 47,
+        "solar_12": 16,
+        "solar_13": 71,
+        "solar_14": 7,
+        "solar_15": 75,
+        "solar_16": 71,
+        "solar_17": 71,
+        "solar_18": 42,
+        "solar_19": 85,
+        "solar_20": 15
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.777939589528605,
+          49.37541091909636
+        ]
+      },
+      "properties": {
+        "id": 97,
+        "typ": "Bank",
+        "solar_06": 96,
+        "solar_07": 54,
+        "solar_08": 92,
+        "solar_09": 6,
+        "solar_10": 36,
+        "solar_11": 76,
+        "solar_12": 39,
+        "solar_13": 45,
+        "solar_14": 13,
+        "solar_15": 73,
+        "solar_16": 64,
+        "solar_17": 27,
+        "solar_18": 19,
+        "solar_19": 84,
+        "solar_20": 61
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.762100306516286,
+          49.416454214549745
+        ]
+      },
+      "properties": {
+        "id": 98,
+        "typ": "Bank",
+        "solar_06": 71,
+        "solar_07": 47,
+        "solar_08": 14,
+        "solar_09": 97,
+        "solar_10": 35,
+        "solar_11": 73,
+        "solar_12": 28,
+        "solar_13": 54,
+        "solar_14": 71,
+        "solar_15": 98,
+        "solar_16": 79,
+        "solar_17": 78,
+        "solar_18": 86,
+        "solar_19": 82,
+        "solar_20": 71
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.79206274751996,
+          49.377093732707564
+        ]
+      },
+      "properties": {
+        "id": 99,
+        "typ": "Bank",
+        "solar_06": 88,
+        "solar_07": 34,
+        "solar_08": 3,
+        "solar_09": 23,
+        "solar_10": 34,
+        "solar_11": 89,
+        "solar_12": 97,
+        "solar_13": 39,
+        "solar_14": 43,
+        "solar_15": 44,
+        "solar_16": 0,
+        "solar_17": 23,
+        "solar_18": 18,
+        "solar_19": 72,
+        "solar_20": 84
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.822146849597338,
+          49.39837967783072
+        ]
+      },
+      "properties": {
+        "id": 100,
+        "typ": "Bank",
+        "solar_06": 81,
+        "solar_07": 3,
+        "solar_08": 11,
+        "solar_09": 95,
+        "solar_10": 67,
+        "solar_11": 27,
+        "solar_12": 48,
+        "solar_13": 53,
+        "solar_14": 58,
+        "solar_15": 43,
+        "solar_16": 20,
+        "solar_17": 47,
+        "solar_18": 39,
+        "solar_19": 92,
+        "solar_20": 41
+      }
+    }
+  ]
+}

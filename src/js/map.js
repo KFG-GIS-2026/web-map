@@ -7,8 +7,8 @@ const map = new maplibregl.Map({
   style: MAP_STYLE,
   center: [8.8, 49.39],
   zoom: 13,
-  pitch: 45,
-  bearing: -17.6,
+  pitch: SIMPLE_CAMERA.pitch,
+  bearing: SIMPLE_CAMERA.bearing,
   canvasContextAttributes: { antialias: true }
 });
 
@@ -100,6 +100,8 @@ map.on("load", () => {
   createShadowLayer(map);
 
   add3DBuildings();
+
+  loadMunicipalityBoundary(map);
 
   initSidebar();
 

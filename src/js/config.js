@@ -5,8 +5,8 @@
 let simpleMode = false;
 
 const COMPLEX_CAMERA = {
-  pitch: 45,
-  bearing: -17.6
+  pitch: 0,
+  bearing: 0
 };
 
 const SIMPLE_CAMERA = {
@@ -54,8 +54,18 @@ function initDisplayMode(map) {
   const complexLabel = document.querySelector(".mode-label:last-child");
   const shadowBar = document.getElementById("shadow-bar");
   const shadowPanel = document.getElementById("shadow-panel");
+  const threeDHint = document.getElementById("three-d-hint");
+  const threeDHintToggle = document.getElementById("three-d-hint-toggle");
 
   if (!toggle || !shadowBar) return;
+
+  function syncThreeDHintToggle() {
+    if (!threeDHint || !threeDHintToggle) return;
+    const isCollapsed = threeDHint.classList.contains("collapsed");
+    const label = threeDHintToggle.querySelector(".three-d-toggle-label");
+    if (label) label.innerHTML = isCollapsed ? "❮ 3D" : "❯";
+    threeDHintToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  }
 
   function setLabelState(isComplex) {
     simpleLabel?.classList.toggle("active", !isComplex);
@@ -95,6 +105,7 @@ function initDisplayMode(map) {
 
     if (isComplex) {
       shadowBar.style.display = "flex";
+      threeDHint?.classList.remove("hidden");
       shadowPanel?.classList.remove("hidden");
       showShadowLayer(map);
       setBuildingVisibility("visible");
@@ -102,17 +113,26 @@ function initDisplayMode(map) {
       setMapPerspective(COMPLEX_CAMERA);
     } else {
       shadowBar.style.display = "none";
+      threeDHint?.classList.add("hidden");
       shadowPanel?.classList.add("hidden");
       hideShadowLayer(map);
       setBuildingVisibility("none");
       setMapTiltEnabled(false);
       setMapPerspective(SIMPLE_CAMERA);
     }
+
+    if (typeof updatePOISource === "function") updatePOISource(map);
   }
 
   toggle.addEventListener("change", () => {
     applyMode(toggle.checked);
   });
 
+  threeDHintToggle?.addEventListener("click", () => {
+    threeDHint?.classList.toggle("collapsed");
+    syncThreeDHintToggle();
+  });
+
   applyMode(!simpleMode);
+  syncThreeDHintToggle();
 }
