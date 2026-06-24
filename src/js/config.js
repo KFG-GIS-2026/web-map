@@ -8,29 +8,27 @@ const MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
 // Image extent of the shadow raster in WGS84 coordinates
 // Order: [NW, NE, SE, SW]
 const SHADOW_COORDS = [
-  [8.793322316, 49.385219820],
-  [8.797466933, 49.385219820],
-  [8.797466933, 49.382514018],
-  [8.793322316, 49.382514018]
+  [8.73803182321166, 49.41863840982511],
+  [8.9035906286068, 49.41863840982511],
+  [8.9035906286068, 49.3644124949337],
+  [8.73803182321166, 49.3644124949337]
 ];
 
-// POI types with category, color and emoji
-const TYPE_MAP = [
-  { key: "fountain",         match: (p) => p.amenity === "fountain",        emoji: "⛲", label: "Brunnen",             cat: "fountain",   color: "#2196F3" },
-  { key: "drinking_water",   match: (p) => p.amenity === "drinking_water",   emoji: "🚰", label: "Trinkwasser",         cat: "drinking",   color: "#29B6F6" },
-  { key: "bench",            match: (p) => p.amenity === "bench",            emoji: "🪑", label: "Bank",                cat: "bench",      color: "#8D6E63" },
-  { key: "library",          match: (p) => p.amenity === "library",          emoji: "📚", label: "Bibliothek",          cat: "building",   color: "#AB47BC" },
-  { key: "community_centre", match: (p) => p.amenity === "community_centre", emoji: "🏛️", label: "Gemeinschaftszentr.", cat: "building",   color: "#FF9800" },
-  { key: "playground",       match: (p) => p.leisure === "playground",       emoji: "🛝", label: "Spielplatz",          cat: "playground", color: "#FF7043" },
-  { key: "park",             match: (p) => p.leisure === "park",             emoji: "🏞️", label: "Park",                cat: "park",       color: "#66BB6A" },
-  { key: "forest",           match: (p) => p.landuse === "forest",           emoji: "🌲", label: "Wald",                cat: "forest",     color: "#2E7D32" },
-  { key: "water",            match: (p) => p.natural === "water",            emoji: "💧", label: "Wasserfläche",        cat: "water",      color: "#1E88E5" },
-  { key: "river",            match: (p) => p.waterway === "river",           emoji: "🌊", label: "Fluss",               cat: "water",      color: "#039BE5" },
-  { key: "bus_stop",         match: (p) => p.highway === "bus_stop",         emoji: "🚌", label: "Bushaltestelle",      cat: "busstop",    color: "#FFB300" },
+// POI categories: one GeoJSON file + one PNG icon per category.
+// Each file in data/osm_poi/ is loaded separately and tagged with its
+// category here. PNG icons are rendered with a white circular background.
+const POI_CATEGORIES = [
+  { cat: "playground", file: "Spielplatz_Punkte.geojson",    icon: "001-slide.png",       label: "Spielplatz",         color: "#FF7043" },
+  { cat: "park",        file: "Park_Punkte.geojson",         icon: "002-park.png",        label: "Park",               color: "#66BB6A" },
+  { cat: "bench",       file: "Sitzbank.geojson",            icon: "003-bank.png",        label: "Sitzbank",           color: "#8D6E63" },
+  { cat: "drinking",    file: "Trinkwasserstelle.geojson",   icon: "004-water.png",       label: "Trinkwasser",        color: "#29B6F6" },
+  { cat: "toilet",      file: "Toilete.geojson",             icon: "005-toilet.png",      label: "Toilette",           color: "#9575CD" },
+  { cat: "church",      file: "Kirche.geojson",              icon: "006-church.png",      label: "Kirche",             color: "#795548" },
+  { cat: "fountain",    file: "Brunnen.geojson",             icon: "007-fountain.png",    label: "Brunnen",            color: "#2196F3" },
+  { cat: "library",     file: "Bücherei.geojson",            icon: "008-open-book.png",   label: "Bücherei",           color: "#AB47BC" },
+  { cat: "museum",      file: "Museum.geojson",              icon: "009-museum-art.png",  label: "Museum",             color: "#FF9800" }
 ];
 
-const FALLBACK_TYPE = { key: "other", emoji: "📍", label: "Ort", cat: "other", color: "#607D8B" };
-
-function getType(props) {
-  return TYPE_MAP.find((t) => t.match(props)) || FALLBACK_TYPE;
+function getCategoryByKey(cat) {
+  return POI_CATEGORIES.find((c) => c.cat === cat) || null;
 }
