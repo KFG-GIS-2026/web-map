@@ -4,63 +4,66 @@
 
 let simpleMode = false;
 
-const COMPLEX_CAMERA = {
-  pitch: 0,
-  bearing: 0
-};
-
-const SIMPLE_CAMERA = {
-  pitch: 0,
-  bearing: 0
-};
+const COMPLEX_CAMERA = { pitch: 0, bearing: 0 };
+const SIMPLE_CAMERA  = { pitch: 0, bearing: 0 };
 
 // Base map style: OpenFreeMap bright (no API key required, OSM data)
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
+
+// ── External data repository ──────────────────────────────
+// All GeoJSON data (POIs, boundary, symbols) is hosted separately on
+// GitHub Pages to keep the map repo and data repo independent.
+const DATA_BASE_URL = "https://kfg-gis-2026.github.io/web-map-data";
 
 // Image extent of the shadow raster in WGS84 coordinates
 // Order: [NW, NE, SE, SW]
 const SHADOW_COORDS = [
   [8.73803182321166, 49.41863840982511],
-  [8.9035906286068, 49.41863840982511],
-  [8.9035906286068, 49.3644124949337],
-  [8.73803182321166, 49.3644124949337]
+  [8.9035906286068,  49.41863840982511],
+  [8.9035906286068,  49.3644124949337 ],
+  [8.73803182321166, 49.3644124949337 ]
 ];
 
-// POI categories: one GeoJSON file + one PNG icon per category.
-// Each file in data/osm_poi/ is loaded separately and tagged with its
-// category here. PNG icons are rendered with a white circular background.
+// POI categories — icons and GeoJSON files are loaded from DATA_BASE_URL
 const POI_CATEGORIES = [
-  { cat: "playground", file: "Spielplatz_Punkte.geojson",    icon: "001-slide.png",       label: "Spielplatz",         color: "#FF7043" },
-  { cat: "park",        file: "Park_Punkte.geojson",         icon: "002-park.png",        label: "Park",               color: "#66BB6A" },
-  { cat: "bench",       file: "Sitzbank.geojson",            icon: "003-bank.png",        label: "Sitzbank",           color: "#8D6E63" },
-  { cat: "drinking",    file: "Trinkwasserstelle.geojson",   icon: "004-water.png",       label: "Trinkwasser",        color: "#29B6F6" },
-  { cat: "toilet",      file: "Toilete.geojson",             icon: "005-toilet.png",      label: "Toilette",           color: "#9575CD" },
-  { cat: "church",      file: "Kirche.geojson",              icon: "006-church.png",      label: "Kirche",             color: "#795548" },
-  { cat: "fountain",    file: "Brunnen.geojson",             icon: "007-fountain.png",    label: "Brunnen",            color: "#2196F3" },
-  { cat: "library",     file: "Bücherei.geojson",            icon: "008-open-book.png",   label: "Bücherei",           color: "#AB47BC" },
-  { cat: "museum",      file: "Museum.geojson",              icon: "009-museum-art.png",  label: "Museum",             color: "#FF9800" }
+  { cat: "playground", file: "Spielplatz_Punkte.geojson",  icon: "001-slide.png",      label: "Spielplatz",  color: "#FF7043" },
+  { cat: "park",       file: "Park_Punkte.geojson",        icon: "002-park.png",       label: "Park",        color: "#66BB6A" },
+  { cat: "bench",      file: "Sitzbank.geojson",           icon: "003-bank.png",       label: "Sitzbank",    color: "#8D6E63" },
+  { cat: "drinking",   file: "Trinkwasserstelle.geojson",  icon: "004-water.png",      label: "Trinkwasser", color: "#29B6F6" },
+  { cat: "toilet",     file: "Toilete.geojson",            icon: "005-toilet.png",     label: "Toilette",    color: "#9575CD" },
+  { cat: "church",     file: "Kirche.geojson",             icon: "006-church.png",     label: "Kirche",      color: "#795548" },
+  { cat: "fountain",   file: "Brunnen.geojson",            icon: "007-fountain.png",   label: "Brunnen",     color: "#2196F3" },
+  { cat: "library",    file: "Bücherei.geojson",           icon: "008-open-book.png",  label: "Bücherei",    color: "#AB47BC" },
+  { cat: "museum",     file: "Museum.geojson",             icon: "009-museum-art.png", label: "Museum",      color: "#FF9800" }
 ];
-
 
 function getCategoryByKey(cat) {
   return POI_CATEGORIES.find((c) => c.cat === cat) || null;
 }
 
+// Convenience helpers to build full URLs from the external data repo
+function poiUrl(filename)    { return `${DATA_BASE_URL}/osm_poi/${filename}`; }
+function symbolUrl(filename) { return `${DATA_BASE_URL}/poi_symbols/${filename}`; }
+function boundaryUrl(filename) { return `${DATA_BASE_URL}/boundary/${filename}`; }
+function shadowUrl(filename) { return `${DATA_BASE_URL}/shadows/${filename}`; }
+
+// ── Display-mode helpers (used by config + map.js) ────────
 
 const FALLBACK_TYPE = { key: "other", emoji: "📍", label: "Ort", cat: "other", color: "#607D8B" };
 
 function getType(props) {
-  return TYPE_MAP.find((t) => t.match(props)) || FALLBACK_TYPE;
+  return typeof TYPE_MAP !== "undefined"
+    ? (TYPE_MAP.find((t) => t.match(props)) || FALLBACK_TYPE)
+    : FALLBACK_TYPE;
 }
 
-
 function initDisplayMode(map) {
-  const toggle = document.getElementById("mode-toggle");
+  const toggle      = document.getElementById("mode-toggle");
   const simpleLabel = document.querySelector(".mode-label:first-child");
   const complexLabel = document.querySelector(".mode-label:last-child");
-  const shadowBar = document.getElementById("shadow-bar");
+  const shadowBar   = document.getElementById("shadow-bar");
   const shadowPanel = document.getElementById("shadow-panel");
-  const threeDHint = document.getElementById("three-d-hint");
+  const threeDHint  = document.getElementById("three-d-hint");
   const threeDHintToggle = document.getElementById("three-d-hint-toggle");
 
   if (!toggle || !shadowBar) return;
@@ -74,24 +77,19 @@ function initDisplayMode(map) {
   }
 
   function setLabelState(isComplex) {
-    simpleLabel?.classList.toggle("active", !isComplex);
-    simpleLabel?.classList.toggle("inactive", isComplex);
-    complexLabel?.classList.toggle("active", isComplex);
+    simpleLabel?.classList.toggle("active",   !isComplex);
+    simpleLabel?.classList.toggle("inactive",  isComplex);
+    complexLabel?.classList.toggle("active",   isComplex);
     complexLabel?.classList.toggle("inactive", !isComplex);
   }
 
   function setBuildingVisibility(visibility) {
-    if (map.getLayer("3d-buildings")) {
+    if (map.getLayer("3d-buildings"))
       map.setLayoutProperty("3d-buildings", "visibility", visibility);
-    }
   }
 
   function setMapPerspective(camera) {
-    map.easeTo({
-      pitch: camera.pitch,
-      bearing: camera.bearing,
-      duration: 500
-    });
+    map.easeTo({ pitch: camera.pitch, bearing: camera.bearing, duration: 500 });
   }
 
   function setMapTiltEnabled(enabled) {
@@ -130,9 +128,7 @@ function initDisplayMode(map) {
     if (typeof updatePOISource === "function") updatePOISource(map);
   }
 
-  toggle.addEventListener("change", () => {
-    applyMode(toggle.checked);
-  });
+  toggle.addEventListener("change", () => applyMode(toggle.checked));
 
   threeDHintToggle?.addEventListener("click", () => {
     threeDHint?.classList.toggle("collapsed");

@@ -1,113 +1,35 @@
-# Kühle Karte Neckargemünd
-
-erreichbar unter
-https://kfg-gis-2026.github.io/web-map/
-
-## lokale Entwicklung
-
-- vs code mit Live Server extension
-- index.html --> open with live server
-
-Browser öffnet sich automatisch auf localhost und Codeänderungen werden automatisch neu geladen
-
-## Code-Struktur und Dateifunktionen
-
-### `index.html` – Das Grundgerüst
-
-- Hier sind alle Grundelemente der Karte definiert
+# Cool Map Neckargemünd
 
 
-Beispiel
+**[Live Demo](https://kfg-gis-2026.github.io/web-map/)**
 
-```html
-<div id="shadow-bar">
-  <button id="shadow-bar-toggle">🕒 Schatten</button>
-  <div id="shadow-panel" class="hidden">
-    <span id="shadow-time">12:00 Uhr</span>
-    <button id="shadow-play">▶</button>
-    <input type="range" id="shadow-slider" min="0" max="14" />
-  </div>
-</div>
-```
+The *Cool Map Neckargemünd* is an interactive web map developed as part of a university research project in the field of **Geoinformatics**.  
+The project focuses on identifying and visualizing cooling structures within the city of Neckargemünd — including shaded areas, green spaces, water points, and other relevant locations that contribute to heat mitigation and outdoor comfort.
 
-Hier wird definiert: Es gibt eine Leiste (`div`), darin einen Button zum Öffnen, eine Zeitanzeige, einen Play-Button und einen Schieberegler. Was diese Elemente *tun* und *aussehen*, regeln die anderen Dateien.
- 
-### `src/css/style.css` – Das Aussehen
+The application is built using **MapLibre GL JS**, **OpenStreetMap data**, and an external data repository hosted on GitHub Pages.
 
-Hier wird das Styling wie Farbe, Größe etc bestimmt
-
-Beispiel
-
-```css
-#shadow-bar {
-  position: absolute;
-  bottom: 56px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.96);
-  border-radius: 32px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-}
- 
-#shadow-play {
-  background: #1a6b3c;
-  color: #fff;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-}
-```
-
-Die `id`-Selektoren (`#shadow-bar`, `#shadow-play`) verknüpfen das CSS direkt mit den gleichnamigen `id`-Attributen im HTML.
-
-
-### JavaScript  `src/js/shadow.js` - Die Interaktivität und Logik
-Lädt die Schattenbilder auf die Karte und steuert die Zeitanimation. Wenn man den Slider bewegt oder auf Play drückt, wechselt dieses Script das angezeigte PNG.
-
-Beispiel
- 
-```js
-// When the slider moves: stop animation, update shadow to selected hour
-slider.addEventListener("input", (e) => {
-  _stopAnimation();
-  updateShadowLayer(map, SHADOW_HOURS[Number(e.target.value)]);
-});
-```
-Lädt die Schattenbilder auf die Karte und steuert die Zeitanimation. Wenn man den Slider bewegt oder auf Play drückt, wechselt dieses Script das angezeigte PNG.
-
-
-#### `map.js`
-Der Einstiegspunkt: Initialisiert die Karte, fügt die Navigationssteuerung hinzu, startet alle anderen Module und regelt das Ein- und Ausklappen der Sidebar.
- 
 ---
- 
-## Die Karte: MapLibre GL JS
- 
-Die Karte selbst wird mit der Open-Source-Bibliothek **MapLibre GL JS** gerendert. Sie ermöglicht flüssige, interaktive Karten im Browser.
- 
-```js
-// Create the map and center it on Neckargemünd
-const map = new maplibregl.Map({
-  container: "map",     // id of the <div> in index.html
-  style: BASEMAPS.streets,
-  center: [8.8, 49.39],
-  zoom: 13,
-  pitch: 45
-});
-```
 
-Weitere Maplibre-Beispiele in Dokumentation
-**[maplibre.org/maplibre-gl-js/docs/examples/](https://maplibre.org/maplibre-gl-js/docs/examples/)**
+## Data
 
-```js
-map.addControl(
-  new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true, showCompass: true }),
-  "top-right"
-);
-map.addControl(
-  new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }),
-  "top-right"
-);
-```
+All geospatial datasets used in this project (POIs, boundary polygons, icons) are maintained in a separate repository:
 
+**[cool-map-data](https://github.com/KFG-GIS-2026/web-map-data)** 
+
+Separating code and data ensures a clean project structure and allows independent updates to the underlying datasets.
+
+---
+
+## Technologies
+
+- **MapLibre GL JS** – interactive map rendering  
+- **OpenFreeMap / OpenStreetMap** – basemap and geographic data  
+- **GitHub Pages** – hosting for both the web map and the data repository  
+
+---
+
+## License
+
+This project was created as part of a university research initiative.  
+Data usage is subject to the respective licenses of the data providers.
 

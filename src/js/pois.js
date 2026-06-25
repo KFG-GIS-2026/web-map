@@ -35,10 +35,10 @@ function getFeatureName(props) {
 }
 
 // Load one category's GeoJSON file and tag each feature.
-// Files must already be in WGS84 — run reproject_geojson.py first
-// if exported from QGIS in EPSG:25832.
+// Files must already be in WGS84 
 async function loadCategoryGeoJSON(category) {
-  const res = await fetch(`data/osm_poi/${category.file}`);
+  const url = poiUrl(category.file);
+  const res = await fetch(url);
   if (!res.ok) {
     console.error(`Could not load ${category.file}:`, res.status);
     return [];
@@ -96,7 +96,7 @@ function createMarkerEl(category) {
   const el = document.createElement("div");
   el.className = "poi-marker";
   const img = document.createElement("img");
-  img.src = `data/poi_symbols/${category.icon}`;
+  img.src = symbolUrl(category.icon);
   img.alt = category.label;
   img.className = "poi-marker-icon";
   el.appendChild(img);
@@ -129,7 +129,7 @@ function buildPopupHTML(category, props) {
 
   return `
     <div style="font-family:sans-serif;font-size:13px;line-height:1.6;text-align:center">
-      <img src="data/poi_symbols/${category.icon}"
+      <img src="${symbolUrl(category.icon)}"
            style="width:28px;height:28px;display:block;margin:0 auto 6px" />
       ${titleHTML}
       <div style="text-align:left">${extraHTML}</div>
