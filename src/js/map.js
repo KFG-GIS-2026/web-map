@@ -79,7 +79,8 @@ function add3DBuildings() {
 //   [HTML markers are DOM elements, always on top]
 async function addBoundaryMask() {
   try {
-    const res = await fetch("data/boundary/Neckargemuend_boundary.geojson");
+    const url = boundaryUrl("Neckargemuend_boundary.geojson");
+    const res = await fetch(url);
     const boundary = await res.json();
 
     const boundaryFeature = boundary.features[0];
