@@ -81,7 +81,7 @@ function loadMunicipalityBoundary(map) {
           source: "municipality-mask",
           paint: {
             "fill-color": "#8f8f8f",
-            "fill-opacity": 0.25
+            "fill-opacity": 0.15
           }
         }, beforeLayerId);
       }

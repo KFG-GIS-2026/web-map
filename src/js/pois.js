@@ -4,10 +4,29 @@
 
 const SOLAR_BENCH_DATA_URL = "data/neckargemuend_baenke_dummy.geojson";
 const SOLAR_BENCH_THRESHOLD = 50;
+const POI_SOURCE_ID = "pois";
+const BENCH_SOURCE_ID = "bench-pois";
+const POI_PROXY_LAYER_ID = "poi-marker-proxy";
+const BENCH_PROXY_LAYER_ID = "bench-marker-proxy";
+const POI_CLUSTER_LAYER_ID = "clusters";
+const POI_CLUSTER_COUNT_LAYER_ID = "cluster-count";
+const BENCH_CLUSTER_LAYER_ID = "bench-clusters";
+const BENCH_CLUSTER_COUNT_LAYER_ID = "bench-cluster-count";
+const CLUSTER_LAYER_IDS = [
+  POI_CLUSTER_COUNT_LAYER_ID,
+  POI_CLUSTER_LAYER_ID,
+  BENCH_CLUSTER_COUNT_LAYER_ID,
+  BENCH_CLUSTER_LAYER_ID,
+  POI_PROXY_LAYER_ID,
+  BENCH_PROXY_LAYER_ID
+];
 
 let geojsonData = null;
 let allMarkers  = [];   // { marker, el, id, cat }
 let rafPending  = false;
+let currentPopup = null;
+let allClusteringEnabled = true;
+let benchClusteringEnabled = true;
 
 // Annotate GeoJSON features with type info
 function annotateGeoJSON(geojson, options = {}) {
@@ -91,6 +110,20 @@ function getFilteredGeoJSON() {
   };
 }
 
+function makeFeatureCollection(features) {
+  return { type: "FeatureCollection", features };
+}
+
+function getPOISourceSlices() {
+  const features = getFilteredGeoJSON().features;
+  if (allClusteringEnabled && benchClusteringEnabled) return { main: features, benches: [] };
+
+  return {
+    main: features.filter((f) => f.properties._cat !== "bench"),
+    benches: features.filter((f) => f.properties._cat === "bench")
+  };
+}
+
 // White circle marker with PNG icon
 function createMarkerEl(category) {
   const el = document.createElement("div");
@@ -140,6 +173,8 @@ function buildPopupHTML(category, props) {
 function createMarkers(map) {
   allMarkers.forEach(({ marker }) => marker.remove());
   allMarkers = [];
+  if (currentPopup) currentPopup.remove();
+  currentPopup = null;
 
   geojsonData.features.forEach((f) => {
     const category = getCategoryByKey(f.properties._cat);
@@ -155,7 +190,13 @@ function createMarkers(map) {
       .addTo(map);
 
     popup.on("open", () => {
+      if (currentPopup && currentPopup !== popup) currentPopup.remove();
+      currentPopup = popup;
       updateSolarPopupValue(popup, f);
+    });
+
+    popup.on("close", () => {
+      if (currentPopup === popup) currentPopup = null;
     });
 
     el.style.display = "none";
@@ -165,12 +206,19 @@ function createMarkers(map) {
 
 // Show/hide individual markers based on cluster state and active filters
 function syncMarkers(map) {
-  if (!map.getSource("pois") || !map.isSourceLoaded("pois")) return;
+  if (!map.getSource(POI_SOURCE_ID) || !map.isSourceLoaded(POI_SOURCE_ID)) return;
+  if (map.getSource(BENCH_SOURCE_ID) && !map.isSourceLoaded(BENCH_SOURCE_ID)) return;
 
   const unclusteredIds = new Set(
-    map.querySourceFeatures("pois", { filter: ["!", ["has", "point_count"]] })
+    map.querySourceFeatures(POI_SOURCE_ID, { filter: ["!", ["has", "point_count"]] })
       .map((f) => f.properties._id)
   );
+
+  if (map.getSource(BENCH_SOURCE_ID)) {
+    map.querySourceFeatures(BENCH_SOURCE_ID, { filter: ["!", ["has", "point_count"]] })
+      .forEach((f) => unclusteredIds.add(f.properties._id));
+  }
+
   const activeCats = new Set(
     Array.from(document.querySelectorAll(".filter-cb:checked")).map((cb) => cb.dataset.cat)
   );
@@ -180,59 +228,146 @@ function syncMarkers(map) {
   });
 }
 
-// Create the GeoJSON source and cluster circle/label layers
+function addMarkerProxyLayer(map, layerId, sourceId) {
+  if (map.getLayer(layerId)) return;
+  map.addLayer({
+    id: layerId,
+    type: "circle",
+    source: sourceId,
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-radius": 1,
+      "circle-opacity": 0
+    }
+  });
+}
+
+function createSourceOptions(features, clusteringEnabled) {
+  const options = {
+    type: "geojson",
+    data: makeFeatureCollection(features)
+  };
+
+  if (clusteringEnabled) {
+    options.cluster = true;
+    options.clusterMaxZoom = 14;
+    options.clusterRadius = 50;
+  }
+
+  return options;
+}
+
+function addClusterLayers(map, layerId, countLayerId, sourceId, color) {
+  map.addLayer({
+    id: layerId,
+    type: "circle",
+    source: sourceId,
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": color,
+      "circle-radius": ["step", ["get", "point_count"], 18, 10, 22, 30, 28],
+      "circle-stroke-width": 3,
+      "circle-stroke-color": "#fff",
+      "circle-opacity": 0.92
+    }
+  });
+
+  map.addLayer({
+    id: countLayerId,
+    type: "symbol",
+    source: sourceId,
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": ["get", "point_count_abbreviated"],
+      "text-font": ["Noto Sans Bold", "Noto Sans Regular"],
+      "text-size": 14,
+      "text-allow-overlap": true
+    },
+    paint: { "text-color": "#fff" }
+  });
+}
+
+function removePOILayersAndSources(map) {
+  CLUSTER_LAYER_IDS.forEach((layerId) => {
+    if (map.getLayer(layerId)) map.removeLayer(layerId);
+  });
+  if (map.getSource(BENCH_SOURCE_ID)) map.removeSource(BENCH_SOURCE_ID);
+  if (map.getSource(POI_SOURCE_ID)) map.removeSource(POI_SOURCE_ID);
+}
+
 function setupPOILayers(map) {
-  if (!map.getSource("pois")) {
-    map.addSource("pois", {
-      type: "geojson",
-      data: getFilteredGeoJSON(),
-      cluster: true,
-      clusterMaxZoom: 14,
-      clusterRadius: 50
-    });
-  }
+  removePOILayersAndSources(map);
+  const slices = getPOISourceSlices();
 
-  if (!map.getLayer("clusters")) {
-    map.addLayer({
-      id: "clusters", type: "circle", source: "pois",
-      filter: ["has", "point_count"],
-      paint: {
-        "circle-color": "#2d7a45",
-        "circle-radius": ["step", ["get", "point_count"], 18, 10, 22, 30, 28],
-        "circle-stroke-width": 3,
-        "circle-stroke-color": "#fff",
-        "circle-opacity": 0.92
-      }
-    });
-  }
+  map.addSource(POI_SOURCE_ID, createSourceOptions(slices.main, allClusteringEnabled));
 
-  if (!map.getLayer("cluster-count")) {
-    map.addLayer({
-      id: "cluster-count", type: "symbol", source: "pois",
-      filter: ["has", "point_count"],
-      layout: {
-        "text-field": ["get", "point_count_abbreviated"],
-        "text-font": ["Noto Sans Bold", "Noto Sans Regular"],
-        "text-size": 14,
-        "text-allow-overlap": true
-      },
-      paint: { "text-color": "#fff" }
-    });
+  addMarkerProxyLayer(map, POI_PROXY_LAYER_ID, POI_SOURCE_ID);
+
+  if (allClusteringEnabled)
+    addClusterLayers(map, POI_CLUSTER_LAYER_ID, POI_CLUSTER_COUNT_LAYER_ID, POI_SOURCE_ID, "#2d7a45");
+
+  if (slices.benches.length) {
+    map.addSource(BENCH_SOURCE_ID, createSourceOptions(slices.benches, benchClusteringEnabled));
+    addMarkerProxyLayer(map, BENCH_PROXY_LAYER_ID, BENCH_SOURCE_ID);
+    if (benchClusteringEnabled)
+      addClusterLayers(map, BENCH_CLUSTER_LAYER_ID, BENCH_CLUSTER_COUNT_LAYER_ID, BENCH_SOURCE_ID, "#8D6E63");
   }
+}
+
+function updatePOISource(map) {
+  if (!geojsonData) return;
+  setupPOILayers(map);
+}
+
+function setClusterButtonState(button, enabled, label) {
+  if (!button) return;
+  button.setAttribute("aria-pressed", String(enabled));
+  button.textContent = `${label}: Cluster ${enabled ? "an" : "aus"}`;
+}
+
+function syncClusterButtons() {
+  setClusterButtonState(
+    document.getElementById("bench-cluster-toggle"),
+    benchClusteringEnabled,
+    "Bänke"
+  );
+  setClusterButtonState(
+    document.getElementById("all-cluster-toggle"),
+    allClusteringEnabled,
+    "Cluster"
+  );
+}
+
+function getRenderedClusterAtPoint(map, point) {
+  const clusterLayers = [POI_CLUSTER_LAYER_ID, BENCH_CLUSTER_LAYER_ID].filter((layerId) =>
+    map.getLayer(layerId)
+  );
+  if (!clusterLayers.length) return null;
+
+  const feature = map.queryRenderedFeatures(point, { layers: clusterLayers })[0];
+  if (!feature) return null;
+
+  return {
+    feature,
+    sourceId: feature.layer.id === BENCH_CLUSTER_LAYER_ID ? BENCH_SOURCE_ID : POI_SOURCE_ID
+  };
 }
 
 // Zoom into cluster on click
 function attachClusterEvents(map) {
-  map.on("click", "clusters", async (e) => {
-    const f = map.queryRenderedFeatures(e.point, { layers: ["clusters"] })[0];
-    if (!f) return;
+  map.on("click", async (e) => {
+    const cluster = getRenderedClusterAtPoint(map, e.point);
+    if (!cluster) return;
+
     try {
-      const zoom = await map.getSource("pois").getClusterExpansionZoom(f.properties.cluster_id);
-      map.easeTo({ center: f.geometry.coordinates, zoom: zoom + 0.5 });
+      const zoom = await map.getSource(cluster.sourceId).getClusterExpansionZoom(cluster.feature.properties.cluster_id);
+      map.easeTo({ center: cluster.feature.geometry.coordinates, zoom: zoom + 0.5 });
     } catch (err) { console.error("Cluster zoom error:", err); }
   });
-  map.on("mouseenter", "clusters", () => { map.getCanvas().style.cursor = "pointer"; });
-  map.on("mouseleave", "clusters", () => { map.getCanvas().style.cursor = ""; });
+
+  map.on("mousemove", (e) => {
+    map.getCanvas().style.cursor = getRenderedClusterAtPoint(map, e.point) ? "pointer" : "";
+  });
 }
 
 // Load all GeoJSON files and initialize layers + markers
@@ -242,6 +377,7 @@ function loadPOIs(map) {
       geojsonData = merged;
       setupPOILayers(map);
       createMarkers(map);
+      syncClusterButtons();
       attachClusterEvents(map);
       map.on("render", () => {
         if (rafPending) return;
@@ -256,7 +392,28 @@ function loadPOIs(map) {
 function initFilterControls(map) {
   document.querySelectorAll(".filter-cb").forEach((cb) => {
     cb.addEventListener("change", () => {
-      if (map.getSource("pois")) map.getSource("pois").setData(getFilteredGeoJSON());
+      updatePOISource(map);
     });
+  });
+}
+
+function initClusterControls(map) {
+  const benchBtn = document.getElementById("bench-cluster-toggle");
+  const allBtn = document.getElementById("all-cluster-toggle");
+
+  if (!benchBtn || !allBtn) return;
+
+  syncClusterButtons();
+
+  benchBtn.addEventListener("click", () => {
+    benchClusteringEnabled = !benchClusteringEnabled;
+    syncClusterButtons();
+    updatePOISource(map);
+  });
+
+  allBtn.addEventListener("click", () => {
+    allClusteringEnabled = !allClusteringEnabled;
+    syncClusterButtons();
+    updatePOISource(map);
   });
 }

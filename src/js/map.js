@@ -64,15 +64,14 @@ function add3DBuildings() {
 }
 
 // ── Boundary mask (island effect) ────────────────────────
-// The mask sits directly above the basemap tiles but below the
-// shadow layer, POI clusters, and labels — so none of those
-// are covered by the dark overlay.
+// The mask sits above the shadow layer but below labels and POIs,
+// so the outside shading still defines Neckargemünd when shadows are visible.
 //
 // Layer order after load:
 //   basemap layers
+//   → shadow-layer          (added in shadow.js before first label)
 //   → boundary-mask-layer   (dark overlay outside Neckargemünd)
 //   → boundary-line-layer   (green border)
-//   → shadow-layer          (added in shadow.js before first label)
 //   → 3d-buildings
 //   → label layers
 //   → clusters / cluster-count  (added by pois.js)
@@ -116,15 +115,16 @@ async function addBoundaryMask() {
       data: { type: "FeatureCollection", features: [maskFeature] }
     });
 
-    // Insert below labels (and therefore below shadow + POIs)
+    // Insert below labels; because the shadow layer already exists, this
+    // places the boundary mask above the shadow raster.
     map.addLayer(
       {
         id: "boundary-mask-layer",
         type: "fill",
         source: "boundary-mask",
-        paint: { "fill-color": "#1a1a2e", "fill-opacity": 0.4 }
+        paint: { "fill-color": "#1a1a2e", "fill-opacity": 0.2 }
       },
-      firstSymbolId  // inserted before labels → under shadow, POIs, labels
+      firstSymbolId
     );
 
     // Boundary outline — also below labels
@@ -134,7 +134,7 @@ async function addBoundaryMask() {
         id: "boundary-line-layer",
         type: "line",
         source: "boundary-line",
-        paint: { "line-color": "#1a6b3c", "line-width": 2, "line-opacity": 0.7 }
+        paint: { "line-color": "#5e625f", "line-width": 1, "line-opacity": 0.5 }
       },
       firstSymbolId
     );
@@ -167,16 +167,18 @@ function initSidebar() {
 // ── Map load ──────────────────────────────────────────────
 map.on("load", () => {
   // Order matters:
-  // 1. boundary mask first (goes under everything else)
-  // 2. shadow layer (inserted before first label in shadow.js)
-  // 3. 3D buildings (on top of shadow)
+  // 1. shadow layer first (below the boundary mask)
+  // 2. boundary mask (drawn over shadows, below labels)
+  // 3. 3D buildings
   // 4. POI clusters (added last by pois.js, on top of buildings)
+  createShadowLayer(map);
   addBoundaryMask().then(() => {
-    createShadowLayer(map);
     add3DBuildings();
     initSidebar();
     initShadowControls(map);
+    initDisplayMode(map);
     loadPOIs(map);
     initFilterControls(map);
+    initClusterControls(map);
   });
 });

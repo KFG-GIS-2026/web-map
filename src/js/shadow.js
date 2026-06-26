@@ -2,10 +2,9 @@
 // shadow.js – Shadow layer + time control with animation
 // ============================================================
 // Layer order in the map style:
-//   ... basemap fill layers ... → shadow-layer → 3d-buildings → label layers
+//   ... basemap fill layers ... → shadow-layer → boundary mask → 3d-buildings → label layers
 // The shadow is inserted before the first symbol/label layer.
-// add3DBuildings() in map.js then inserts the building extrusion
-// directly after the shadow, so buildings always render on top.
+// addBoundaryMask() in map.js then inserts the outside shading above it.
 // ============================================================
 
 let currentShadowHour = 12;
@@ -13,24 +12,60 @@ let _animationTimer   = null;
 let _animationRunning = false;
 
 const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
+const SHADOW_DATE_MONTHS = [
+  { month: 4, label: "April" },
+  { month: 5, label: "Mai" },
+  { month: 6, label: "Juni" },
+  { month: 7, label: "Juli" },
+  { month: 8, label: "August" },
+  { month: 9, label: "September" }
+];
+const SHADOW_DATE_DAYS = [1, 15];
 
 function getShadowImage(hour) {
   const h = String(hour).padStart(2, "0");
   return `data/shadows/shadow_${h}00.png`;
 }
 
-function _formatDateInputValue(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+function _formatDateValue(month, day) {
+  const paddedMonth = String(month).padStart(2, "0");
+  const paddedDay = String(day).padStart(2, "0");
+  return `${paddedMonth}-${paddedDay}`;
 }
 
-function _getClosestShadowHour(date) {
-  const hour = date.getHours();
-  const minHour = SHADOW_HOURS[0];
-  const maxHour = SHADOW_HOURS[SHADOW_HOURS.length - 1];
-  return Math.min(Math.max(hour, minHour), maxHour);
+function _formatDateLabel(monthLabel, day) {
+  return `${day === 1 ? "Anfang" : "Mitte"} ${monthLabel}`;
+}
+
+function _getAllowedShadowDates(year) {
+  return SHADOW_DATE_MONTHS.flatMap(({ month, label }) =>
+    SHADOW_DATE_DAYS.map((day) => ({
+      value: _formatDateValue(month, day),
+      label: _formatDateLabel(label, day),
+      date: new Date(year, month - 1, day, 12)
+    }))
+  );
+}
+
+function _getNextAllowedShadowDate(date) {
+  const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const options = _getAllowedShadowDates(date.getFullYear());
+  return options.find((option) => option.date >= today) || options[0];
+}
+
+function _populateShadowDateSelect(select, referenceDate) {
+  const options = _getAllowedShadowDates(referenceDate.getFullYear());
+  select.innerHTML = "";
+  options.forEach((option) => {
+    const el = document.createElement("option");
+    el.value = option.value;
+    el.textContent = option.label;
+    select.appendChild(el);
+  });
+}
+
+function _formatDateInputValue(date) {
+  return _getNextAllowedShadowDate(date).value;
 }
 
 function _syncDateInput(date) {
@@ -50,8 +85,8 @@ function createShadowLayer(map) {
   });
 
   // Insert shadow before the first symbol layer (labels).
-  // add3DBuildings() will then insert "3d-buildings" also before that same
-  // label layer → "3d-buildings" ends up directly above "shadow-layer".
+  // Boundary and 3D layers are inserted later before that same label layer,
+  // so they render above the shadow raster.
   let beforeLayerId;
   for (const layer of map.getStyle().layers) {
     if (layer.type === "symbol" && layer.layout?.["text-field"]) {
@@ -143,9 +178,9 @@ function initShadowControls(map) {
   const hideBtn = document.getElementById("shadow-hide");
   const playBtn = document.getElementById("shadow-play");
   const dateInput = document.getElementById("shadow-date");
-  const todayBtn = document.getElementById("shadow-today");
+  const currentBtn = document.getElementById("shadow-current");
 
-  if (!slider || !panel || !toggle || !hideBtn || !playBtn || !dateInput || !todayBtn) {
+  if (!slider || !panel || !toggle || !hideBtn || !playBtn || !dateInput || !currentBtn) {
     console.warn("Shadow controls: DOM elements not found");
     return;
   }
@@ -153,6 +188,7 @@ function initShadowControls(map) {
   slider.max   = SHADOW_HOURS.length - 1;
   slider.value = SHADOW_HOURS.indexOf(currentShadowHour);
   _syncTimeDisplay(currentShadowHour);
+  _populateShadowDateSelect(dateInput, new Date());
   _syncDateInput(new Date());
 
   slider.addEventListener("input", (e) => {
@@ -164,11 +200,9 @@ function initShadowControls(map) {
     _stopAnimation();
   });
 
-  todayBtn.addEventListener("click", () => {
-    const now = new Date();
+  currentBtn.addEventListener("click", () => {
     _stopAnimation();
-    _syncDateInput(now);
-    updateShadowLayer(map, _getClosestShadowHour(now));
+    _syncDateInput(new Date());
   });
 
   playBtn.addEventListener("click", () => {

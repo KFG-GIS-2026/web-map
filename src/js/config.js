@@ -63,6 +63,7 @@ function initDisplayMode(map) {
   const complexLabel = document.querySelector(".mode-label:last-child");
   const shadowBar   = document.getElementById("shadow-bar");
   const shadowPanel = document.getElementById("shadow-panel");
+  const shadowDateSection = document.getElementById("shadow-date-section");
   const threeDHint  = document.getElementById("three-d-hint");
   const threeDHintToggle = document.getElementById("three-d-hint-toggle");
 
@@ -109,6 +110,7 @@ function initDisplayMode(map) {
 
     if (isComplex) {
       shadowBar.style.display = "flex";
+      if (shadowDateSection) shadowDateSection.style.display = "grid";
       threeDHint?.classList.remove("hidden");
       shadowPanel?.classList.remove("hidden");
       showShadowLayer(map);
@@ -117,6 +119,7 @@ function initDisplayMode(map) {
       setMapPerspective(COMPLEX_CAMERA);
     } else {
       shadowBar.style.display = "none";
+      if (shadowDateSection) shadowDateSection.style.display = "none";
       threeDHint?.classList.add("hidden");
       shadowPanel?.classList.add("hidden");
       hideShadowLayer(map);

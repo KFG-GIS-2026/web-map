@@ -134,14 +134,51 @@ input:checked + .slider::before {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px;
-  margin-bottom: 18px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid rgba(26,107,60,0.12);
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(26,107,60,0.12);
 }
 
 #shadow-date-section h3 {
   grid-column: 1 / -1;
-  margin-top: 0;
+  margin: 0;
+}
+
+#cluster-demo-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(26,107,60,0.12);
+}
+
+#cluster-demo-section h3 {
+  margin: 0;
+}
+
+.cluster-toggle {
+  border: 1px solid rgba(26,107,60,0.18);
+  background: #f7fbf8;
+  color: #155c32;
+  border-radius: 10px;
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s, border-color .15s;
+}
+
+.cluster-toggle:hover {
+  background: #e6f2ea;
+}
+
+.cluster-toggle[aria-pressed="false"] {
+  background: #f4f4f4;
+  border-color: rgba(0,0,0,0.12);
+  color: #666;
 }
 
 /* Close (X) button inside sidebar header */
@@ -478,7 +515,7 @@ input:checked + .slider::before {
   font-weight: 800;
 }
 
-.shadow-date-control input {
+.shadow-date-control select {
   width: 134px;
   border: none;
   outline: none;
@@ -490,12 +527,7 @@ input:checked + .slider::before {
   font-weight: 600;
 }
 
-.shadow-date-control input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: .7;
-}
-
-#shadow-today {
+#shadow-current {
   border: none;
   background: #e6f2ea;
   color: #155c32;
@@ -507,7 +539,7 @@ input:checked + .slider::before {
   cursor: pointer;
   transition: background .15s;
 }
-#shadow-today:hover { background: #d6eadc; }
+#shadow-current:hover { background: #d6eadc; }
 
 /* Play button */
 #shadow-play {
@@ -642,8 +674,8 @@ input:checked + .slider::before {
 
   #shadow-time  { font-size: 16px; min-width: auto; }
   .shadow-date-control { flex: 1; min-width: 190px; }
-  .shadow-date-control input { width: 100%; font-size: 14px; }
-  #shadow-today { font-size: 14px; padding: 8px 11px; }
+  .shadow-date-control select { width: 100%; font-size: 14px; }
+  #shadow-current { font-size: 14px; padding: 8px 11px; }
   #shadow-play  { width: 42px; height: 42px; font-size: 16px; }
 
   /* GitHub badge: push up above shadow bar */

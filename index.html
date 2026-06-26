@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260621-5" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260626-9" />
 </head>
 <body>
 
@@ -28,15 +28,6 @@
       <button id="sidebar-toggle" title="Legende ein-/ausblenden" aria-label="Legende ein-/ausblenden">
         ✕
       </button>
-    </div>
-
-    <div id="shadow-date-section">
-      <h3>Schattenzeit</h3>
-      <label class="shadow-date-control" for="shadow-date">
-        <span>Datum</span>
-        <input type="date" id="shadow-date" title="Datum auswählen" />
-      </label>
-      <button id="shadow-today" title="Auf heute springen">Heute</button>
     </div>
 
     <div id="sidebar-content">
@@ -100,6 +91,25 @@
         <span class="filter-label">Museum</span>
       </label>
     </div>
+
+    <div id="shadow-date-section">
+      <h3>Zeitpunkt</h3>
+      <label class="shadow-date-control" for="shadow-date">
+        <span>Datum</span>
+        <select id="shadow-date" title="Datum auswählen"></select>
+      </label>
+      <button id="shadow-current" title="Auf den nächsten Zeitpunkt springen">aktuell</button>
+    </div>
+
+    <div id="cluster-demo-section">
+      <h3>Demo</h3>
+      <button id="bench-cluster-toggle" class="cluster-toggle" type="button" aria-pressed="true">
+        Bänke: Cluster an
+      </button>
+      <button id="all-cluster-toggle" class="cluster-toggle" type="button" aria-pressed="true">
+        Cluster an
+      </button>
+    </div>
   </div>
 
   <!-- Floating button to reopen sidebar when collapsed -->
@@ -158,10 +168,10 @@
   </a>
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-  <script src="src/js/config.js?v=20260621-5"></script>
-  <script src="src/js/boundary.js?v=20260621-5"></script>
-  <script src="src/js/shadow.js?v=20260621-5"></script>
-  <script src="src/js/pois.js?v=20260621-5"></script>
-  <script src="src/js/map.js?v=20260621-5"></script>
+  <script src="src/js/config.js?v=20260626-9"></script>
+  <script src="src/js/boundary.js?v=20260626-9"></script>
+  <script src="src/js/shadow.js?v=20260626-9"></script>
+  <script src="src/js/pois.js?v=20260626-9"></script>
+  <script src="src/js/map.js?v=20260626-9"></script>
 </body>
 </html>
