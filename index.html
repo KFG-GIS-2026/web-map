@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260626-9" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260630-4" />
 </head>
 <body>
 
@@ -93,7 +93,13 @@
     </div>
 
     <div id="shadow-date-section">
-      <h3>Zeitpunkt</h3>
+      <h3>
+        Zeitpunkt
+        <span class="info-help">
+          <button class="info-button" type="button" aria-label="Hinweis zum Zeitpunkt">i</button>
+          <span class="info-tooltip">der Zeitpunkt für die Schattenmodellierung und für die Solarwerte der POIs</span>
+        </span>
+      </h3>
       <label class="shadow-date-control" for="shadow-date">
         <span>Datum</span>
         <select id="shadow-date" title="Datum auswählen"></select>
@@ -110,6 +116,13 @@
         Cluster an
       </button>
     </div>
+
+    <div id="sidebar-help-row">
+      <button id="help-open" class="sidebar-help-button" type="button">
+        <span class="sidebar-help-icon" aria-hidden="true">?</span>
+        Hilfe
+      </button>
+    </div>
   </div>
 
   <!-- Floating button to reopen sidebar when collapsed -->
@@ -118,6 +131,102 @@
   </button>
   
   <div id="map"></div>
+
+  <div id="help-modal" class="help-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="help-backdrop" data-help-close></div>
+    <div class="help-dialog" tabindex="-1">
+      <div class="help-header">
+        <div>
+          <span class="help-kicker">Kurzüberblick</span>
+          <h2 id="help-title">Kühle Karte Neckargemünd</h2>
+        </div>
+        <button id="help-close" class="help-close-button" type="button" aria-label="Hilfe schließen">×</button>
+      </div>
+
+      <div class="help-body">
+        <section class="help-intro">
+          <div class="help-map-visual" aria-hidden="true">
+            <div class="help-map-shade shade-a"></div>
+            <div class="help-map-shade shade-b"></div>
+            <div class="help-boundary"></div>
+            <span class="help-poi-dot dot-a"></span>
+            <span class="help-poi-dot dot-b"></span>
+            <span class="help-poi-dot dot-c"></span>
+            <span class="help-cluster-dot">4</span>
+          </div>
+          <div>
+            <h3>Was zeigt die Karte?</h3>
+            <p>
+              Die Karte hilft dabei, kühle Orte, Wasserstellen, Sitzmöglichkeiten und öffentliche Orte in Neckargemünd zu finden. In der Sidebar können die Symbole ein- und ausgeblendet werden; ein Klick auf einen Punkt öffnet Detailinformationen.
+            </p>
+            <div class="help-symbol-strip" aria-label="Beispiele für Kartensymbole">
+              <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/001-slide.png" alt="Spielplatz" />
+              <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/003-bank.png" alt="Sitzbank" />
+              <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/004-water.png" alt="Trinkwasser" />
+              <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/007-fountain.png" alt="Brunnen" />
+              <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/005-toilet.png" alt="Toilette" />
+            </div>
+          </div>
+        </section>
+
+        <div class="help-grid">
+          <section class="help-card">
+            <div class="help-card-figure help-mode-figure" aria-hidden="true">
+              <span>Einfach</span>
+              <span class="help-switch-figure"><i></i></span>
+              <span>Komplex</span>
+            </div>
+            <h3>Einfach und Komplex</h3>
+            <p>
+              Im einfachen Modus bleibt die Karte reduziert. Im komplexen Modus erscheinen zusätzliche Werkzeuge wie Schatten, Zeitpunkt, 3D-Hinweis und Demo-Schalter.
+            </p>
+          </section>
+
+          <section class="help-card">
+            <div class="help-card-figure help-time-figure" aria-hidden="true">
+              <span class="help-time-chip">12:00 Uhr</span>
+              <span class="help-play-chip">▶</span>
+              <span class="help-range-figure"><i></i></span>
+              <span class="help-shadow-chip">Schatten</span>
+            </div>
+            <h3>Schatten und Uhrzeit</h3>
+            <p>
+              Unten steuert der Uhrzeitregler die Werte für die jeweilige Stunde. Der Play-Button startet den Durchlauf; der Schalter „Schatten“ blendet die modellierten Schatten ein oder aus.
+            </p>
+          </section>
+
+          <section class="help-card">
+            <div class="help-card-figure help-date-figure" aria-hidden="true">
+              <span>Anfang April</span>
+              <span>Mitte Juni</span>
+              <button type="button" tabindex="-1">aktuell</button>
+            </div>
+            <h3>Zeitpunkt</h3>
+            <p>
+              Unter „Zeitpunkt“ wird das Datum für Schattenmodellierung und Solarwerte gewählt. Zur Auswahl stehen Anfang und Mitte der Monate April bis September; „aktuell“ springt zum nächsten passenden Datum.
+            </p>
+          </section>
+
+          <section class="help-card">
+            <div class="help-card-figure help-cluster-figure" aria-hidden="true">
+              <span class="cluster-bubble">7</span>
+              <span class="cluster-bubble small">3</span>
+              <span class="single-point"></span>
+              <span class="single-point second"></span>
+            </div>
+            <h3>Cluster und Popups</h3>
+            <p>
+              Nahe Punkte können zu Clustern zusammengefasst werden. Für Demos lassen sich Cluster in der Sidebar umschalten. Es bleibt immer nur das aktuell angeklickte Popup offen.
+            </p>
+          </section>
+        </div>
+      </div>
+
+      <div class="help-footer">
+        <button id="help-start" class="help-primary-button" type="button">Loslegen</button>
+      </div>
+    </div>
+  </div>
 
   <div id="three-d-hint" aria-label="Hinweis zur 3D Steuerung">
     <button id="three-d-hint-toggle" type="button" aria-expanded="true" title="3D Hinweis ein-/ausklappen">
@@ -138,17 +247,23 @@
     </div>
   </div>
 
-  <!-- ── Shadow Bar ── -->
+  <!-- ── Time Bar ── -->
   <div id="shadow-bar">
-    <button id="shadow-bar-toggle" title="Schatten ein-/ausblenden">
-      🕒 Schatten
-    </button>
-
-    <div id="shadow-panel" class="hidden">
+    <div id="shadow-panel">
       <span id="shadow-time">12:00 Uhr</span>
       <button id="shadow-play" title="Animation starten/stoppen">▶</button>
       <input type="range" id="shadow-slider" min="0" max="14" step="1" value="6" />
-      <button id="shadow-hide" title="Schließen">✕</button>
+    </div>
+    <div id="shadow-toggle-control">
+      <span class="shadow-toggle-label">Schatten</span>
+      <label class="switch shadow-switch">
+        <input type="checkbox" id="shadow-toggle" title="Schatten ein-/ausblenden" />
+        <span class="slider"></span>
+      </label>
+      <span class="info-help">
+        <button class="info-button" type="button" aria-label="Hinweis zum Schatten">i</button>
+        <span class="info-tooltip">Modellierter Schattenwurf zur angegeben Zeit. Der Zeitpunkt ist approximiert und kann unter "Zeitpunkt" in der Sidebar geändert werden.</span>
+      </span>
     </div>
   </div>
 
@@ -168,10 +283,11 @@
   </a>
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-  <script src="src/js/config.js?v=20260626-9"></script>
-  <script src="src/js/boundary.js?v=20260626-9"></script>
-  <script src="src/js/shadow.js?v=20260626-9"></script>
-  <script src="src/js/pois.js?v=20260626-9"></script>
-  <script src="src/js/map.js?v=20260626-9"></script>
+  <script src="src/js/config.js?v=20260630-4"></script>
+  <script src="src/js/boundary.js?v=20260630-4"></script>
+  <script src="src/js/shadow.js?v=20260630-4"></script>
+  <script src="src/js/pois.js?v=20260630-4"></script>
+  <script src="src/js/help.js?v=20260630-4"></script>
+  <script src="src/js/map.js?v=20260630-4"></script>
 </body>
 </html>

@@ -10,6 +10,10 @@
 let currentShadowHour = 12;
 let _animationTimer   = null;
 let _animationRunning = false;
+let _shadowVisible    = false;
+let _shadowUpdateSeq  = 0;
+
+const _shadowImageCache = new Map();
 
 const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
 const SHADOW_DATE_MONTHS = [
@@ -25,6 +29,24 @@ const SHADOW_DATE_DAYS = [1, 15];
 function getShadowImage(hour) {
   const h = String(hour).padStart(2, "0");
   return `data/shadows/shadow_${h}00.png`;
+}
+
+function _preloadShadowImage(url) {
+  if (_shadowImageCache.has(url)) return _shadowImageCache.get(url);
+
+  const promise = new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+
+  _shadowImageCache.set(url, promise);
+  return promise;
+}
+
+function _preloadShadowImages() {
+  SHADOW_HOURS.forEach((hour) => _preloadShadowImage(getShadowImage(hour)));
 }
 
 function _formatDateValue(month, day) {
@@ -105,19 +127,28 @@ function createShadowLayer(map) {
     beforeLayerId
   );
 
-  // Start hidden; becomes visible when the panel is opened
+  // Start hidden; the separate shadow toggle controls visibility.
   map.setLayoutProperty("shadow-layer", "visibility", "none");
+  _syncShadowToggle();
 }
 
-function updateShadowLayer(map, hour) {
+async function updateShadowLayer(map, hour) {
+  const updateSeq = ++_shadowUpdateSeq;
+  const url = getShadowImage(hour);
+  const loaded = await _preloadShadowImage(url);
+  if (updateSeq !== _shadowUpdateSeq) return false;
+
   currentShadowHour = hour;
   const source = map.getSource("shadow");
   if (source) {
-    source.updateImage({ url: getShadowImage(hour), coordinates: SHADOW_COORDS });
+    source.updateImage({ url, coordinates: SHADOW_COORDS });
   }
   _syncTimeDisplay(hour);
   _syncSlider(hour);
   if (typeof updatePOISource === "function") updatePOISource(map);
+
+  if (!loaded) console.warn(`Shadow image could not be preloaded: ${url}`);
+  return true;
 }
 
 function _syncTimeDisplay(hour) {
@@ -130,19 +161,26 @@ function _syncSlider(hour) {
   if (slider) slider.value = SHADOW_HOURS.indexOf(hour);
 }
 
+function _syncShadowToggle() {
+  const input = document.getElementById("shadow-toggle");
+  if (!input) return;
+  input.checked = _shadowVisible;
+}
+
 // ── Animation ─────────────────────────────────────────────
 
 const ANIMATION_SPEED = 1000;
 
 function _startAnimation(map) {
+  if (_animationRunning) return;
   _animationRunning = true;
   document.getElementById("shadow-play").textContent = "⏸";
 
-  function tick() {
+  async function tick() {
     if (!_animationRunning) return;
     const nextIdx = (SHADOW_HOURS.indexOf(currentShadowHour) + 1) % SHADOW_HOURS.length;
-    updateShadowLayer(map, SHADOW_HOURS[nextIdx]);
-    _animationTimer = setTimeout(tick, ANIMATION_SPEED);
+    await updateShadowLayer(map, SHADOW_HOURS[nextIdx]);
+    if (_animationRunning) _animationTimer = setTimeout(tick, ANIMATION_SPEED);
   }
 
   _animationTimer = setTimeout(tick, ANIMATION_SPEED);
@@ -159,28 +197,29 @@ function _stopAnimation() {
 // ── Visibility ────────────────────────────────────────────
 
 function showShadowLayer(map) {
+  _shadowVisible = true;
   if (map.getLayer("shadow-layer"))
     map.setLayoutProperty("shadow-layer", "visibility", "visible");
+  _syncShadowToggle();
 }
 
 function hideShadowLayer(map) {
-  _stopAnimation();
+  _shadowVisible = false;
   if (map.getLayer("shadow-layer"))
     map.setLayoutProperty("shadow-layer", "visibility", "none");
+  _syncShadowToggle();
 }
 
 // ── UI Events ─────────────────────────────────────────────
 
 function initShadowControls(map) {
   const slider  = document.getElementById("shadow-slider");
-  const panel   = document.getElementById("shadow-panel");
-  const toggle  = document.getElementById("shadow-bar-toggle");
-  const hideBtn = document.getElementById("shadow-hide");
+  const toggle  = document.getElementById("shadow-toggle");
   const playBtn = document.getElementById("shadow-play");
   const dateInput = document.getElementById("shadow-date");
   const currentBtn = document.getElementById("shadow-current");
 
-  if (!slider || !panel || !toggle || !hideBtn || !playBtn || !dateInput || !currentBtn) {
+  if (!slider || !toggle || !playBtn || !dateInput || !currentBtn) {
     console.warn("Shadow controls: DOM elements not found");
     return;
   }
@@ -190,6 +229,7 @@ function initShadowControls(map) {
   _syncTimeDisplay(currentShadowHour);
   _populateShadowDateSelect(dateInput, new Date());
   _syncDateInput(new Date());
+  _preloadShadowImages();
 
   slider.addEventListener("input", (e) => {
     _stopAnimation();
@@ -210,19 +250,10 @@ function initShadowControls(map) {
     else _startAnimation(map);
   });
 
-  toggle.addEventListener("click", () => {
-    const isOpen = !panel.classList.contains("hidden");
-    if (isOpen) {
-      panel.classList.add("hidden");
-      hideShadowLayer(map);
-    } else {
-      panel.classList.remove("hidden");
-      showShadowLayer(map);
-    }
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) showShadowLayer(map);
+    else hideShadowLayer(map);
   });
 
-  hideBtn.addEventListener("click", () => {
-    panel.classList.add("hidden");
-    hideShadowLayer(map);
-  });
+  _syncShadowToggle();
 }

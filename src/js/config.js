@@ -62,7 +62,6 @@ function initDisplayMode(map) {
   const simpleLabel = document.querySelector(".mode-label:first-child");
   const complexLabel = document.querySelector(".mode-label:last-child");
   const shadowBar   = document.getElementById("shadow-bar");
-  const shadowPanel = document.getElementById("shadow-panel");
   const shadowDateSection = document.getElementById("shadow-date-section");
   const threeDHint  = document.getElementById("three-d-hint");
   const threeDHintToggle = document.getElementById("three-d-hint-toggle");
@@ -112,7 +111,6 @@ function initDisplayMode(map) {
       shadowBar.style.display = "flex";
       if (shadowDateSection) shadowDateSection.style.display = "grid";
       threeDHint?.classList.remove("hidden");
-      shadowPanel?.classList.remove("hidden");
       showShadowLayer(map);
       setBuildingVisibility("visible");
       setMapTiltEnabled(true);
@@ -121,7 +119,7 @@ function initDisplayMode(map) {
       shadowBar.style.display = "none";
       if (shadowDateSection) shadowDateSection.style.display = "none";
       threeDHint?.classList.add("hidden");
-      shadowPanel?.classList.add("hidden");
+      if (typeof _stopAnimation === "function") _stopAnimation();
       hideShadowLayer(map);
       setBuildingVisibility("none");
       setMapTiltEnabled(false);
