@@ -176,14 +176,14 @@ input:checked + .slider::before {
 }
 
 .info-button {
-  width: 18px;
-  height: 18px;
+  width: 23px;
+  height: 23px;
   border: 1px solid rgba(26,107,60,0.28);
   border-radius: 50%;
   background: #fff;
   color: #1a6b3c;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 800;
   line-height: 1;
   padding: 0;
@@ -194,17 +194,17 @@ input:checked + .slider::before {
   left: 50%;
   bottom: calc(100% + 8px);
   z-index: 200;
-  width: min(260px, 78vw);
+  width: min(320px, 82vw);
   transform: translateX(-50%);
-  padding: 9px 10px;
+  padding: 11px 12px;
   border: 1px solid rgba(26,107,60,0.16);
   border-radius: 8px;
   background: rgba(255,255,255,0.98);
   box-shadow: 0 8px 22px rgba(0,0,0,0.16);
   color: #333;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.45;
   text-transform: none;
   letter-spacing: 0;
   white-space: normal;
@@ -217,7 +217,7 @@ input:checked + .slider::before {
   left: 0;
   top: calc(100% + 8px);
   bottom: auto;
-  width: 240px;
+  width: 300px;
   transform: none;
 }
 
@@ -744,6 +744,7 @@ input:checked + .slider::before {
   border-radius: 12px;
   box-shadow: 0 24px 70px rgba(0,0,0,0.28);
   color: #243128;
+  font-size: 17px;
 }
 
 .help-header {
@@ -763,7 +764,7 @@ input:checked + .slider::before {
   display: block;
   margin-bottom: 3px;
   color: #68746d;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -772,7 +773,7 @@ input:checked + .slider::before {
 .help-header h2 {
   margin: 0;
   color: #155c32;
-  font-size: 25px;
+  font-size: 31px;
   line-height: 1.15;
 }
 
@@ -802,9 +803,9 @@ input:checked + .slider::before {
 
 .help-intro h3,
 .help-card h3 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   color: #1a6b3c;
-  font-size: 17px;
+  font-size: 20px;
   line-height: 1.2;
   text-transform: none;
   letter-spacing: 0;
@@ -814,8 +815,8 @@ input:checked + .slider::before {
 .help-card p {
   margin: 0;
   color: #4d5a52;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.55;
 }
 
 .help-map-visual {
@@ -912,6 +913,10 @@ input:checked + .slider::before {
   gap: 14px;
 }
 
+.help-info-card {
+  grid-column: 1 / -1;
+}
+
 .help-card {
   padding: 15px;
   border: 1px solid rgba(26,107,60,0.13);
@@ -942,7 +947,7 @@ input:checked + .slider::before {
 .help-date-figure span,
 .help-shadow-chip,
 .help-time-chip {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
   color: #155c32;
 }
@@ -977,7 +982,7 @@ input:checked + .slider::before {
   border-radius: 50%;
   background: #1a6b3c;
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .help-range-figure {
@@ -1044,6 +1049,41 @@ input:checked + .slider::before {
 
 .single-point { left: 50%; bottom: 17px; background: #1a6b3c; }
 .single-point.second { left: 68%; bottom: 22px; background: #d18b22; }
+
+.help-info-figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 86px;
+  background: linear-gradient(135deg, #eef5f0, #dfece5);
+}
+
+.help-info-demo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(26,107,60,0.28);
+  border-radius: 50%;
+  background: #fff;
+  color: #1a6b3c;
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.help-info-demo-tooltip {
+  padding: 9px 12px;
+  border: 1px solid rgba(26,107,60,0.15);
+  border-radius: 8px;
+  background: #fff;
+  color: #314038;
+  font-size: 15px;
+  font-weight: 750;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.11);
+}
 
 .help-footer {
   display: flex;
@@ -1186,7 +1226,7 @@ input:checked + .slider::before {
   }
 
   .help-header h2 {
-    font-size: 21px;
+    font-size: 25px;
   }
 
   .help-body {
