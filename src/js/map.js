@@ -2,6 +2,8 @@
 // map.js – Map initialization, 3D buildings, sidebar,
 //          boundary mask
 // ============================================================
+const pmtilesProtocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", pmtilesProtocol.tile);
 
 const map = new maplibregl.Map({
   container: "map",
