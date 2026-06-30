@@ -1,5 +1,6 @@
 // ============================================================
 // shadow.js – Shadow layer + time control with animation
+// Now using pmtiles raster tilesets instead of single PNG images
 // ============================================================
 // Layer order in the map style:
 //   ... basemap fill layers ... → shadow-layer → boundary mask → 3d-buildings → label layers
@@ -7,17 +8,16 @@
 // addBoundaryMask() in map.js then inserts the outside shading above it.
 // ============================================================
 
-let currentShadowHour = 12;
+let currentShadowHour  = 12;
+let currentShadowMonth = 6;
+let currentShadowDay   = 1;
+
 let _animationTimer   = null;
 let _animationRunning = false;
 let _shadowVisible    = false;
-let _shadowUpdateSeq  = 0;
-
-const _shadowImageCache = new Map();
 
 const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
 const SHADOW_DATE_MONTHS = [
-  { month: 4, label: "April" },
   { month: 5, label: "Mai" },
   { month: 6, label: "Juni" },
   { month: 7, label: "Juli" },
@@ -26,33 +26,17 @@ const SHADOW_DATE_MONTHS = [
 ];
 const SHADOW_DATE_DAYS = [1, 15];
 
-function getShadowImage(hour) {
+// ── URL helpers ────────────────────────────────────────────
+
+function getShadowUrl(month, day, hour) {
   const h = String(hour).padStart(2, "0");
-  return `data/shadows/shadow_${h}00.png`;
+  return `${DATA_BASE_URL}/shadows/${month}_${day}/shadow_${h}00.pmtiles`;
 }
 
-function _preloadShadowImage(url) {
-  if (_shadowImageCache.has(url)) return _shadowImageCache.get(url);
-
-  const promise = new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url;
-  });
-
-  _shadowImageCache.set(url, promise);
-  return promise;
-}
-
-function _preloadShadowImages() {
-  SHADOW_HOURS.forEach((hour) => _preloadShadowImage(getShadowImage(hour)));
-}
+// ── Date select helpers ────────────────────────────────────
 
 function _formatDateValue(month, day) {
-  const paddedMonth = String(month).padStart(2, "0");
-  const paddedDay = String(day).padStart(2, "0");
-  return `${paddedMonth}-${paddedDay}`;
+  return `${month}-${day}`;
 }
 
 function _formatDateLabel(monthLabel, day) {
@@ -64,6 +48,8 @@ function _getAllowedShadowDates(year) {
     SHADOW_DATE_DAYS.map((day) => ({
       value: _formatDateValue(month, day),
       label: _formatDateLabel(label, day),
+      month,
+      day,
       date: new Date(year, month - 1, day, 12)
     }))
   );
@@ -92,28 +78,63 @@ function _formatDateInputValue(date) {
 
 function _syncDateInput(date) {
   const input = document.getElementById("shadow-date");
-  if (input) input.value = _formatDateInputValue(date);
+  if (!input) return;
+  const next = _getNextAllowedShadowDate(date);
+  input.value = next.value;
+  currentShadowMonth = next.month;
+  currentShadowDay   = next.day;
 }
 
+// ── Source / Layer management ──────────────────────────────
+// pmtiles sources cannot be swapped in-place like image sources via
+// updateImage(). Instead, the source + layer are removed and re-added
+// whenever the hour or date changes.
+
 function createShadowLayer(map) {
-  // Clean up existing layer and source (e.g. after basemap switch)
+  _rebuildShadowSource(map);
+}
+
+function _rebuildShadowSource(map) {
+  const wasVisible = map.getLayer("shadow-layer")
+    ? map.getLayoutProperty("shadow-layer", "visibility") === "visible"
+    : _shadowVisible;
+
   if (map.getLayer("shadow-layer")) map.removeLayer("shadow-layer");
   if (map.getSource("shadow"))      map.removeSource("shadow");
 
+  const url = getShadowUrl(currentShadowMonth, currentShadowDay, currentShadowHour);
+
   map.addSource("shadow", {
-    type: "image",
-    url: getShadowImage(currentShadowHour),
-    coordinates: SHADOW_COORDS
+    type: "raster",
+    url: `pmtiles://${url}`,
+    tileSize: 256
   });
 
-  // Insert shadow before the first symbol layer (labels).
-  // Boundary and 3D layers are inserted later before that same label layer,
-  // so they render above the shadow raster.
+  // Insert shadow directly below the lowest layer that must stay above it.
+  // On rebuild (hour/date change), 3d-buildings and boundary-mask-layer
+  // already exist, so we must anchor against THEM, not against "the first
+  // label layer" — otherwise re-adding shadow-layer pushes it above
+  // 3d-buildings (since that layer is by then sitting right below labels).
+  const styleLayers = map.getStyle().layers;
   let beforeLayerId;
-  for (const layer of map.getStyle().layers) {
-    if (layer.type === "symbol" && layer.layout?.["text-field"]) {
+  for (const layer of styleLayers) {
+    if (
+      layer.id === "boundary-mask-layer" ||
+      layer.id === "boundary-line-layer" ||
+      layer.id === "3d-buildings"
+    ) {
       beforeLayerId = layer.id;
       break;
+    }
+  }
+  // Fallback for the very first call, before boundary/3D layers exist yet:
+  // insert before the first label layer instead.
+  if (!beforeLayerId) {
+    for (const layer of styleLayers) {
+      if (layer.type === "symbol" && layer.layout?.["text-field"]) {
+        beforeLayerId = layer.id;
+        break;
+      }
     }
   }
 
@@ -127,28 +148,24 @@ function createShadowLayer(map) {
     beforeLayerId
   );
 
-  // Start hidden; the separate shadow toggle controls visibility.
-  map.setLayoutProperty("shadow-layer", "visibility", "none");
+  map.setLayoutProperty("shadow-layer", "visibility", wasVisible ? "visible" : "none");
   _syncShadowToggle();
 }
 
 async function updateShadowLayer(map, hour) {
-  const updateSeq = ++_shadowUpdateSeq;
-  const url = getShadowImage(hour);
-  const loaded = await _preloadShadowImage(url);
-  if (updateSeq !== _shadowUpdateSeq) return false;
-
   currentShadowHour = hour;
-  const source = map.getSource("shadow");
-  if (source) {
-    source.updateImage({ url, coordinates: SHADOW_COORDS });
-  }
+  _rebuildShadowSource(map);
   _syncTimeDisplay(hour);
   _syncSlider(hour);
   if (typeof updatePOISource === "function") updatePOISource(map);
-
-  if (!loaded) console.warn(`Shadow image could not be preloaded: ${url}`);
   return true;
+}
+
+function updateShadowDate(map, month, day) {
+  currentShadowMonth = month;
+  currentShadowDay   = day;
+  _rebuildShadowSource(map);
+  if (typeof updatePOISource === "function") updatePOISource(map);
 }
 
 function _syncTimeDisplay(hour) {
@@ -213,11 +230,11 @@ function hideShadowLayer(map) {
 // ── UI Events ─────────────────────────────────────────────
 
 function initShadowControls(map) {
-  const slider  = document.getElementById("shadow-slider");
-  const toggle  = document.getElementById("shadow-toggle");
-  const playBtn = document.getElementById("shadow-play");
-  const dateInput = document.getElementById("shadow-date");
-  const currentBtn = document.getElementById("shadow-current");
+  const slider     = document.getElementById("shadow-slider");
+  const toggle      = document.getElementById("shadow-toggle");
+  const playBtn     = document.getElementById("shadow-play");
+  const dateInput   = document.getElementById("shadow-date");
+  const currentBtn  = document.getElementById("shadow-current");
 
   if (!slider || !toggle || !playBtn || !dateInput || !currentBtn) {
     console.warn("Shadow controls: DOM elements not found");
@@ -227,9 +244,9 @@ function initShadowControls(map) {
   slider.max   = SHADOW_HOURS.length - 1;
   slider.value = SHADOW_HOURS.indexOf(currentShadowHour);
   _syncTimeDisplay(currentShadowHour);
+
   _populateShadowDateSelect(dateInput, new Date());
   _syncDateInput(new Date());
-  _preloadShadowImages();
 
   slider.addEventListener("input", (e) => {
     _stopAnimation();
@@ -238,11 +255,15 @@ function initShadowControls(map) {
 
   dateInput.addEventListener("change", () => {
     _stopAnimation();
+    const [month, day] = dateInput.value.split("-").map(Number);
+    updateShadowDate(map, month, day);
   });
 
   currentBtn.addEventListener("click", () => {
     _stopAnimation();
     _syncDateInput(new Date());
+    _rebuildShadowSource(map);
+    if (typeof updatePOISource === "function") updatePOISource(map);
   });
 
   playBtn.addEventListener("click", () => {
