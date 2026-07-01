@@ -63,6 +63,9 @@ function initDisplayMode(map) {
   const complexLabel = document.querySelector(".mode-label:last-child");
   const shadowBar   = document.getElementById("shadow-bar");
   const shadowDateSection = document.getElementById("shadow-date-section");
+  const addressSearchSection = document.getElementById("address-search-section");
+  const solarFilterSection = document.getElementById("solar-filter-section");
+  const solarLegendSection = document.getElementById("solar-legend-section");
   const threeDHint  = document.getElementById("three-d-hint");
   const threeDHintToggle = document.getElementById("three-d-hint-toggle");
 
@@ -110,6 +113,9 @@ function initDisplayMode(map) {
     if (isComplex) {
       shadowBar.style.display = "flex";
       if (shadowDateSection) shadowDateSection.style.display = "grid";
+      if (addressSearchSection) addressSearchSection.style.display = "grid";
+      if (solarFilterSection) solarFilterSection.style.display = "grid";
+      if (solarLegendSection) solarLegendSection.style.display = "none";
       threeDHint?.classList.remove("hidden");
       showShadowLayer(map);
       setBuildingVisibility("visible");
@@ -118,6 +124,9 @@ function initDisplayMode(map) {
     } else {
       shadowBar.style.display = "none";
       if (shadowDateSection) shadowDateSection.style.display = "none";
+      if (addressSearchSection) addressSearchSection.style.display = "none";
+      if (solarFilterSection) solarFilterSection.style.display = "none";
+      if (solarLegendSection) solarLegendSection.style.display = "grid";
       threeDHint?.classList.add("hidden");
       if (typeof _stopAnimation === "function") _stopAnimation();
       hideShadowLayer(map);

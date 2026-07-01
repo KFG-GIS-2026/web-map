@@ -4,6 +4,25 @@
 
 const SOLAR_BENCH_DATA_URL = "data/neckargemuend_baenke_dummy.geojson";
 const SOLAR_BENCH_THRESHOLD = 50;
+const SOLAR_CLASS_SCHEMES = {
+  bench: {
+    breaks: [50, 100, 450, 750],
+    ranges: ["bis 50", "50-100", "100-450", "450-750", "ueber 750"]
+  },
+  playground: {
+    breaks: [100, 300, 450, 600],
+    ranges: ["bis 100", "100-300", "300-450", "450-600", "ueber 600"]
+  }
+};
+const SOLAR_CLASS_COLORS = ["#2F80ED", "#35C4B5", "#F2C94C", "#F2994A", "#EB5757"];
+const SOLAR_CLASS_LABELS = [
+  "sehr geringe Sonnenbelastung",
+  "geringe Sonnenbelastung",
+  "mittlere Sonnenbelastung",
+  "hohe Sonnenbelastung",
+  "sehr hohe Sonnenbelastung"
+];
+const SOLAR_VALUE_UNIT = "W/m2";
 const POI_SOURCE_ID = "pois";
 const BENCH_SOURCE_ID = "bench-pois";
 const POI_PROXY_LAYER_ID = "poi-marker-proxy";
@@ -25,6 +44,7 @@ let geojsonData = null;
 let allMarkers  = [];   // { marker, el, id, cat }
 let rafPending  = false;
 let currentPopup = null;
+let currentPopupFeature = null;
 let allClusteringEnabled = true;
 let benchClusteringEnabled = true;
 
@@ -84,15 +104,104 @@ async function loadAllPOIs() {
   return { type: "FeatureCollection", features: results.flat() };
 }
 
-function getSolarPropertyName(hour) {
-  return `solar_${String(hour).padStart(2, "0")}`;
+function getSolarPropertyName(month = currentShadowMonth, day = currentShadowDay, hour = currentShadowHour) {
+  return `${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}_${String(hour).padStart(2, "0")}`;
+}
+
+function getSolarValue(props) {
+  const value = Number(props[getSolarPropertyName()]);
+  return Number.isFinite(value) ? value : null;
+}
+
+function hasSolarValue(props) {
+  return getSolarValue(props) !== null;
+}
+
+function shouldShowSolarValue(props) {
+  return props._cat === "bench" || props._cat === "playground";
+}
+
+function getSolarClassInfo(props) {
+  const value = getSolarValue(props);
+  const scheme = SOLAR_CLASS_SCHEMES[props._cat];
+  if (value === null || !scheme) return null;
+
+  const classIndex = scheme.breaks.findIndex((limit) => value <= limit);
+  const index = classIndex === -1 ? SOLAR_CLASS_COLORS.length - 1 : classIndex;
+  return {
+    value,
+    index,
+    color: SOLAR_CLASS_COLORS[index],
+    label: SOLAR_CLASS_LABELS[index],
+    range: scheme.ranges[index]
+  };
+}
+
+function getSolarMarkerColor(props) {
+  return getSolarClassInfo(props)?.color || "#ffffff";
+}
+
+function getActiveSolarClasses() {
+  return new Set(
+    Array.from(document.querySelectorAll(".solar-class-cb:checked")).map((cb) => Number(cb.dataset.solarClass))
+  );
+}
+
+function isSolarClassVisible(feature, activeSolarClasses = getActiveSolarClasses()) {
+  const info = getSolarClassInfo(feature.properties);
+  return !info || activeSolarClasses.has(info.index);
+}
+
+function formatSolarDateLabel() {
+  const dayLabel = currentShadowDay === 1 ? "Anfang" : "Mitte";
+  const month = SHADOW_DATE_MONTHS.find((entry) => entry.month === currentShadowMonth);
+  return `${dayLabel} ${month ? month.label : String(currentShadowMonth).padStart(2, "0")}`;
+}
+
+function getSolarValueText(props) {
+  const solarValue = getSolarValue(props);
+  if (solarValue === null) return null;
+
+  const formattedValue = solarValue.toLocaleString("de-DE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1
+  });
+  const hour = String(currentShadowHour).padStart(2, "0");
+  return `Solarwert ${formatSolarDateLabel()}, ${hour}:00 Uhr: ${formattedValue} ${SOLAR_VALUE_UNIT}`;
+}
+
+function getSolarPopupHTML(props) {
+  const info = getSolarClassInfo(props);
+  const hour = String(currentShadowHour).padStart(2, "0");
+
+  if (!info) {
+    return `
+      <div class="solar-popup solar-popup-empty" data-solar-value>
+        <strong>Keine Sonnenbelastungsdaten</strong>
+        <span>Keine Daten fuer ${formatSolarDateLabel()}, ${hour}:00 Uhr</span>
+      </div>`;
+  }
+
+  const formattedValue = info.value.toLocaleString("de-DE", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1
+  });
+
+  return `
+    <div class="solar-popup" data-solar-value>
+      <div class="solar-popup-head">
+        <span class="solar-popup-swatch" style="background:${info.color}"></span>
+        <strong>${info.label}</strong>
+      </div>
+      <div class="solar-popup-meta">${formatSolarDateLabel()}, ${hour}.00 Uhr: <strong>${formattedValue} ${SOLAR_VALUE_UNIT}</strong></div>
+    </div>`;
 }
 
 function isSolarBenchVisible(feature) {
   if (feature.properties._source !== "solar-benches") return true;
   if (simpleMode) return false;
 
-  const solarValue = Number(feature.properties[getSolarPropertyName(currentShadowHour)]);
+  const solarValue = Number(feature.properties[getSolarPropertyName()]);
   return Number.isFinite(solarValue) && solarValue <= SOLAR_BENCH_THRESHOLD;
 }
 
@@ -102,10 +211,13 @@ function getFilteredGeoJSON() {
   const active = new Set(
     Array.from(document.querySelectorAll(".filter-cb:checked")).map((cb) => cb.dataset.cat)
   );
+  const activeSolarClasses = simpleMode ? null : getActiveSolarClasses();
   return {
     ...geojsonData,
     features: geojsonData.features.filter((f) => (
-      active.has(f.properties._cat) && isSolarBenchVisible(f)
+      active.has(f.properties._cat) &&
+      isSolarBenchVisible(f) &&
+      (simpleMode || isSolarClassVisible(f, activeSolarClasses))
     ))
   };
 }
@@ -124,10 +236,11 @@ function getPOISourceSlices() {
   };
 }
 
-// White circle marker with PNG icon
-function createMarkerEl(category) {
+// Circle marker with PNG icon; solar POIs get a data-driven background color.
+function createMarkerEl(category, props) {
   const el = document.createElement("div");
   el.className = "poi-marker";
+  el.style.backgroundColor = getSolarMarkerColor(props);
   const img = document.createElement("img");
   img.src = symbolUrl(category.icon);
   img.alt = category.label;
@@ -151,6 +264,10 @@ function buildPopupHTML(category, props) {
   if (props.material) extra.push(`🪵 Material: ${props.material}`);
   if (props.description) extra.push(`ℹ️ ${props.description}`);
 
+  if (category.cat === "bench" || category.cat === "playground") {
+    extra.push(getSolarPopupHTML(props));
+  }
+
   const titleHTML = name
     ? `<strong style="font-size:14px">${name}</strong>
        <br><span style="color:#888;font-size:12px">📌 ${category.label}</span>`
@@ -169,18 +286,51 @@ function buildPopupHTML(category, props) {
     </div>`;
 }
 
+function updateSolarPopupValue(popup, feature) {
+  if (!popup || !feature || !shouldShowSolarValue(feature.properties)) return;
+
+  const container = popup.getElement();
+  const valueEl = container?.querySelector("[data-solar-value]");
+  if (!valueEl) return;
+
+  valueEl.outerHTML = getSolarPopupHTML(feature.properties);
+}
+
+function syncCurrentPopupSolarValue() {
+  updateSolarPopupValue(currentPopup, currentPopupFeature);
+}
+
+function syncMarkerSolarStyles() {
+  allMarkers.forEach(({ el, feature }) => {
+    el.style.backgroundColor = getSolarMarkerColor(feature.properties);
+  });
+}
+
+function syncSolarActionButton() {
+  const button = document.getElementById("solar-hide-high");
+  if (!button) return;
+
+  const highHidden = Array.from(document.querySelectorAll(".solar-class-cb"))
+    .filter((cb) => Number(cb.dataset.solarClass) >= 3)
+    .every((cb) => !cb.checked);
+
+  button.setAttribute("aria-pressed", String(highHidden));
+  button.textContent = highHidden ? "Alle Sonnenklassen anzeigen" : "Nur kühlere Orte anzeigen";
+}
+
 // Create all markers (initially hidden, shown via syncMarkers)
 function createMarkers(map) {
   allMarkers.forEach(({ marker }) => marker.remove());
   allMarkers = [];
   if (currentPopup) currentPopup.remove();
   currentPopup = null;
+  currentPopupFeature = null;
 
   geojsonData.features.forEach((f) => {
     const category = getCategoryByKey(f.properties._cat);
     if (!category) return;
 
-    const el    = createMarkerEl(category);
+    const el    = createMarkerEl(category, f.properties);
     const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: false })
       .setHTML(buildPopupHTML(category, f.properties));
 
@@ -192,11 +342,15 @@ function createMarkers(map) {
     popup.on("open", () => {
       if (currentPopup && currentPopup !== popup) currentPopup.remove();
       currentPopup = popup;
+      currentPopupFeature = f;
       updateSolarPopupValue(popup, f);
     });
 
     popup.on("close", () => {
-      if (currentPopup === popup) currentPopup = null;
+      if (currentPopup === popup) {
+        currentPopup = null;
+        currentPopupFeature = null;
+      }
     });
 
     el.style.display = "none";
@@ -317,6 +471,8 @@ function setupPOILayers(map) {
 function updatePOISource(map) {
   if (!geojsonData) return;
   setupPOILayers(map);
+  syncMarkerSolarStyles();
+  syncCurrentPopupSolarValue();
 }
 
 function setClusterButtonState(button, enabled, label) {
@@ -395,6 +551,29 @@ function initFilterControls(map) {
       updatePOISource(map);
     });
   });
+
+  document.querySelectorAll(".solar-class-cb").forEach((cb) => {
+    cb.addEventListener("change", () => {
+      syncSolarActionButton();
+      updatePOISource(map);
+    });
+  });
+
+  const hideHighSolarBtn = document.getElementById("solar-hide-high");
+  hideHighSolarBtn?.addEventListener("click", () => {
+    const highHidden = Array.from(document.querySelectorAll(".solar-class-cb"))
+      .filter((cb) => Number(cb.dataset.solarClass) >= 3)
+      .every((cb) => !cb.checked);
+
+    document.querySelectorAll(".solar-class-cb").forEach((cb) => {
+      cb.checked = highHidden || Number(cb.dataset.solarClass) < 3;
+    });
+
+    syncSolarActionButton();
+    updatePOISource(map);
+  });
+
+  syncSolarActionButton();
 }
 
 function initClusterControls(map) {

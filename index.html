@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260630-8" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260701-6" />
 </head>
 <body>
 
@@ -24,10 +24,22 @@
   <!-- ── Sidebar ── -->
   <div id="sidebar">
     <div id="sidebar-header">
-      <h2>Kühle Orte</h2>
+      <h2>
+        <span class="sidebar-title-main">Kühle-Orte-Karte</span>
+        <span class="sidebar-title-sub">Neckargemünd</span>
+      </h2>
       <button id="sidebar-toggle" title="Legende ein-/ausblenden" aria-label="Legende ein-/ausblenden">
         ✕
       </button>
+    </div>
+
+    <div id="address-search-section">
+      <h3>Adresse suchen</h3>
+      <form id="address-search-form" autocomplete="off">
+        <input id="address-search-input" type="search" placeholder="Straße, Hausnummer" aria-label="Adresse suchen" />
+        <button type="submit">Suchen</button>
+      </form>
+      <div id="address-search-status" role="status" aria-live="polite"></div>
     </div>
 
     <div id="sidebar-content">
@@ -92,6 +104,33 @@
       </label>
     </div>
 
+    <div id="solar-legend-section">
+      <h3>Sonnenbelastung</h3>
+      <p class="solar-filter-note">Die Hintergrundfarbe von Sitzbänken und Spielplätzen zeigt die aktuelle Sonnenbelastung.</p>
+      <div class="simple-solar-legend">
+        <div class="simple-solar-legend-item">
+          <span class="simple-solar-swatch" style="background:#2F80ED"></span>
+          <span>sehr gering</span>
+        </div>
+        <div class="simple-solar-legend-item">
+          <span class="simple-solar-swatch" style="background:#35C4B5"></span>
+          <span>gering</span>
+        </div>
+        <div class="simple-solar-legend-item">
+          <span class="simple-solar-swatch" style="background:#F2C94C"></span>
+          <span>mittel</span>
+        </div>
+        <div class="simple-solar-legend-item">
+          <span class="simple-solar-swatch" style="background:#F2994A"></span>
+          <span>hoch</span>
+        </div>
+        <div class="simple-solar-legend-item">
+          <span class="simple-solar-swatch" style="background:#EB5757"></span>
+          <span>sehr hoch</span>
+        </div>
+      </div>
+    </div>
+
     <div id="shadow-date-section">
       <h3>
         Zeitpunkt
@@ -105,6 +144,40 @@
         <select id="shadow-date" title="Datum auswählen"></select>
       </label>
       <button id="shadow-current" title="Auf den nächsten Zeitpunkt springen">aktuell</button>
+    </div>
+
+    <div id="solar-filter-section">
+      <h3>Sonnenbelastung</h3>
+      <p class="solar-filter-note">Die Farben zeigen die aktuelle Sonnenbelastung von Sitzbänken und Spielplätzen: Blau ist kühler, Rot ist belasteter.</p>
+      <div class="solar-class-row" aria-label="Sonnenbelastungsklassen auswählen">
+        <label class="solar-class-chip" title="sehr geringe Sonnenbelastung">
+          <input type="checkbox" class="solar-class-cb" data-solar-class="0" checked />
+          <span style="background:#2F80ED"></span>
+        </label>
+        <label class="solar-class-chip" title="geringe Sonnenbelastung">
+          <input type="checkbox" class="solar-class-cb" data-solar-class="1" checked />
+          <span style="background:#35C4B5"></span>
+        </label>
+        <label class="solar-class-chip" title="mittlere Sonnenbelastung">
+          <input type="checkbox" class="solar-class-cb" data-solar-class="2" checked />
+          <span style="background:#F2C94C"></span>
+        </label>
+        <label class="solar-class-chip" title="hohe Sonnenbelastung">
+          <input type="checkbox" class="solar-class-cb" data-solar-class="3" checked />
+          <span style="background:#F2994A"></span>
+        </label>
+        <label class="solar-class-chip" title="sehr hohe Sonnenbelastung">
+          <input type="checkbox" class="solar-class-cb" data-solar-class="4" checked />
+          <span style="background:#EB5757"></span>
+        </label>
+      </div>
+      <div class="solar-class-labels">
+        <span>sehr gering</span>
+        <span>sehr hoch</span>
+      </div>
+      <button id="solar-hide-high" class="solar-action" type="button" aria-pressed="false">
+        Nur kühlere Orte anzeigen
+      </button>
     </div>
 
     <div id="cluster-demo-section">
@@ -282,11 +355,11 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/config.js?v=20260630-8"></script>
-  <script src="src/js/boundary.js?v=20260630-8"></script>
-  <script src="src/js/shadow.js?v=20260630-8"></script>
-  <script src="src/js/pois.js?v=20260630-8"></script>
-  <script src="src/js/help.js?v=20260630-8"></script>
-  <script src="src/js/map.js?v=20260630-8"></script>
+  <script src="src/js/config.js?v=20260701-6"></script>
+  <script src="src/js/boundary.js?v=20260701-6"></script>
+  <script src="src/js/shadow.js?v=20260701-6"></script>
+  <script src="src/js/pois.js?v=20260701-6"></script>
+  <script src="src/js/help.js?v=20260701-6"></script>
+  <script src="src/js/map.js?v=20260701-6"></script>
 </body>
 </html>

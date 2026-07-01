@@ -167,6 +167,81 @@ function initSidebar() {
 }
 
 // ── Map load ──────────────────────────────────────────────
+let addressSearchMarker = null;
+
+function setAddressSearchStatus(message, isError = false) {
+  const status = document.getElementById("address-search-status");
+  if (!status) return;
+  status.textContent = message || "";
+  status.style.color = isError ? "#b33a2b" : "#66756b";
+}
+
+async function searchAddress(query) {
+  const params = new URLSearchParams({
+    format: "jsonv2",
+    q: `${query}, Neckargemünd, Baden-Württemberg, Deutschland`,
+    limit: "1",
+    addressdetails: "1",
+    countrycodes: "de",
+    bounded: "1",
+    viewbox: "8.73803182321166,49.41863840982511,8.9035906286068,49.3644124949337"
+  });
+
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`);
+  if (!res.ok) throw new Error(`Geocoder status ${res.status}`);
+  return res.json();
+}
+
+function initAddressSearch(map) {
+  const form = document.getElementById("address-search-form");
+  const input = document.getElementById("address-search-input");
+  if (!form || !input) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (simpleMode) {
+      setAddressSearchStatus("Adresssuche ist in der komplexen Ansicht verfügbar.", true);
+      return;
+    }
+
+    const query = input.value.trim();
+    if (!query) {
+      setAddressSearchStatus("Bitte eine Straße oder Adresse eingeben.", true);
+      return;
+    }
+
+    setAddressSearchStatus("Adresse wird gesucht ...");
+    try {
+      const results = await searchAddress(query);
+      const result = results[0];
+      if (!result) {
+        setAddressSearchStatus("Keine passende Adresse in Neckargemünd gefunden.", true);
+        return;
+      }
+
+      const lng = Number(result.lon);
+      const lat = Number(result.lat);
+      if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
+        setAddressSearchStatus("Suchergebnis ohne gültige Koordinate.", true);
+        return;
+      }
+
+      if (addressSearchMarker) addressSearchMarker.remove();
+      addressSearchMarker = new maplibregl.Marker({ color: "#1a6b3c" })
+        .setLngLat([lng, lat])
+        .setPopup(new maplibregl.Popup({ offset: 24, closeButton: false }).setText(result.display_name))
+        .addTo(map);
+
+      map.easeTo({ center: [lng, lat], zoom: 17, duration: 900 });
+      addressSearchMarker.togglePopup();
+      setAddressSearchStatus("Adresse gefunden.");
+    } catch (err) {
+      console.error("Address search error:", err);
+      setAddressSearchStatus("Adresssuche momentan nicht verfügbar.", true);
+    }
+  });
+}
+
 map.on("load", () => {
   // Order matters:
   // 1. shadow layer first (below the boundary mask)
@@ -177,6 +252,7 @@ map.on("load", () => {
   addBoundaryMask().then(() => {
     add3DBuildings();
     initSidebar();
+    initAddressSearch(map);
     initShadowControls(map);
     initDisplayMode(map);
     loadPOIs(map);

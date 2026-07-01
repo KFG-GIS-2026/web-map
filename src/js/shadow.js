@@ -15,8 +15,15 @@ let currentShadowDay   = 1;
 let _animationTimer   = null;
 let _animationRunning = false;
 let _shadowVisible    = false;
+let _shadowSlot       = 0;
+let _activeShadowLayerId = null;
+let _activeShadowSourceId = null;
+let _shadowTransitionId = 0;
 
 const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
+const SHADOW_OPACITY = 0.55;
+const SHADOW_FADE_MS = 260;
+const SHADOW_SOURCE_LOAD_TIMEOUT_MS = 1600;
 const SHADOW_DATE_MONTHS = [
   { month: 5, label: "Mai" },
   { month: 6, label: "Juni" },
@@ -91,10 +98,10 @@ function _syncDateInput(date) {
 // whenever the hour or date changes.
 
 function createShadowLayer(map) {
-  _rebuildShadowSource(map);
+  _rebuildShadowSource(map, { fade: false });
 }
 
-function _rebuildShadowSource(map) {
+function _rebuildShadowSourceLegacy(map) {
   const wasVisible = map.getLayer("shadow-layer")
     ? map.getLayoutProperty("shadow-layer", "visibility") === "visible"
     : _shadowVisible;
@@ -152,20 +159,162 @@ function _rebuildShadowSource(map) {
   _syncShadowToggle();
 }
 
+async function _rebuildShadowSource(map, options = {}) {
+  const fade = options.fade !== false;
+  const transitionId = ++_shadowTransitionId;
+  const wasVisible = _isShadowLayerVisible(map);
+  const nextSlot = _shadowSlot === 0 ? 1 : 0;
+  const sourceId = `shadow-${nextSlot}`;
+  const layerId = `shadow-layer-${nextSlot}`;
+  const oldSourceId = _activeShadowSourceId;
+  const oldLayerId = _activeShadowLayerId;
+
+  _removeShadowLayerAndSource(map, layerId, sourceId);
+
+  const url = getShadowUrl(currentShadowMonth, currentShadowDay, currentShadowHour);
+  map.addSource(sourceId, {
+    type: "raster",
+    url: `pmtiles://${url}`,
+    tileSize: 256
+  });
+
+  map.addLayer(
+    {
+      id: layerId,
+      type: "raster",
+      source: sourceId,
+      paint: { "raster-opacity": fade && wasVisible ? 0 : SHADOW_OPACITY, "raster-fade-duration": 0 }
+    },
+    _getShadowBeforeLayerId(map)
+  );
+
+  map.setLayoutProperty(layerId, "visibility", wasVisible ? "visible" : "none");
+
+  if (fade && wasVisible && oldLayerId && map.getLayer(oldLayerId)) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await _fadeShadowLayers(map, oldLayerId, layerId, transitionId);
+  } else if (oldLayerId || oldSourceId) {
+    _removeShadowLayerAndSource(map, oldLayerId, oldSourceId);
+  }
+
+  if (transitionId !== _shadowTransitionId || !map.getLayer(layerId)) return false;
+
+  _shadowSlot = nextSlot;
+  _activeShadowLayerId = layerId;
+  _activeShadowSourceId = sourceId;
+  map.setPaintProperty(layerId, "raster-opacity", SHADOW_OPACITY);
+  map.setLayoutProperty(layerId, "visibility", _shadowVisible ? "visible" : "none");
+  _syncShadowToggle();
+  return true;
+}
+
+function _getShadowBeforeLayerId(map) {
+  const styleLayers = map.getStyle().layers;
+  for (const layer of styleLayers) {
+    if (
+      layer.id === "boundary-mask-layer" ||
+      layer.id === "boundary-line-layer" ||
+      layer.id === "3d-buildings"
+    ) {
+      return layer.id;
+    }
+  }
+
+  for (const layer of styleLayers) {
+    if (layer.type === "symbol" && layer.layout?.["text-field"]) return layer.id;
+  }
+  return undefined;
+}
+
+function _removeShadowLayerAndSource(map, layerId, sourceId) {
+  if (layerId && map.getLayer(layerId)) map.removeLayer(layerId);
+  if (sourceId && map.getSource(sourceId)) map.removeSource(sourceId);
+}
+
+function _getShadowLayerIds(map) {
+  return ["shadow-layer-0", "shadow-layer-1"].filter((layerId) => map.getLayer(layerId));
+}
+
+function _isShadowLayerVisible(map) {
+  const layers = _getShadowLayerIds(map);
+  if (!layers.length) return _shadowVisible;
+  return layers.some((layerId) => map.getLayoutProperty(layerId, "visibility") === "visible");
+}
+
+function _waitForShadowSource(map, sourceId, transitionId) {
+  return new Promise((resolve) => {
+    let timeoutId = null;
+
+    function cleanup(result) {
+      map.off("sourcedata", check);
+      map.off("idle", check);
+      if (timeoutId) clearTimeout(timeoutId);
+      resolve(result);
+    }
+
+    function check() {
+      if (transitionId !== _shadowTransitionId || !map.getSource(sourceId)) {
+        cleanup(false);
+        return;
+      }
+      if (map.isSourceLoaded(sourceId)) cleanup(true);
+    }
+
+    timeoutId = setTimeout(() => cleanup(false), SHADOW_SOURCE_LOAD_TIMEOUT_MS);
+    map.on("sourcedata", check);
+    map.on("idle", check);
+    check();
+  });
+}
+
+function _fadeShadowLayers(map, oldLayerId, newLayerId, transitionId) {
+  return new Promise((resolve) => {
+    const startedAt = performance.now();
+
+    function step(now) {
+      if (transitionId !== _shadowTransitionId || !map.getLayer(newLayerId)) {
+        resolve(false);
+        return;
+      }
+
+      const t = Math.min((now - startedAt) / SHADOW_FADE_MS, 1);
+      map.setPaintProperty(newLayerId, "raster-opacity", SHADOW_OPACITY * t);
+      if (map.getLayer(oldLayerId)) {
+        map.setPaintProperty(oldLayerId, "raster-opacity", SHADOW_OPACITY * (1 - t));
+      }
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        if (map.getLayer(oldLayerId)) {
+          const oldSourceId = oldLayerId.replace("shadow-layer", "shadow");
+          _removeShadowLayerAndSource(map, oldLayerId, oldSourceId);
+        }
+        resolve(true);
+      }
+    }
+
+    requestAnimationFrame(step);
+  });
+}
+
 async function updateShadowLayer(map, hour) {
   currentShadowHour = hour;
-  _rebuildShadowSource(map);
+  const updated = await _rebuildShadowSource(map);
+  if (!updated) return false;
   _syncTimeDisplay(hour);
   _syncSlider(hour);
   if (typeof updatePOISource === "function") updatePOISource(map);
   return true;
 }
 
-function updateShadowDate(map, month, day) {
+async function updateShadowDate(map, month, day) {
   currentShadowMonth = month;
   currentShadowDay   = day;
-  _rebuildShadowSource(map);
+  const updated = await _rebuildShadowSource(map);
+  if (!updated) return false;
   if (typeof updatePOISource === "function") updatePOISource(map);
+  return true;
 }
 
 function _syncTimeDisplay(hour) {
@@ -196,7 +345,7 @@ function _startAnimation(map) {
   async function tick() {
     if (!_animationRunning) return;
     const nextIdx = (SHADOW_HOURS.indexOf(currentShadowHour) + 1) % SHADOW_HOURS.length;
-    await updateShadowLayer(map, SHADOW_HOURS[nextIdx]);
+    updateShadowLayer(map, SHADOW_HOURS[nextIdx]).catch((err) => console.error("Shadow update error:", err));
     if (_animationRunning) _animationTimer = setTimeout(tick, ANIMATION_SPEED);
   }
 
@@ -215,15 +364,17 @@ function _stopAnimation() {
 
 function showShadowLayer(map) {
   _shadowVisible = true;
-  if (map.getLayer("shadow-layer"))
-    map.setLayoutProperty("shadow-layer", "visibility", "visible");
+  _getShadowLayerIds(map).forEach((layerId) => {
+    map.setLayoutProperty(layerId, "visibility", "visible");
+  });
   _syncShadowToggle();
 }
 
 function hideShadowLayer(map) {
   _shadowVisible = false;
-  if (map.getLayer("shadow-layer"))
-    map.setLayoutProperty("shadow-layer", "visibility", "none");
+  _getShadowLayerIds(map).forEach((layerId) => {
+    map.setLayoutProperty(layerId, "visibility", "none");
+  });
   _syncShadowToggle();
 }
 
@@ -247,6 +398,7 @@ function initShadowControls(map) {
 
   _populateShadowDateSelect(dateInput, new Date());
   _syncDateInput(new Date());
+  _rebuildShadowSource(map, { fade: false });
 
   slider.addEventListener("input", (e) => {
     _stopAnimation();
@@ -259,11 +411,11 @@ function initShadowControls(map) {
     updateShadowDate(map, month, day);
   });
 
-  currentBtn.addEventListener("click", () => {
+  currentBtn.addEventListener("click", async () => {
     _stopAnimation();
     _syncDateInput(new Date());
-    _rebuildShadowSource(map);
-    if (typeof updatePOISource === "function") updatePOISource(map);
+    const updated = await _rebuildShadowSource(map);
+    if (updated && typeof updatePOISource === "function") updatePOISource(map);
   });
 
   playBtn.addEventListener("click", () => {

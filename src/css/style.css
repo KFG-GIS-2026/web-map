@@ -122,15 +122,35 @@ input:checked + .slider::before {
 #sidebar-header,
 #sidebar-content,
 #shadow-date-section,
+#address-search-section,
+#solar-filter-section,
+#solar-legend-section,
 #cluster-demo-section,
 #sidebar-help-row {
   flex-shrink: 0;
 }
 #sidebar h2 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
   color: #1a6b3c;
+}
+
+.sidebar-title-main,
+.sidebar-title-sub {
+  display: block;
+}
+
+.sidebar-title-main {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.sidebar-title-sub {
+  margin-top: 3px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a6b3c;
+  letter-spacing: 0;
 }
 #sidebar h3 {
   margin: 18px 0 8px;
@@ -154,6 +174,54 @@ input:checked + .slider::before {
   margin: 0;
 }
 
+#address-search-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 4px 0 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(26,107,60,0.12);
+}
+
+#address-search-section h3 {
+  margin: 0;
+}
+
+#address-search-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+}
+
+#address-search-input {
+  min-width: 0;
+  height: 38px;
+  border: 1px solid rgba(26,107,60,0.18);
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 13px;
+  color: #26332a;
+  background: #fff;
+}
+
+#address-search-form button {
+  min-height: 38px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 11px;
+  background: #1a6b3c;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#address-search-status {
+  min-height: 15px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #66756b;
+}
+
 #cluster-demo-section {
   display: grid;
   grid-template-columns: 1fr;
@@ -165,6 +233,154 @@ input:checked + .slider::before {
 
 #cluster-demo-section h3 {
   margin: 0;
+}
+
+#solar-filter-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(26,107,60,0.12);
+}
+
+#solar-filter-section h3 {
+  margin: 0 0 2px;
+}
+
+#solar-legend-section {
+  display: none;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(26,107,60,0.12);
+}
+
+#solar-legend-section h3 {
+  margin: 0 0 2px;
+}
+
+.solar-filter-note {
+  margin: -2px 0 0;
+  color: #66756b;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.solar-class-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(26,107,60,0.07);
+  border: 1px solid rgba(26,107,60,0.12);
+}
+
+.solar-class-chip {
+  position: relative;
+  min-width: 0;
+  min-height: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.68);
+  border: 1px solid rgba(255,255,255,0.72);
+  transition: transform .12s, box-shadow .12s, opacity .12s, background .12s;
+}
+
+.solar-class-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.solar-class-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.solar-class-chip span {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.16);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.16);
+}
+
+.solar-class-chip:not(:has(input:checked)) {
+  opacity: .38;
+  filter: grayscale(.45);
+  background: rgba(255,255,255,0.36);
+}
+
+.solar-class-chip:has(input:checked) {
+  box-shadow: inset 0 0 0 1px rgba(26,107,60,0.18);
+}
+
+.solar-class-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: -4px;
+  color: #66756b;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.simple-solar-legend {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.simple-solar-legend-item {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  color: #26332a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.simple-solar-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.16);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.16);
+}
+
+.solar-action {
+  margin-top: 1px;
+  width: 100%;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: #e8f3ec;
+  color: #1a6b3c;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+
+.solar-action:hover {
+  background: #d6eadc;
+  box-shadow: 0 2px 9px rgba(26,107,60,0.12);
+}
+
+.solar-action[aria-pressed="true"] {
+  background: #1a6b3c;
+  color: #fff;
 }
 
 .info-help {
@@ -410,6 +626,45 @@ input:checked + .slider::before {
   border-radius: 10px !important;
   padding: 10px 14px !important;
   box-shadow: 0 4px 18px rgba(0,0,0,0.18) !important;
+}
+
+.solar-popup {
+  margin-top: 7px;
+  padding: 7px 8px;
+  border-radius: 7px;
+  background: #f7faf8;
+  border: 1px solid rgba(26,107,60,0.16);
+  text-align: left;
+}
+
+.solar-popup-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  color: #23402d;
+}
+
+.solar-popup-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.14);
+  flex: 0 0 auto;
+}
+
+.solar-popup-main {
+  font-weight: 700;
+  color: #1f2f25;
+}
+
+.solar-popup-meta,
+.solar-popup-empty span {
+  display: block;
+  margin-top: 2px;
+  color: #66756b;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 /* ── Navigation controls: top-right ── */
