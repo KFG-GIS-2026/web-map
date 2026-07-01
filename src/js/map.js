@@ -147,6 +147,8 @@ async function addBoundaryMask() {
 }
 
 // ── Sidebar collapse ──────────────────────────────────────
+let mobileActivePanel = null;
+
 function initSidebar() {
   const sidebar   = document.getElementById("sidebar");
   const openBtn   = document.getElementById("sidebar-open");
@@ -164,6 +166,95 @@ function initSidebar() {
   toggleBtn.addEventListener("click", closeSidebar);
   openBtn.addEventListener("click", openSidebar);
   if (window.innerWidth < 600) closeSidebar();
+
+  function _setActionButtonState(buttonId, active) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  }
+
+  function _closeMobilePanels() {
+    // On mobile, closing mobile panels should also collapse the sidebar.
+    // On desktop, leave the sidebar open by default and only close
+    // the temporary mobile panels (shadow/mode).
+    if (window.matchMedia("(max-width: 600px)").matches) {
+      closeSidebar();
+    }
+    _closeMobileShadowPanel();
+    _closeMobileModePanel();
+    _setActionButtonState("mobile-action-sidebar", false);
+    _setActionButtonState("mobile-action-shadow", false);
+    _setActionButtonState("mobile-action-mode", false);
+    mobileActivePanel = null;
+  }
+
+  function _openMobileShadowPanel() {
+    if (simpleMode) {
+      _openMobileModePanel();
+      return;
+    }
+    const shadowBar = document.getElementById("shadow-bar");
+    if (!shadowBar) return;
+    shadowBar.classList.add("open");
+    shadowBar.style.display = "flex";
+  }
+
+  function _closeMobileShadowPanel() {
+    const shadowBar = document.getElementById("shadow-bar");
+    if (!shadowBar) return;
+    shadowBar.classList.remove("open");
+    if (window.matchMedia("(max-width: 600px)").matches) {
+      shadowBar.style.display = "none";
+    } else {
+      shadowBar.style.display = "flex";
+    }
+  }
+
+  function _openMobileModePanel() {
+    const panel = document.getElementById("mobile-mode-panel");
+    if (!panel) return;
+    panel.classList.remove("hidden");
+    panel.setAttribute("aria-hidden", "false");
+  }
+
+  function _closeMobileModePanel() {
+    const panel = document.getElementById("mobile-mode-panel");
+    if (!panel) return;
+    panel.classList.add("hidden");
+    panel.setAttribute("aria-hidden", "true");
+  }
+
+  function _toggleMobilePanel(panel) {
+    if (mobileActivePanel === panel) {
+      _closeMobilePanels();
+      return;
+    }
+    _closeMobilePanels();
+    mobileActivePanel = panel;
+    _setActionButtonState(`mobile-action-${panel}`, true);
+    if (panel === "sidebar") openSidebar();
+    if (panel === "shadow") _openMobileShadowPanel();
+    if (panel === "mode") _openMobileModePanel();
+  }
+
+  window.addEventListener("resize", () => {
+    // When switching to desktop size, ensure mobile-only panels are closed
+    // but keep the sidebar open. When switching to mobile, collapse sidebar.
+    if (!window.matchMedia("(max-width: 600px)").matches) {
+      // desktop: close shadow/mode panels but keep sidebar
+      _closeMobilePanels();
+    } else {
+      // mobile: ensure sidebar is collapsed to match mobile UX
+      _closeMobilePanels();
+    }
+  });
+
+  document.getElementById("mobile-action-sidebar")?.addEventListener("click", () => _toggleMobilePanel("sidebar"));
+  document.getElementById("mobile-action-shadow")?.addEventListener("click", () => _toggleMobilePanel("shadow"));
+  document.getElementById("mobile-action-mode")?.addEventListener("click", () => _toggleMobilePanel("mode"));
+
+  _closeMobilePanels();
 }
 
 // ── Map load ──────────────────────────────────────────────

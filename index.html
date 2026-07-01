@@ -202,6 +202,24 @@
   <button id="sidebar-open" title="Legende öffnen" aria-label="Legende öffnen">
     🗂️
   </button>
+
+  <div id="mobile-mode-panel" class="mobile-panel hidden" aria-hidden="true" role="region" aria-label="Modusauswahl">
+    <div class="mobile-panel-header">Modus</div>
+    <div class="mobile-mode-switch-row">
+      <span class="mobile-mode-label inactive">Einfach</span>
+      <label class="mobile-switch">
+        <input type="checkbox" id="mobile-mode-toggle">
+        <span class="slider"></span>
+      </label>
+      <span class="mobile-mode-label active">Komplex</span>
+    </div>
+  </div>
+
+  <div id="mobile-action-bar" class="mobile-action-bar" aria-label="Mobile Schnellzugriff">
+    <button id="mobile-action-sidebar" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Legende öffnen">🗂️</button>
+    <button id="mobile-action-shadow" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Schatten öffnen">🌤️</button>
+    <button id="mobile-action-mode" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Einfach/Komplex Modus">⚙️</button>
+  </div>
   
   <div id="map"></div>
 
