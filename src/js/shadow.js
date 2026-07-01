@@ -241,32 +241,6 @@ function _isShadowLayerVisible(map) {
   return layers.some((layerId) => map.getLayoutProperty(layerId, "visibility") === "visible");
 }
 
-function _waitForShadowSource(map, sourceId, transitionId) {
-  return new Promise((resolve) => {
-    let timeoutId = null;
-
-    function cleanup(result) {
-      map.off("sourcedata", check);
-      map.off("idle", check);
-      if (timeoutId) clearTimeout(timeoutId);
-      resolve(result);
-    }
-
-    function check() {
-      if (transitionId !== _shadowTransitionId || !map.getSource(sourceId)) {
-        cleanup(false);
-        return;
-      }
-      if (map.isSourceLoaded(sourceId)) cleanup(true);
-    }
-
-    timeoutId = setTimeout(() => cleanup(false), SHADOW_SOURCE_LOAD_TIMEOUT_MS);
-    map.on("sourcedata", check);
-    map.on("idle", check);
-    check();
-  });
-}
-
 function _fadeShadowLayers(map, oldLayerId, newLayerId, transitionId) {
   return new Promise((resolve) => {
     const startedAt = performance.now();
@@ -342,7 +316,7 @@ function _startAnimation(map) {
   _animationRunning = true;
   document.getElementById("shadow-play").textContent = "⏸";
 
-  async function tick() {
+  function tick() {
     if (!_animationRunning) return;
     const nextIdx = (SHADOW_HOURS.indexOf(currentShadowHour) + 1) % SHADOW_HOURS.length;
     updateShadowLayer(map, SHADOW_HOURS[nextIdx]).catch((err) => console.error("Shadow update error:", err));

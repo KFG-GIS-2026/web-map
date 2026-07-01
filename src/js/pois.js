@@ -236,6 +236,10 @@ function getPOISourceSlices() {
   };
 }
 
+function usesSeparateBenchSource() {
+  return !(allClusteringEnabled && benchClusteringEnabled);
+}
+
 // Circle marker with PNG icon; solar POIs get a data-driven background color.
 function createMarkerEl(category, props) {
   const el = document.createElement("div");
@@ -460,7 +464,7 @@ function setupPOILayers(map) {
   if (allClusteringEnabled)
     addClusterLayers(map, POI_CLUSTER_LAYER_ID, POI_CLUSTER_COUNT_LAYER_ID, POI_SOURCE_ID, "#2d7a45");
 
-  if (slices.benches.length) {
+  if (usesSeparateBenchSource()) {
     map.addSource(BENCH_SOURCE_ID, createSourceOptions(slices.benches, benchClusteringEnabled));
     addMarkerProxyLayer(map, BENCH_PROXY_LAYER_ID, BENCH_SOURCE_ID);
     if (benchClusteringEnabled)
@@ -468,9 +472,28 @@ function setupPOILayers(map) {
   }
 }
 
-function updatePOISource(map) {
+function updatePOISourceData(map) {
+  const mainSource = map.getSource(POI_SOURCE_ID);
+  if (!mainSource) return false;
+
+  const slices = getPOISourceSlices();
+  const hasBenchSource = Boolean(map.getSource(BENCH_SOURCE_ID));
+  const needsBenchSource = usesSeparateBenchSource();
+
+  if (needsBenchSource && !hasBenchSource) return false;
+
+  mainSource.setData(makeFeatureCollection(slices.main));
+  if (hasBenchSource) {
+    map.getSource(BENCH_SOURCE_ID).setData(makeFeatureCollection(slices.benches));
+  }
+  return true;
+}
+
+function updatePOISource(map, options = {}) {
   if (!geojsonData) return;
-  setupPOILayers(map);
+  if (options.rebuild || !updatePOISourceData(map)) {
+    setupPOILayers(map);
+  }
   syncMarkerSolarStyles();
   syncCurrentPopupSolarValue();
 }
@@ -587,12 +610,12 @@ function initClusterControls(map) {
   benchBtn.addEventListener("click", () => {
     benchClusteringEnabled = !benchClusteringEnabled;
     syncClusterButtons();
-    updatePOISource(map);
+    updatePOISource(map, { rebuild: true });
   });
 
   allBtn.addEventListener("click", () => {
     allClusteringEnabled = !allClusteringEnabled;
     syncClusterButtons();
-    updatePOISource(map);
+    updatePOISource(map, { rebuild: true });
   });
 }

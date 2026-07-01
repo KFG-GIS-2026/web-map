@@ -149,7 +149,7 @@ input:checked + .slider::before {
   margin-top: 3px;
   font-size: 18px;
   font-weight: 800;
-  color: #1a6b3c;
+  color: #3f4642;
   letter-spacing: 0;
 }
 #sidebar h3 {
