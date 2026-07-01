@@ -59,8 +59,7 @@ function getType(props) {
 
 function initDisplayMode(map) {
   const toggle      = document.getElementById("mode-toggle");
-  const simpleLabel = document.querySelector(".mode-label:first-child");
-  const complexLabel = document.querySelector(".mode-label:last-child");
+  const mobileToggle = document.getElementById("mobile-mode-toggle");
   const shadowBar   = document.getElementById("shadow-bar");
   const shadowDateSection = document.getElementById("shadow-date-section");
   const addressSearchSection = document.getElementById("address-search-section");
@@ -80,10 +79,21 @@ function initDisplayMode(map) {
   }
 
   function setLabelState(isComplex) {
-    simpleLabel?.classList.toggle("active",   !isComplex);
-    simpleLabel?.classList.toggle("inactive",  isComplex);
-    complexLabel?.classList.toggle("active",   isComplex);
-    complexLabel?.classList.toggle("inactive", !isComplex);
+    document.querySelectorAll(".mode-label, .mobile-mode-label").forEach((label) => {
+      const isSimple = label.textContent.trim() === "Einfach";
+      const active = isSimple ? !isComplex : isComplex;
+      label.classList.toggle("active", active);
+      label.classList.toggle("inactive", !active);
+    });
+  }
+
+  function syncModeToggles(isComplex) {
+    toggle.checked = isComplex;
+    if (mobileToggle) mobileToggle.checked = isComplex;
+  }
+
+  function isMobileViewport() {
+    return window.matchMedia("(max-width: 600px)").matches;
   }
 
   function setBuildingVisibility(visibility) {
@@ -107,11 +117,15 @@ function initDisplayMode(map) {
 
   function applyMode(isComplex) {
     simpleMode = !isComplex;
-    toggle.checked = isComplex;
     setLabelState(isComplex);
+    syncModeToggles(isComplex);
 
     if (isComplex) {
-      shadowBar.style.display = "flex";
+      if (isMobileViewport()) {
+        if (!shadowBar.classList.contains("open")) shadowBar.style.display = "none";
+      } else {
+        shadowBar.style.display = "flex";
+      }
       if (shadowDateSection) shadowDateSection.style.display = "grid";
       if (addressSearchSection) addressSearchSection.style.display = "grid";
       if (solarFilterSection) solarFilterSection.style.display = "grid";
@@ -139,6 +153,7 @@ function initDisplayMode(map) {
   }
 
   toggle.addEventListener("change", () => applyMode(toggle.checked));
+  mobileToggle?.addEventListener("change", () => applyMode(mobileToggle.checked));
 
   threeDHintToggle?.addEventListener("click", () => {
     threeDHint?.classList.toggle("collapsed");
@@ -146,5 +161,6 @@ function initDisplayMode(map) {
   });
 
   applyMode(!simpleMode);
+  syncModeToggles(!simpleMode);
   syncThreeDHintToggle();
 }
