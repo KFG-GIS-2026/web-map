@@ -360,6 +360,8 @@ function initShadowControls(map) {
   const playBtn     = document.getElementById("shadow-play");
   const dateInput   = document.getElementById("shadow-date");
   const currentBtn  = document.getElementById("shadow-current");
+  const closeBtn    = document.getElementById("shadow-bar-close");
+  const shadowBar   = document.getElementById("shadow-bar");
 
   if (!slider || !toggle || !playBtn || !dateInput || !currentBtn) {
     console.warn("Shadow controls: DOM elements not found");
@@ -400,6 +402,14 @@ function initShadowControls(map) {
   toggle.addEventListener("change", () => {
     if (toggle.checked) showShadowLayer(map);
     else hideShadowLayer(map);
+  });
+
+  closeBtn?.addEventListener("click", () => {
+    _stopAnimation();
+    if (shadowBar) {
+      shadowBar.classList.remove("open");
+      shadowBar.style.display = "none";
+    }
   });
 
   _syncShadowToggle();

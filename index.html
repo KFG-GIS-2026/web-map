@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260701-9" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260702-2" />
 </head>
 <body>
 
@@ -33,77 +33,6 @@
       </button>
     </div>
 
-    <div id="address-search-section">
-      <h3>Adresse suchen</h3>
-      <form id="address-search-form" autocomplete="off">
-        <input id="address-search-input" type="search" placeholder="Straße, Hausnummer" aria-label="Adresse suchen" />
-        <button type="submit">Suchen</button>
-      </form>
-      <div id="address-search-status" role="status" aria-live="polite"></div>
-    </div>
-
-    <div id="sidebar-content">
-      <h3>Freizeit &amp; Erholung</h3>
-
-      <label class="filter-item" id="lbl-playground">
-        <input type="checkbox" class="filter-cb" data-cat="playground" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/001-slide.png" alt="" /></span>
-        <span class="filter-label">Spielplatz</span>
-      </label>
-
-      <label class="filter-item" id="lbl-park">
-        <input type="checkbox" class="filter-cb" data-cat="park" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/002-park.png" alt="" /></span>
-        <span class="filter-label">Park</span>
-      </label>
-
-      <label class="filter-item" id="lbl-bench">
-        <input type="checkbox" class="filter-cb" data-cat="bench" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/003-bank.png" alt="" /></span>
-        <span class="filter-label">Sitzbank</span>
-      </label>
-
-      <h3>Wasser</h3>
-
-      <label class="filter-item" id="lbl-drinking">
-        <input type="checkbox" class="filter-cb" data-cat="drinking" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/004-water.png" alt="" /></span>
-        <span class="filter-label">Trinkwasser</span>
-      </label>
-
-      <label class="filter-item" id="lbl-fountain">
-        <input type="checkbox" class="filter-cb" data-cat="fountain" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/007-fountain.png" alt="" /></span>
-        <span class="filter-label">Brunnen</span>
-      </label>
-
-      <h3>Gebäude</h3>
-
-      <label class="filter-item" id="lbl-toilet">
-        <input type="checkbox" class="filter-cb" data-cat="toilet" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/005-toilet.png" alt="" /></span>
-        <span class="filter-label">Toilette</span>
-      </label>
-
-      <label class="filter-item" id="lbl-church">
-        <input type="checkbox" class="filter-cb" data-cat="church" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/006-church.png" alt="" /></span>
-        <span class="filter-label">Kirche</span>
-      </label>
-
-      <label class="filter-item" id="lbl-library">
-        <input type="checkbox" class="filter-cb" data-cat="library" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/008-open-book.png" alt="" /></span>
-        <span class="filter-label">Bücherei</span>
-      </label>
-
-      <label class="filter-item" id="lbl-museum">
-        <input type="checkbox" class="filter-cb" data-cat="museum" checked />
-        <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/009-museum-art.png" alt="" /></span>
-        <span class="filter-label">Museum</span>
-      </label>
-    </div>
-
     <div id="solar-legend-section">
       <h3>Sonnenbelastung</h3>
       <p class="solar-filter-note">Die Hintergrundfarbe von Sitzbänken und Spielplätzen zeigt die aktuelle Sonnenbelastung.</p>
@@ -129,21 +58,6 @@
           <span>sehr hoch</span>
         </div>
       </div>
-    </div>
-
-    <div id="shadow-date-section">
-      <h3>
-        Zeitpunkt
-        <span class="info-help">
-          <button class="info-button" type="button" aria-label="Hinweis zum Zeitpunkt">i</button>
-          <span class="info-tooltip">der Zeitpunkt für die Schattenmodellierung und für die Solarwerte der POIs</span>
-        </span>
-      </h3>
-      <label class="shadow-date-control" for="shadow-date">
-        <span>Datum</span>
-        <select id="shadow-date" title="Datum auswählen"></select>
-      </label>
-      <button id="shadow-current" title="Auf den nächsten Zeitpunkt springen">aktuell</button>
     </div>
 
     <div id="solar-filter-section">
@@ -180,27 +94,126 @@
       </button>
     </div>
 
-    <div id="cluster-demo-section">
-      <h3>Demo</h3>
-      <button id="bench-cluster-toggle" class="cluster-toggle" type="button" aria-pressed="true">
-        Bänke: Cluster an
-      </button>
-      <button id="all-cluster-toggle" class="cluster-toggle" type="button" aria-pressed="true">
-        Cluster an
+    <div id="shadow-date-section">
+      <h3>
+        Zeitpunkt
+        <span class="info-help">
+          <button class="info-button" type="button" aria-label="Hinweis zum Zeitpunkt">i</button>
+          <span class="info-tooltip">der Zeitpunkt für die Schattenmodellierung und für die Solarwerte der POIs</span>
+        </span>
+      </h3>
+      <label class="shadow-date-control" for="shadow-date">
+        <span>Datum</span>
+        <select id="shadow-date" title="Datum auswählen"></select>
+      </label>
+      <button id="shadow-current" title="Auf den nächsten Zeitpunkt springen">aktuell</button>
+    </div>
+
+    <div id="sidebar-content">
+      <div class="category-group" data-category-cats="playground park bench">
+        <button class="category-group-toggle" type="button" aria-pressed="true">
+          <span>Freizeit &amp; Erholung</span>
+          <span class="category-group-state">ausblenden</span>
+        </button>
+        <div class="category-items">
+          <label class="filter-item" id="lbl-playground">
+            <input type="checkbox" class="filter-cb" data-cat="playground" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/001-slide.png" alt="" /></span>
+            <span class="filter-label">Spielplatz</span>
+          </label>
+
+          <label class="filter-item" id="lbl-park">
+            <input type="checkbox" class="filter-cb" data-cat="park" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/002-park.png" alt="" /></span>
+            <span class="filter-label">Park</span>
+          </label>
+
+          <label class="filter-item" id="lbl-bench">
+            <input type="checkbox" class="filter-cb" data-cat="bench" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/003-bank.png" alt="" /></span>
+            <span class="filter-label">Sitzbank</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="category-group" data-category-cats="drinking fountain toilet">
+        <button class="category-group-toggle" type="button" aria-pressed="true">
+          <span>Wasser</span>
+          <span class="category-group-state">ausblenden</span>
+        </button>
+        <div class="category-items">
+          <label class="filter-item" id="lbl-drinking">
+            <input type="checkbox" class="filter-cb" data-cat="drinking" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/004-water.png" alt="" /></span>
+            <span class="filter-label">Trinkwasser</span>
+          </label>
+
+          <label class="filter-item" id="lbl-fountain">
+            <input type="checkbox" class="filter-cb" data-cat="fountain" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/007-fountain.png" alt="" /></span>
+            <span class="filter-label">Brunnen</span>
+          </label>
+
+          <label class="filter-item" id="lbl-toilet">
+            <input type="checkbox" class="filter-cb" data-cat="toilet" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/005-toilet.png" alt="" /></span>
+            <span class="filter-label">Toilette</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="category-group" data-category-cats="church library museum">
+        <button class="category-group-toggle" type="button" aria-pressed="true">
+          <span>Gebäude</span>
+          <span class="category-group-state">ausblenden</span>
+        </button>
+        <div class="category-items">
+
+          <label class="filter-item" id="lbl-church">
+            <input type="checkbox" class="filter-cb" data-cat="church" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/006-church.png" alt="" /></span>
+            <span class="filter-label">Kirche</span>
+          </label>
+
+          <label class="filter-item" id="lbl-library">
+            <input type="checkbox" class="filter-cb" data-cat="library" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/008-open-book.png" alt="" /></span>
+            <span class="filter-label">Bücherei</span>
+          </label>
+
+          <label class="filter-item" id="lbl-museum">
+            <input type="checkbox" class="filter-cb" data-cat="museum" checked />
+            <span class="legend-icon"><img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/009-museum-art.png" alt="" /></span>
+            <span class="filter-label">Museum</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div id="cluster-control-section">
+      <button id="cluster-toggle" class="cluster-toggle" type="button" aria-pressed="true">
+        Orte beim Rauszoomen nicht zusammenfassen
       </button>
     </div>
 
-    <div id="sidebar-help-row">
-      <button id="help-open" class="sidebar-help-button" type="button">
-        <span class="sidebar-help-icon" aria-hidden="true">?</span>
-        Hilfe
-      </button>
-    </div>
+    <details id="address-search-section" class="address-search-collapsible">
+      <summary><span>Adresssuche</span></summary>
+      <form id="address-search-form" autocomplete="off">
+        <input id="address-search-input" type="search" placeholder="Straße, Hausnummer" aria-label="Adresse suchen" />
+        <button type="submit">Suchen</button>
+      </form>
+      <div id="address-search-status" role="status" aria-live="polite"></div>
+    </details>
   </div>
 
   <!-- Floating button to reopen sidebar when collapsed -->
   <button id="sidebar-open" title="Legende öffnen" aria-label="Legende öffnen">
     🗂️
+  </button>
+
+  <button id="help-open" class="floating-help-button" type="button" aria-label="Hilfe öffnen">
+    <span class="sidebar-help-icon" aria-hidden="true">?</span>
+    <span>Hilfe</span>
   </button>
 
   <div id="mobile-mode-panel" class="mobile-panel hidden" aria-hidden="true" role="region" aria-label="Modusauswahl">
@@ -341,7 +354,24 @@
     <div id="shadow-panel">
       <span id="shadow-time">12:00 Uhr</span>
       <button id="shadow-play" title="Animation starten/stoppen">▶</button>
-      <input type="range" id="shadow-slider" min="0" max="14" step="1" value="6" />
+      <div class="shadow-slider-wrap">
+        <input type="range" id="shadow-slider" min="0" max="12" step="1" value="4" />
+        <div class="shadow-slider-scale" aria-hidden="true">
+          <span data-hour="8">8</span>
+          <span></span>
+          <span></span>
+          <span data-hour="11">11</span>
+          <span></span>
+          <span></span>
+          <span data-hour="14">14</span>
+          <span></span>
+          <span></span>
+          <span data-hour="17">17</span>
+          <span></span>
+          <span></span>
+          <span data-hour="20">20</span>
+        </div>
+      </div>
     </div>
     <div id="shadow-toggle-control">
       <span class="shadow-toggle-label">Schatten</span>
@@ -354,6 +384,7 @@
         <span class="info-tooltip">Modellierter Schattenwurf zur angegeben Zeit. Der Zeitpunkt ist approximiert und kann unter "Zeitpunkt" in der Sidebar geändert werden.</span>
       </span>
     </div>
+    <button id="shadow-bar-close" type="button" title="Zeitleiste schließen" aria-label="Zeitleiste schließen">×</button>
   </div>
 
   <a id="gh-link" href="https://github.com/KFG-GIS-2026/web-map"
@@ -373,11 +404,11 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/config.js?v=20260701-9"></script>
-  <script src="src/js/boundary.js?v=20260701-9"></script>
-  <script src="src/js/shadow.js?v=20260701-9"></script>
-  <script src="src/js/pois.js?v=20260701-9"></script>
-  <script src="src/js/help.js?v=20260701-9"></script>
-  <script src="src/js/map.js?v=20260701-9"></script>
+  <script src="src/js/config.js?v=20260702-2"></script>
+  <script src="src/js/boundary.js?v=20260702-2"></script>
+  <script src="src/js/shadow.js?v=20260702-2"></script>
+  <script src="src/js/pois.js?v=20260702-2"></script>
+  <script src="src/js/help.js?v=20260702-2"></script>
+  <script src="src/js/map.js?v=20260702-2"></script>
 </body>
 </html>

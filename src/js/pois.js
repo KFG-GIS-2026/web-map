@@ -264,8 +264,8 @@ function buildPopupHTML(category, props) {
   if (props.wheelchair === "yes") extra.push("♿ Rollstuhlgerecht");
   if (props.website)
     extra.push(`<a href="${props.website}" target="_blank" style="color:#1a6b3c">🔗 Website</a>`);
-  if (props.seats) extra.push(`🪑 Sitzplätze: ${props.seats}`);
-  if (props.material) extra.push(`🪵 Material: ${props.material}`);
+  if (category.cat !== "bench" && props.seats) extra.push(`🪑 Sitzplätze: ${props.seats}`);
+  if (category.cat !== "bench" && props.material) extra.push(`🪵 Material: ${props.material}`);
   if (props.description) extra.push(`ℹ️ ${props.description}`);
 
   if (category.cat === "bench" || category.cat === "playground") {
@@ -320,6 +320,25 @@ function syncSolarActionButton() {
 
   button.setAttribute("aria-pressed", String(highHidden));
   button.textContent = highHidden ? "Alle Sonnenklassen anzeigen" : "Nur kühlere Orte anzeigen";
+}
+
+function getCategoryGroupCheckboxes(group) {
+  const cats = (group.dataset.categoryCats || "").split(/\s+/).filter(Boolean);
+  return cats
+    .map((cat) => document.querySelector(`.filter-cb[data-cat="${cat}"]`))
+    .filter(Boolean);
+}
+
+function syncCategoryGroupButtons() {
+  document.querySelectorAll(".category-group").forEach((group) => {
+    const button = group.querySelector(".category-group-toggle");
+    const state = group.querySelector(".category-group-state");
+    const checkboxes = getCategoryGroupCheckboxes(group);
+    const hasAnyChecked = checkboxes.some((cb) => cb.checked);
+
+    if (button) button.setAttribute("aria-pressed", String(hasAnyChecked));
+    if (state) state.textContent = hasAnyChecked ? "ausblenden" : "einblenden";
+  });
 }
 
 // Create all markers (initially hidden, shown via syncMarkers)
@@ -498,23 +517,14 @@ function updatePOISource(map, options = {}) {
   syncCurrentPopupSolarValue();
 }
 
-function setClusterButtonState(button, enabled, label) {
-  if (!button) return;
-  button.setAttribute("aria-pressed", String(enabled));
-  button.textContent = `${label}: Cluster ${enabled ? "an" : "aus"}`;
-}
-
 function syncClusterButtons() {
-  setClusterButtonState(
-    document.getElementById("bench-cluster-toggle"),
-    benchClusteringEnabled,
-    "Bänke"
-  );
-  setClusterButtonState(
-    document.getElementById("all-cluster-toggle"),
-    allClusteringEnabled,
-    "Cluster"
-  );
+  const button = document.getElementById("cluster-toggle");
+  if (!button) return;
+
+  button.setAttribute("aria-pressed", String(allClusteringEnabled));
+  button.textContent = allClusteringEnabled
+    ? "Orte beim Rauszoomen nicht zusammenfassen"
+    : "Orte beim Rauszoomen zusammenfassen";
 }
 
 function getRenderedClusterAtPoint(map, point) {
@@ -571,6 +581,22 @@ function loadPOIs(map) {
 function initFilterControls(map) {
   document.querySelectorAll(".filter-cb").forEach((cb) => {
     cb.addEventListener("change", () => {
+      syncCategoryGroupButtons();
+      updatePOISource(map);
+    });
+  });
+
+  document.querySelectorAll(".category-group-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+      const group = button.closest(".category-group");
+      const checkboxes = group ? getCategoryGroupCheckboxes(group) : [];
+      const shouldShow = !checkboxes.some((cb) => cb.checked);
+
+      checkboxes.forEach((cb) => {
+        cb.checked = shouldShow;
+      });
+
+      syncCategoryGroupButtons();
       updatePOISource(map);
     });
   });
@@ -597,24 +623,18 @@ function initFilterControls(map) {
   });
 
   syncSolarActionButton();
+  syncCategoryGroupButtons();
 }
 
 function initClusterControls(map) {
-  const benchBtn = document.getElementById("bench-cluster-toggle");
-  const allBtn = document.getElementById("all-cluster-toggle");
-
-  if (!benchBtn || !allBtn) return;
+  const clusterBtn = document.getElementById("cluster-toggle");
+  if (!clusterBtn) return;
 
   syncClusterButtons();
 
-  benchBtn.addEventListener("click", () => {
-    benchClusteringEnabled = !benchClusteringEnabled;
-    syncClusterButtons();
-    updatePOISource(map, { rebuild: true });
-  });
-
-  allBtn.addEventListener("click", () => {
+  clusterBtn.addEventListener("click", () => {
     allClusteringEnabled = !allClusteringEnabled;
+    benchClusteringEnabled = allClusteringEnabled;
     syncClusterButtons();
     updatePOISource(map, { rebuild: true });
   });
