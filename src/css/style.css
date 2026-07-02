@@ -1595,6 +1595,8 @@ input:checked + .slider::before {
   width: min(920px, calc(100vw - 24px));
   max-height: calc(100vh - 24px);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: #fbfdfb;
   border: 1px solid rgba(26,107,60,0.16);
   border-radius: 12px;
@@ -1647,7 +1649,11 @@ input:checked + .slider::before {
 
 .help-close-button:hover { background: #ddebe2; }
 
-.help-body { padding: 16px 18px 6px; }
+.help-body {
+  padding: 16px 18px 6px;
+  overflow-y: auto;
+  min-height: 0;
+}
 
 .help-intro {
   display: grid;
@@ -1947,6 +1953,7 @@ input:checked + .slider::before {
   display: flex;
   justify-content: flex-end;
   padding: 8px 16px 12px;
+  flex-shrink: 0;
 }
 
 .help-primary-button {

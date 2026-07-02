@@ -55,6 +55,9 @@ function buildCurrentMapLink(map) {
   params.set("z", map.getZoom().toFixed(2));
   params.set("ansicht", simpleMode ? "einfach" : "komplex");
   params.set("lang", getLanguage());
+  const popupId = typeof getCurrentPopupFeatureId === "function" ? getCurrentPopupFeatureId() : "";
+  if (popupId) params.set("poi", popupId);
+  else params.delete("poi");
   return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 }
 

@@ -477,6 +477,10 @@ function syncCurrentPopupHTML() {
   currentPopup.setHTML(buildEnhancedPopupHTML(category, currentPopupFeature.properties, currentPopupMap));
 }
 
+function getCurrentPopupFeatureId() {
+  return currentPopupFeature?.properties?._id || "";
+}
+
 function syncMarkerSolarStyles() {
   allMarkers.forEach(({ el, feature }) => {
     el.style.backgroundColor = getSolarMarkerColor(feature.properties);

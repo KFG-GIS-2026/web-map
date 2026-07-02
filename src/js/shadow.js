@@ -19,6 +19,7 @@ let _shadowSlot       = 0;
 let _activeShadowLayerId = null;
 let _activeShadowSourceId = null;
 let _shadowTransitionId = 0;
+let _animationStartHour = null;
 
 const SHADOW_HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 8..20
 const SHADOW_OPACITY = 0.55;
@@ -347,13 +348,22 @@ const ANIMATION_SPEED = 1000;
 function _startAnimation(map) {
   if (_animationRunning) return;
   _animationRunning = true;
+  _animationStartHour = currentShadowHour;
   document.getElementById("shadow-play").textContent = "⏸";
 
   function tick() {
     if (!_animationRunning) return;
-    const nextIdx = (SHADOW_HOURS.indexOf(currentShadowHour) + 1) % SHADOW_HOURS.length;
-    updateShadowLayer(map, SHADOW_HOURS[nextIdx]).catch((err) => console.error("Shadow update error:", err));
-    if (_animationRunning) _animationTimer = setTimeout(tick, ANIMATION_SPEED);
+    const currentIdx = SHADOW_HOURS.indexOf(currentShadowHour);
+    const nextHour = currentIdx < 0 || currentIdx >= SHADOW_HOURS.length - 1
+      ? _animationStartHour
+      : SHADOW_HOURS[currentIdx + 1];
+    const shouldStopAfterUpdate = nextHour === _animationStartHour && currentShadowHour !== _animationStartHour;
+    updateShadowLayer(map, nextHour)
+      .then(() => {
+        if (shouldStopAfterUpdate) _stopAnimation();
+      })
+      .catch((err) => console.error("Shadow update error:", err));
+    if (_animationRunning && !shouldStopAfterUpdate) _animationTimer = setTimeout(tick, ANIMATION_SPEED);
   }
 
   _animationTimer = setTimeout(tick, ANIMATION_SPEED);
@@ -363,6 +373,7 @@ function _stopAnimation() {
   _animationRunning = false;
   clearTimeout(_animationTimer);
   _animationTimer = null;
+  _animationStartHour = null;
   const btn = document.getElementById("shadow-play");
   if (btn) btn.textContent = "▶";
 }
