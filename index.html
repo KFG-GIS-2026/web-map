@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260702-9" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260702-16" />
 </head>
 <body>
 
@@ -41,7 +41,7 @@
           <span class="info-tooltip">Die Farben zeigen den Solarwert zum gewählten Zeitpunkt. Blau steht für geringe, Rot für sehr hohe Sonnenbelastung.</span>
         </span>
       </h3>
-      <p class="solar-filter-note">Die Hintergrundfarbe von Sitzbänken und Spielplätzen zeigt die aktuelle Sonnenbelastung.</p>
+      <p class="solar-filter-note">Die Hintergrundfarbe von Parks, Sitzbänken und Spielplätzen zeigt die aktuelle Sonnenbelastung.</p>
       <div class="simple-solar-legend">
         <div class="simple-solar-legend-item">
           <span class="simple-solar-swatch" style="background:#2F80ED"></span>
@@ -74,7 +74,7 @@
           <span class="info-tooltip">Die Farben zeigen den Solarwert zum gewählten Zeitpunkt. Blau steht für geringe, Rot für sehr hohe Sonnenbelastung.</span>
         </span>
       </h3>
-      <p class="solar-filter-note">Die Farben zeigen die aktuelle Sonnenbelastung von Sitzbänken und Spielplätzen: Blau ist kühler, Rot ist belasteter.</p>
+      <p class="solar-filter-note">Die Farben zeigen die aktuelle Sonnenbelastung von Parks, Sitzbänken und Spielplätzen: Blau ist kühler, Rot ist belasteter.</p>
       <div class="solar-class-row" aria-label="Sonnenbelastungsklassen auswählen">
         <label class="solar-class-chip" title="sehr geringe Sonnenbelastung">
           <input type="checkbox" class="solar-class-cb" data-solar-class="0" checked />
@@ -153,6 +153,7 @@
           <span>Wasser</span>
           <span class="category-group-state">ausblenden</span>
         </button>
+        <p class="sidebar-disclaimer">Alle Angaben ohne Gewähr. Die Angaben basieren auf öffentlichen Daten.</p>
         <div class="category-items">
           <label class="filter-item" id="lbl-drinking">
             <input type="checkbox" class="filter-cb" data-cat="drinking" checked />
@@ -204,7 +205,7 @@
 
     <div id="cluster-control-section">
       <button id="cluster-toggle" class="cluster-toggle" type="button" aria-pressed="true">
-        Orte beim Rauszoomen nicht zusammenfassen
+        Orte beim Zoomen nicht zusammenfassen
       </button>
     </div>
 
@@ -228,6 +229,22 @@
     <span>Hilfe</span>
   </button>
 
+  <button id="shadow-bar-open" class="floating-shadow-button hidden" type="button" aria-label="Zeitregler öffnen">
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <circle cx="8" cy="8" r="5" />
+      <path d="M8 5v3l2 1" />
+    </svg>
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M5 15h14" />
+      <path d="M7 18h10" />
+      <path d="M9 21h6" />
+      <path d="M17 11a5 5 0 1 0-9.6 2" />
+      <path d="M19 4l1.2-1.2" />
+      <path d="M20 9h2" />
+      <path d="M14 2V0" />
+    </svg>
+  </button>
+
   <div id="mobile-mode-panel" class="mobile-panel hidden" aria-hidden="true" role="region" aria-label="Modusauswahl">
     <div class="mobile-panel-header">Modus</div>
     <div class="mobile-mode-switch-row">
@@ -247,6 +264,33 @@
   </div>
   
   <div id="map"></div>
+
+  <div id="map-action-controls" aria-label="Kartenaktionen">
+    <button id="map-print-button" class="map-action-button" type="button" aria-pressed="false" title="Drucken" aria-label="Drucken">
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M7 8V3h10v5" />
+        <path d="M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+        <path d="M7 14h10v7H7z" />
+        <path d="M17 12h.01" />
+      </svg>
+    </button>
+    <button id="map-copy-link-button" class="map-action-button" type="button" title="Link kopieren" aria-label="Link kopieren">
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L10.9 5.03" />
+        <path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07l1.22-1.22" />
+      </svg>
+    </button>
+    <span id="map-action-status" role="status" aria-live="polite"></span>
+  </div>
+
+  <div id="print-selection-layer" hidden aria-hidden="true">
+    <div id="print-selection-box" aria-hidden="true"></div>
+    <div class="print-selection-panel">
+      <span id="print-selection-hint">Bereich in der Karte aufziehen</span>
+      <button id="print-selection-confirm" type="button" disabled>Auswahl drucken</button>
+      <button id="print-selection-cancel" type="button">Abbrechen</button>
+    </div>
+  </div>
 
   <div id="help-modal" class="help-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="help-title">
     <div class="help-backdrop" data-help-close></div>
@@ -275,6 +319,7 @@
             <p>
               Die Karte hilft dabei, kühle Orte, Wasserstellen, Sitzmöglichkeiten und öffentliche Orte in Neckargemünd zu finden. In der Sidebar können die Symbole ein- und ausgeblendet werden; ein Klick auf einen Punkt öffnet Detailinformationen.
             </p>
+            <p class="help-disclaimer">Alle Angaben ohne Gewähr. Die Angaben basieren auf öffentlichen Daten.</p>
             <div class="help-symbol-strip" aria-label="Beispiele für Kartensymbole">
               <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/001-slide.png" alt="Spielplatz" />
               <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/003-bank.png" alt="Sitzbank" />
@@ -393,7 +438,7 @@
       </label>
       <span class="info-help">
         <button class="info-button" type="button" aria-label="Hinweis zum Schatten">i</button>
-        <span class="info-tooltip">Modellierter Schattenwurf zur angegeben Zeit. Der Zeitpunkt ist approximiert und kann unter "Zeitpunkt" in der Sidebar geändert werden.</span>
+        <span class="info-tooltip">Modellierter Schattenwurf zur angegebenen Zeit. Angenäherte Werte bei wolkenfreiem Himmel. Der Zeitpunkt kann unter "Zeitpunkt" in der Sidebar geändert werden.</span>
       </span>
     </div>
     <button id="shadow-bar-close" type="button" title="Zeitleiste schließen" aria-label="Zeitleiste schließen">×</button>
@@ -416,11 +461,11 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/config.js?v=20260702-9"></script>
-  <script src="src/js/boundary.js?v=20260702-9"></script>
-  <script src="src/js/shadow.js?v=20260702-9"></script>
-  <script src="src/js/pois.js?v=20260702-9"></script>
-  <script src="src/js/help.js?v=20260702-9"></script>
-  <script src="src/js/map.js?v=20260702-9"></script>
+  <script src="src/js/config.js?v=20260702-16"></script>
+  <script src="src/js/boundary.js?v=20260702-16"></script>
+  <script src="src/js/shadow.js?v=20260702-16"></script>
+  <script src="src/js/pois.js?v=20260702-16"></script>
+  <script src="src/js/help.js?v=20260702-16"></script>
+  <script src="src/js/map.js?v=20260702-16"></script>
 </body>
 </html>

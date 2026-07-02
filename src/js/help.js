@@ -18,6 +18,13 @@ function initHelpModal() {
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
     modal.classList.add("is-open");
+    dialog.scrollTop = 0;
+    const body = dialog.querySelector(".help-body");
+    if (body) body.scrollTop = 0;
+    requestAnimationFrame(() => {
+      dialog.scrollTop = 0;
+      if (body) body.scrollTop = 0;
+    });
     dialog.focus();
   }
 

@@ -5,14 +5,35 @@
 const pmtilesProtocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", pmtilesProtocol.tile);
 
+function parseInitialMapState() {
+  const params = new URLSearchParams(window.location.search);
+  const lngParam = params.get("lng");
+  const latParam = params.get("lat");
+  const lng = lngParam === null ? NaN : Number(lngParam);
+  const lat = latParam === null ? NaN : Number(latParam);
+  const zoomParam = params.get("z") ?? params.get("zoom");
+  const zoom = zoomParam === null ? NaN : Number(zoomParam);
+  const rawMode = (params.get("ansicht") || params.get("mode") || "").toLowerCase();
+  const mode = rawMode === "komplex" || rawMode === "complex" ? "complex" : "simple";
+
+  return {
+    center: Number.isFinite(lng) && Number.isFinite(lat) ? [lng, lat] : [8.807, 49.39],
+    zoom: Number.isFinite(zoom) ? zoom : 13,
+    mode
+  };
+}
+
+const INITIAL_MAP_STATE = parseInitialMapState();
+window.__INITIAL_MAP_STATE = INITIAL_MAP_STATE;
+
 const map = new maplibregl.Map({
   container: "map",
   style: MAP_STYLE,
-  center: [8.8, 49.39],
-  zoom: 13,
+  center: INITIAL_MAP_STATE.center,
+  zoom: INITIAL_MAP_STATE.zoom,
   pitch: SIMPLE_CAMERA.pitch,
   bearing: SIMPLE_CAMERA.bearing,
-  canvasContextAttributes: { antialias: true }
+  canvasContextAttributes: { antialias: true, preserveDrawingBuffer: true }
 });
 
 map.addControl(
@@ -23,6 +44,189 @@ map.addControl(
   new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }),
   "top-right"
 );
+
+function buildCurrentMapLink(map) {
+  const center = map.getCenter();
+  const params = new URLSearchParams(window.location.search);
+  params.set("lng", center.lng.toFixed(6));
+  params.set("lat", center.lat.toFixed(6));
+  params.set("z", map.getZoom().toFixed(2));
+  params.set("ansicht", simpleMode ? "einfach" : "komplex");
+  return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+}
+
+function setMapActionStatus(message) {
+  const status = document.getElementById("map-action-status");
+  if (!status) return;
+  status.textContent = message || "";
+  if (message) window.setTimeout(() => { status.textContent = ""; }, 2200);
+}
+
+async function copyCurrentMapLink(map) {
+  const url = buildCurrentMapLink(map);
+  try {
+    await navigator.clipboard.writeText(url);
+    setMapActionStatus("Link kopiert");
+  } catch (err) {
+    const textarea = document.createElement("textarea");
+    textarea.value = url;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+    setMapActionStatus("Link kopiert");
+  }
+}
+
+function initMapActionControls(map) {
+  const printButton = document.getElementById("map-print-button");
+  const copyButton = document.getElementById("map-copy-link-button");
+  const layer = document.getElementById("print-selection-layer");
+  const box = document.getElementById("print-selection-box");
+  const confirmButton = document.getElementById("print-selection-confirm");
+  const cancelButton = document.getElementById("print-selection-cancel");
+  const hint = document.getElementById("print-selection-hint");
+  const mapContainer = map.getContainer();
+
+  if (!printButton || !copyButton || !layer || !box || !confirmButton || !cancelButton) return;
+
+  let start = null;
+  let selection = null;
+
+  function setBox(rect) {
+    box.style.left = `${rect.left}px`;
+    box.style.top = `${rect.top}px`;
+    box.style.width = `${rect.width}px`;
+    box.style.height = `${rect.height}px`;
+    confirmButton.disabled = rect.width < 32 || rect.height < 32;
+  }
+
+  function resetSelection() {
+    selection = null;
+    start = null;
+    setBox({ left: 0, top: 0, width: 0, height: 0 });
+    confirmButton.disabled = true;
+    if (hint) hint.textContent = "Bereich in der Karte aufziehen";
+  }
+
+  function enterPrintSelection() {
+    resetSelection();
+    layer.hidden = false;
+    layer.setAttribute("aria-hidden", "false");
+    printButton.setAttribute("aria-pressed", "true");
+    map.dragPan.disable();
+  }
+
+  function exitPrintSelection() {
+    layer.hidden = true;
+    layer.setAttribute("aria-hidden", "true");
+    printButton.setAttribute("aria-pressed", "false");
+    if (!map.dragPan.isEnabled()) map.dragPan.enable();
+    resetSelection();
+  }
+
+  function pointFromEvent(event) {
+    const rect = mapContainer.getBoundingClientRect();
+    return {
+      x: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
+      y: Math.max(0, Math.min(rect.height, event.clientY - rect.top))
+    };
+  }
+
+  function rectFromPoints(a, b) {
+    const left = Math.min(a.x, b.x);
+    const top = Math.min(a.y, b.y);
+    return {
+      left,
+      top,
+      width: Math.abs(a.x - b.x),
+      height: Math.abs(a.y - b.y)
+    };
+  }
+
+  function printSelection() {
+    if (!selection || selection.width < 32 || selection.height < 32) return;
+
+    const printRect = { ...selection };
+    const mapRect = mapContainer.getBoundingClientRect();
+    const root = document.documentElement;
+
+    exitPrintSelection();
+    root.style.setProperty("--print-map-width", `${mapRect.width.toFixed(2)}px`);
+    root.style.setProperty("--print-map-height", `${mapRect.height.toFixed(2)}px`);
+    root.style.setProperty("--print-map-left", `${(-printRect.left).toFixed(2)}px`);
+    root.style.setProperty("--print-map-top", `${(-printRect.top).toFixed(2)}px`);
+    root.style.setProperty("--print-selection-width", `${printRect.width.toFixed(2)}px`);
+    root.style.setProperty("--print-selection-height", `${printRect.height.toFixed(2)}px`);
+    document.body.classList.add("map-print-active");
+
+    let printStarted = false;
+    let restored = false;
+
+    const restoreAfterPrint = () => {
+      if (restored) return;
+      restored = true;
+      window.removeEventListener("afterprint", restoreAfterPrint);
+      document.body.classList.remove("map-print-active");
+      root.style.removeProperty("--print-map-width");
+      root.style.removeProperty("--print-map-height");
+      root.style.removeProperty("--print-map-left");
+      root.style.removeProperty("--print-map-top");
+      root.style.removeProperty("--print-selection-width");
+      root.style.removeProperty("--print-selection-height");
+    };
+
+    const startPrint = () => {
+      if (printStarted) return;
+      printStarted = true;
+      window.addEventListener("afterprint", restoreAfterPrint, { once: true });
+      window.print();
+      window.setTimeout(() => {
+        if (!document.body.classList.contains("map-print-active")) return;
+        restoreAfterPrint();
+      }, 2000);
+    };
+
+    requestAnimationFrame(() => window.setTimeout(startPrint, 120));
+  }
+
+  copyButton.addEventListener("click", () => copyCurrentMapLink(map));
+  printButton.addEventListener("click", enterPrintSelection);
+  cancelButton.addEventListener("click", exitPrintSelection);
+  confirmButton.addEventListener("click", printSelection);
+
+  layer.addEventListener("pointerdown", (event) => {
+    if (event.target.closest(".print-selection-panel")) return;
+    layer.setPointerCapture(event.pointerId);
+    start = pointFromEvent(event);
+    selection = { left: start.x, top: start.y, width: 0, height: 0 };
+    setBox(selection);
+    if (hint) hint.textContent = "Loslassen und Auswahl drucken";
+  });
+
+  layer.addEventListener("pointermove", (event) => {
+    if (!start) return;
+    selection = rectFromPoints(start, pointFromEvent(event));
+    setBox(selection);
+  });
+
+  layer.addEventListener("pointerup", (event) => {
+    if (!start) return;
+    selection = rectFromPoints(start, pointFromEvent(event));
+    setBox(selection);
+    start = null;
+    if (hint) hint.textContent = confirmButton.disabled
+      ? "Bereich etwas groesser aufziehen"
+      : "Auswahl drucken oder abbrechen";
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !layer.hidden) exitPrintSelection();
+  });
+}
 
 // ── 3D Buildings ──────────────────────────────────────────
 function add3DBuildings() {
@@ -343,6 +547,7 @@ map.on("load", () => {
   addBoundaryMask().then(() => {
     add3DBuildings();
     initSidebar();
+    initMapActionControls(map);
     initAddressSearch(map);
     initShadowControls(map);
     initDisplayMode(map);

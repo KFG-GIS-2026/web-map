@@ -150,6 +150,7 @@ function _rebuildShadowSourceLegacy(map) {
       id: "shadow-layer",
       type: "raster",
       source: "shadow",
+      minzoom: SHADOW_MIN_ZOOM,
       paint: { "raster-opacity": 0.55, "raster-fade-duration": 0 }
     },
     beforeLayerId
@@ -183,6 +184,7 @@ async function _rebuildShadowSource(map, options = {}) {
       id: layerId,
       type: "raster",
       source: sourceId,
+      minzoom: SHADOW_MIN_ZOOM,
       paint: { "raster-opacity": fade && wasVisible ? 0 : SHADOW_OPACITY, "raster-fade-duration": 0 }
     },
     _getShadowBeforeLayerId(map)
@@ -338,6 +340,7 @@ function _stopAnimation() {
 
 function showShadowLayer(map) {
   _shadowVisible = true;
+  if (typeof ensureShadowMinimumZoom === "function") ensureShadowMinimumZoom(map);
   _getShadowLayerIds(map).forEach((layerId) => {
     map.setLayoutProperty(layerId, "visibility", "visible");
   });
@@ -361,6 +364,7 @@ function initShadowControls(map) {
   const dateInput   = document.getElementById("shadow-date");
   const currentBtn  = document.getElementById("shadow-current");
   const closeBtn    = document.getElementById("shadow-bar-close");
+  const openBtn     = document.getElementById("shadow-bar-open");
   const shadowBar   = document.getElementById("shadow-bar");
 
   if (!slider || !toggle || !playBtn || !dateInput || !currentBtn) {
@@ -410,6 +414,17 @@ function initShadowControls(map) {
       shadowBar.classList.remove("open");
       shadowBar.style.display = "none";
     }
+    if (!simpleMode && !window.matchMedia("(max-width: 600px)").matches) {
+      openBtn?.classList.remove("hidden");
+    }
+  });
+
+  openBtn?.addEventListener("click", () => {
+    if (shadowBar) {
+      shadowBar.classList.remove("open");
+      shadowBar.style.display = window.matchMedia("(max-width: 600px)").matches ? "none" : "flex";
+    }
+    openBtn.classList.add("hidden");
   });
 
   _syncShadowToggle();

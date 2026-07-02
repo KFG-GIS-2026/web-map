@@ -319,6 +319,13 @@ input:checked + .slider::before {
   line-height: 1.35;
 }
 
+.sidebar-disclaimer {
+  margin: -1px 2px 3px;
+  color: #8a938d;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
 .solar-class-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -540,18 +547,21 @@ input:checked + .slider::before {
   z-index: 24;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 8px 13px 8px 9px;
+  justify-content: center;
+  gap: 6px;
+  min-width: 72px;
+  height: 29px;
+  min-height: 29px;
+  padding: 0 9px 0 6px;
   border: 1px solid rgba(26,107,60,0.18);
-  border-radius: 10px;
+  border-radius: 4px;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(8px);
   color: #155c32;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 850;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.3);
   transition: background .15s, box-shadow .15s, transform .1s;
 }
 
@@ -568,13 +578,60 @@ input:checked + .slider::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 19px;
+  height: 19px;
   border-radius: 50%;
   background: #1a6b3c;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 850;
   line-height: 1;
+}
+
+.floating-shadow-button {
+  position: absolute;
+  left: 50%;
+  bottom: 56px;
+  z-index: 24;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 29px;
+  min-height: 29px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(26,107,60,0.18);
+  border-radius: 4px;
+  padding: 0;
+  background: rgba(255,255,255,0.96);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+  color: #155c32;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, transform .1s;
+}
+
+.floating-shadow-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.floating-shadow-button:hover {
+  background: #e6f2ea;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+
+.floating-shadow-button:active {
+  transform: translateX(-50%) translateY(1px);
+}
+
+.floating-shadow-button.hidden {
+  display: none;
 }
 
 /* Close (X) button inside sidebar header */
@@ -887,6 +944,150 @@ input:checked + .slider::before {
 
 /* ── Navigation controls: top-right ── */
 .maplibregl-ctrl-top-right { top: 10px; right: 10px; }
+
+#map-action-controls {
+  position: absolute;
+  right: 14px;
+  bottom: 94px;
+  z-index: 24;
+  width: 72px;
+  display: inline-flex;
+  align-items: stretch;
+  overflow: visible;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+}
+
+.map-action-button {
+  flex: 1 1 0;
+  width: 36px;
+  height: 29px;
+  border: none;
+  border-radius: 0;
+  background: #fff;
+  color: #333;
+  box-shadow: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  transition: background .15s, color .15s;
+}
+
+.map-action-button + .map-action-button {
+  border-left: 1px solid #ddd;
+}
+
+.map-action-button:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.map-action-button:nth-child(2) {
+  border-radius: 0 4px 4px 0;
+}
+
+.map-action-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-action-button:hover,
+.map-action-button[aria-pressed="true"] {
+  background: #f2f2f2;
+  color: #000;
+}
+
+#map-action-status {
+  position: absolute;
+  top: 0;
+  right: calc(100% + 8px);
+  min-width: max-content;
+  padding: 7px 9px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.96);
+  color: #155c32;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14);
+  pointer-events: none;
+}
+
+#map-action-status:empty {
+  display: none;
+}
+
+#print-selection-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  background: rgba(15,24,20,0.18);
+  cursor: crosshair;
+}
+
+#print-selection-layer[hidden] {
+  display: none;
+}
+
+#print-selection-box {
+  position: absolute;
+  border: 2px solid #1a6b3c;
+  background: rgba(255,255,255,0.22);
+  box-shadow: 0 0 0 9999px rgba(15,24,20,0.26);
+  pointer-events: none;
+}
+
+.print-selection-panel {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.97);
+  border: 1px solid rgba(26,107,60,0.14);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  cursor: default;
+}
+
+#print-selection-hint {
+  color: #415047;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.print-selection-panel button {
+  min-height: 30px;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 10px;
+  background: #1a6b3c;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.print-selection-panel button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+#print-selection-cancel {
+  background: #eef2ef;
+  color: #415047;
+}
 
 #three-d-hint {
   position: absolute;
@@ -1415,6 +1616,12 @@ input:checked + .slider::before {
   line-height: 1.55;
 }
 
+.help-disclaimer {
+  margin-top: 8px !important;
+  color: #7a837d !important;
+  font-size: 13px !important;
+}
+
 .help-map-visual {
   position: relative;
   height: 210px;
@@ -1716,6 +1923,48 @@ input:checked + .slider::before {
 }
 #gh-link:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
 
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  html:has(body.map-print-active),
+  body.map-print-active {
+    width: var(--print-selection-width);
+    height: var(--print-selection-height);
+    overflow: hidden !important;
+  }
+
+  #sidebar,
+  #sidebar-open,
+  #mode-switch-container,
+  #map-action-controls,
+  #print-selection-layer,
+  #help-open,
+  #help-modal,
+  #mobile-action-bar,
+  #mobile-mode-panel,
+  #three-d-hint,
+  #shadow-bar,
+  #shadow-bar-open,
+  #gh-link,
+  .maplibregl-control-container {
+    display: none !important;
+  }
+
+  #map {
+    position: fixed;
+    left: var(--print-map-left, 0);
+    top: var(--print-map-top, 0);
+    width: var(--print-map-width, 100vw);
+    height: var(--print-map-height, 100vh);
+  }
+}
+
 /* ============================================================
    Responsive – mobile (max-width: 600px)
    ============================================================ */
@@ -1736,6 +1985,15 @@ input:checked + .slider::before {
   .floating-help-button {
     right: 10px;
     bottom: 78px;
+  }
+
+  #map-action-controls {
+    right: 10px;
+    bottom: 114px;
+  }
+
+  .floating-shadow-button {
+    display: none !important;
   }
 
   /* Re-open button: top-left corner */

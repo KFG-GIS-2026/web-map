@@ -12,6 +12,10 @@ const SOLAR_CLASS_SCHEMES = {
   playground: {
     breaks: [100, 300, 450, 600],
     ranges: ["bis 100", "100-300", "300-450", "450-600", "ueber 600"]
+  },
+  park: {
+    breaks: [100, 300, 450, 600],
+    ranges: ["bis 100", "100-300", "300-450", "450-600", "ueber 600"]
   }
 };
 const SOLAR_CLASS_COLORS = ["#2F80ED", "#35C4B5", "#F2C94C", "#F2994A", "#EB5757"];
@@ -118,7 +122,7 @@ function hasSolarValue(props) {
 }
 
 function shouldShowSolarValue(props) {
-  return props._cat === "bench" || props._cat === "playground";
+  return props._cat === "bench" || props._cat === "playground" || props._cat === "park";
 }
 
 function getSolarClassInfo(props) {
@@ -268,7 +272,7 @@ function buildPopupHTML(category, props) {
   if (category.cat !== "bench" && props.material) extra.push(`🪵 Material: ${props.material}`);
   if (props.description) extra.push(`ℹ️ ${props.description}`);
 
-  if (category.cat === "bench" || category.cat === "playground") {
+  if (category.cat === "bench" || category.cat === "playground" || category.cat === "park") {
     extra.push(getSolarPopupHTML(props));
   }
 
@@ -523,8 +527,8 @@ function syncClusterButtons() {
 
   button.setAttribute("aria-pressed", String(allClusteringEnabled));
   button.textContent = allClusteringEnabled
-    ? "Orte beim Rauszoomen nicht zusammenfassen"
-    : "Orte beim Rauszoomen zusammenfassen";
+    ? "Orte beim Zoomen nicht zusammenfassen"
+    : "Orte beim Zoomen zusammenfassen";
 }
 
 function getRenderedClusterAtPoint(map, point) {

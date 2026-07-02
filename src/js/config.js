@@ -2,10 +2,11 @@
 // config.js – shared configuration and type definitions
 // ============================================================
 
-let simpleMode = false;
+let simpleMode = true;
 
 const COMPLEX_CAMERA = { pitch: 0, bearing: 0 };
 const SIMPLE_CAMERA  = { pitch: 0, bearing: 0 };
+const SHADOW_MIN_ZOOM = 15;
 
 // Base map style: OpenFreeMap bright (no API key required, OSM data)
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/bright";
@@ -47,6 +48,16 @@ function symbolUrl(filename) { return `${DATA_BASE_URL}/poi_symbols/${filename}`
 function boundaryUrl(filename) { return `${DATA_BASE_URL}/boundary/${filename}`; }
 function shadowUrl(filename) { return `${DATA_BASE_URL}/shadows/${filename}`; }
 
+function ensureShadowMinimumZoom(map) {
+  if (!map || map.getZoom() >= SHADOW_MIN_ZOOM) return;
+  map.easeTo({ zoom: SHADOW_MIN_ZOOM, duration: 500 });
+}
+
+function getInitialViewMode() {
+  const stateMode = window.__INITIAL_MAP_STATE?.mode;
+  return stateMode === "complex" ? "complex" : "simple";
+}
+
 // ── Display-mode helpers (used by config + map.js) ────────
 
 const FALLBACK_TYPE = { key: "other", emoji: "📍", label: "Ort", cat: "other", color: "#607D8B" };
@@ -61,6 +72,7 @@ function initDisplayMode(map) {
   const toggle      = document.getElementById("mode-toggle");
   const mobileToggle = document.getElementById("mobile-mode-toggle");
   const shadowBar   = document.getElementById("shadow-bar");
+  const shadowBarOpen = document.getElementById("shadow-bar-open");
   const shadowDateSection = document.getElementById("shadow-date-section");
   const addressSearchSection = document.getElementById("address-search-section");
   const solarFilterSection = document.getElementById("solar-filter-section");
@@ -127,6 +139,7 @@ function initDisplayMode(map) {
       } else {
         shadowBar.style.display = "flex";
       }
+      shadowBarOpen?.classList.add("hidden");
       if (shadowDateSection) shadowDateSection.style.display = "grid";
       if (addressSearchSection) addressSearchSection.style.display = "block";
       if (solarFilterSection) solarFilterSection.style.display = "grid";
@@ -139,6 +152,7 @@ function initDisplayMode(map) {
       setMapPerspective(COMPLEX_CAMERA);
     } else {
       shadowBar.style.display = "none";
+      shadowBarOpen?.classList.add("hidden");
       if (shadowDateSection) shadowDateSection.style.display = "none";
       if (addressSearchSection) addressSearchSection.style.display = "none";
       if (solarFilterSection) solarFilterSection.style.display = "none";
@@ -163,7 +177,8 @@ function initDisplayMode(map) {
     syncThreeDHintToggle();
   });
 
-  applyMode(!simpleMode);
-  syncModeToggles(!simpleMode);
+  const initialComplex = getInitialViewMode() === "complex";
+  applyMode(initialComplex);
+  syncModeToggles(initialComplex);
   syncThreeDHintToggle();
 }
