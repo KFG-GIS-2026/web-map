@@ -354,7 +354,7 @@ function createMarkers(map) {
     if (!category) return;
 
     const el    = createMarkerEl(category, f.properties);
-    const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: false })
+    const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: true })
       .setHTML(buildPopupHTML(category, f.properties));
 
     const marker = new maplibregl.Marker({ element: el, anchor: "center" })
