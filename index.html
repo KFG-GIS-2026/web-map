@@ -5,20 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260702-16" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260702-37" />
 </head>
 <body>
 
 
 <div id="mode-switch-container">
-  <span class="mode-label inactive">Einfach</span>
+  <span class="mode-label inactive" data-mode="simple">Einfach</span>
 
   <label class="switch">
     <input type="checkbox" id="mode-toggle">
     <span class="slider"></span>
   </label>
 
-  <span class="mode-label active">Komplex</span>
+  <span class="mode-label active" data-mode="complex">Komplex</span>
 </div>
 
   <!-- ── Sidebar ── -->
@@ -35,13 +35,13 @@
 
     <div id="solar-legend-section">
       <h3>
-        Sonnenbelastung
+        <span class="section-title-text">Sonnenbelastung</span>
         <span class="info-help">
           <button class="info-button" type="button" aria-label="Hinweis zur Sonnenbelastung">i</button>
-          <span class="info-tooltip">Die Farben zeigen den Solarwert zum gewählten Zeitpunkt. Blau steht für geringe, Rot für sehr hohe Sonnenbelastung.</span>
+          <span class="info-tooltip">In der einfachen Ansicht zeigen die Farben den Tagesdurchschnitt für den zeitlich passendsten Stichtag. Datum und Uhrzeit können in der komplexen Ansicht genauer eingestellt werden.</span>
         </span>
       </h3>
-      <p class="solar-filter-note">Die Hintergrundfarbe von Parks, Sitzbänken und Spielplätzen zeigt die aktuelle Sonnenbelastung.</p>
+      <p class="solar-filter-note" id="simple-solar-date-note">Die Hintergrundfarbe von Parks, Sitzbänken und Spielplätzen zeigt den Tagesdurchschnitt der Sonnenbelastung.</p>
       <div class="simple-solar-legend">
         <div class="simple-solar-legend-item">
           <span class="simple-solar-swatch" style="background:#2F80ED"></span>
@@ -68,10 +68,10 @@
 
     <div id="solar-filter-section">
       <h3>
-        Sonnenbelastung
+        <span class="section-title-text">Sonnenbelastung</span>
         <span class="info-help">
           <button class="info-button" type="button" aria-label="Hinweis zur Sonnenbelastung">i</button>
-          <span class="info-tooltip">Die Farben zeigen den Solarwert zum gewählten Zeitpunkt. Blau steht für geringe, Rot für sehr hohe Sonnenbelastung.</span>
+          <span class="info-tooltip">Die Farben zeigen den Solarwert zum gewählten Datum und zur gewählten Uhrzeit. Blau steht für geringe, Rot für sehr hohe Sonnenbelastung.</span>
         </span>
       </h3>
       <p class="solar-filter-note">Die Farben zeigen die aktuelle Sonnenbelastung von Parks, Sitzbänken und Spielplätzen: Blau ist kühler, Rot ist belasteter.</p>
@@ -108,7 +108,7 @@
 
     <div id="shadow-date-section">
       <h3>
-        Zeitpunkt
+        <span class="section-title-text">Zeitpunkt</span>
         <span class="info-help">
           <button class="info-button" type="button" aria-label="Hinweis zum Zeitpunkt">i</button>
           <span class="info-tooltip">der Zeitpunkt für die Schattenmodellierung und für die Solarwerte der POIs</span>
@@ -118,7 +118,7 @@
         <span>Datum</span>
         <select id="shadow-date" title="Datum auswählen"></select>
       </label>
-      <button id="shadow-current" title="Auf den nächsten Zeitpunkt springen">aktuell</button>
+      <button id="shadow-current" title="Auf den zeitlich passendsten Zeitpunkt springen">aktuell</button>
     </div>
 
     <div id="sidebar-content">
@@ -224,12 +224,21 @@
     🗂️
   </button>
 
+  <div id="language-control" class="floating-language-control" role="group" aria-label="Sprache auswählen">
+    <button class="language-option" type="button" data-lang="de" title="Deutsch" aria-label="Deutsch">
+      <span class="flag-icon flag-de" aria-hidden="true"></span>
+    </button>
+    <button class="language-option" type="button" data-lang="en" title="English" aria-label="English">
+      <span class="flag-icon flag-gb" aria-hidden="true"></span>
+    </button>
+  </div>
+
   <button id="help-open" class="floating-help-button" type="button" aria-label="Hilfe öffnen">
     <span class="sidebar-help-icon" aria-hidden="true">?</span>
     <span>Hilfe</span>
   </button>
 
-  <button id="shadow-bar-open" class="floating-shadow-button hidden" type="button" aria-label="Zeitregler öffnen">
+  <button id="shadow-bar-open" class="floating-shadow-button hidden" type="button" aria-label="Zeit- und Schattensteuerung öffnen" title="Zeit- und Schattensteuerung öffnen" data-tooltip="Zeit- und Schattensteuerung öffnen">
     <svg aria-hidden="true" viewBox="0 0 24 24">
       <circle cx="8" cy="8" r="5" />
       <path d="M8 5v3l2 1" />
@@ -248,12 +257,12 @@
   <div id="mobile-mode-panel" class="mobile-panel hidden" aria-hidden="true" role="region" aria-label="Modusauswahl">
     <div class="mobile-panel-header">Modus</div>
     <div class="mobile-mode-switch-row">
-      <span class="mobile-mode-label inactive">Einfach</span>
+      <span class="mobile-mode-label inactive" data-mode="simple">Einfach</span>
       <label class="mobile-switch">
         <input type="checkbox" id="mobile-mode-toggle">
         <span class="slider"></span>
       </label>
-      <span class="mobile-mode-label active">Komplex</span>
+      <span class="mobile-mode-label active" data-mode="complex">Komplex</span>
     </div>
   </div>
 
@@ -266,30 +275,13 @@
   <div id="map"></div>
 
   <div id="map-action-controls" aria-label="Kartenaktionen">
-    <button id="map-print-button" class="map-action-button" type="button" aria-pressed="false" title="Drucken" aria-label="Drucken">
-      <svg aria-hidden="true" viewBox="0 0 24 24">
-        <path d="M7 8V3h10v5" />
-        <path d="M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
-        <path d="M7 14h10v7H7z" />
-        <path d="M17 12h.01" />
-      </svg>
-    </button>
-    <button id="map-copy-link-button" class="map-action-button" type="button" title="Link kopieren" aria-label="Link kopieren">
+    <button id="map-copy-link-button" class="map-action-button" type="button" title="Link zur aktuellen Ansicht kopieren" aria-label="Link zur aktuellen Ansicht kopieren">
       <svg aria-hidden="true" viewBox="0 0 24 24">
         <path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L10.9 5.03" />
         <path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07l1.22-1.22" />
       </svg>
     </button>
     <span id="map-action-status" role="status" aria-live="polite"></span>
-  </div>
-
-  <div id="print-selection-layer" hidden aria-hidden="true">
-    <div id="print-selection-box" aria-hidden="true"></div>
-    <div class="print-selection-panel">
-      <span id="print-selection-hint">Bereich in der Karte aufziehen</span>
-      <button id="print-selection-confirm" type="button" disabled>Auswahl drucken</button>
-      <button id="print-selection-cancel" type="button">Abbrechen</button>
-    </div>
   </div>
 
   <div id="help-modal" class="help-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="help-title">
@@ -461,11 +453,12 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/config.js?v=20260702-16"></script>
-  <script src="src/js/boundary.js?v=20260702-16"></script>
-  <script src="src/js/shadow.js?v=20260702-16"></script>
-  <script src="src/js/pois.js?v=20260702-16"></script>
-  <script src="src/js/help.js?v=20260702-16"></script>
-  <script src="src/js/map.js?v=20260702-16"></script>
+  <script src="src/js/i18n.js?v=20260702-37"></script>
+  <script src="src/js/config.js?v=20260702-37"></script>
+  <script src="src/js/boundary.js?v=20260702-37"></script>
+  <script src="src/js/shadow.js?v=20260702-37"></script>
+  <script src="src/js/pois.js?v=20260702-37"></script>
+  <script src="src/js/help.js?v=20260702-37"></script>
+  <script src="src/js/map.js?v=20260702-37"></script>
 </body>
 </html>

@@ -6,27 +6,28 @@ const SOLAR_BENCH_DATA_URL = "data/neckargemuend_baenke_dummy.geojson";
 const SOLAR_BENCH_THRESHOLD = 50;
 const SOLAR_CLASS_SCHEMES = {
   bench: {
-    breaks: [50, 100, 450, 750],
-    ranges: ["bis 50", "50-100", "100-450", "450-750", "ueber 750"]
+    breaks: [200, 350, 500, 750],
+    ranges: ["bis 200", "200-350", "350-500", "500-750", "ueber 750"]
   },
   playground: {
-    breaks: [100, 300, 450, 600],
-    ranges: ["bis 100", "100-300", "300-450", "450-600", "ueber 600"]
+    breaks: [200, 300, 450, 650],
+    ranges: ["bis 200", "200-300", "300-450", "450-650", "ueber 650"]
   },
   park: {
-    breaks: [100, 300, 450, 600],
-    ranges: ["bis 100", "100-300", "300-450", "450-600", "ueber 600"]
+    breaks: [150, 300, 400, 600],
+    ranges: ["bis 150", "150-300", "300-400", "400-600", "ueber 600"]
   }
 };
 const SOLAR_CLASS_COLORS = ["#2F80ED", "#35C4B5", "#F2C94C", "#F2994A", "#EB5757"];
 const SOLAR_CLASS_LABELS = [
-  "sehr geringe Sonnenbelastung",
-  "geringe Sonnenbelastung",
-  "mittlere Sonnenbelastung",
-  "hohe Sonnenbelastung",
-  "sehr hohe Sonnenbelastung"
+  "veryLowSolar",
+  "lowSolar",
+  "mediumSolar",
+  "highSolar",
+  "veryHighSolar"
 ];
-const SOLAR_VALUE_UNIT = "W/m2";
+const SOLAR_VALUE_UNIT = "W/m²";
+const BUILDING_CATEGORIES = new Set(["church", "library", "museum"]);
 const POI_SOURCE_ID = "pois";
 const BENCH_SOURCE_ID = "bench-pois";
 const POI_PROXY_LAYER_ID = "poi-marker-proxy";
@@ -49,6 +50,7 @@ let allMarkers  = [];   // { marker, el, id, cat }
 let rafPending  = false;
 let currentPopup = null;
 let currentPopupFeature = null;
+let currentPopupMap = null;
 let allClusteringEnabled = true;
 let benchClusteringEnabled = true;
 
@@ -112,9 +114,43 @@ function getSolarPropertyName(month = currentShadowMonth, day = currentShadowDay
   return `${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}_${String(hour).padStart(2, "0")}`;
 }
 
-function getSolarValue(props) {
+function formatSolarDateLabelFor(month, day) {
+  const dayLabel = typeof t === "function" ? t(day === 1 ? "beginning" : "middle") : (day === 1 ? "Anfang" : "Mitte");
+  const fallbackMonth = SHADOW_DATE_MONTHS.find((entry) => entry.month === month)?.label || String(month).padStart(2, "0");
+  const monthLabel = typeof t === "function" ? t(`month_${month}`) : fallbackMonth;
+  return `${dayLabel} ${monthLabel}`;
+}
+
+function getSimpleSolarDate() {
+  if (typeof _getNextAllowedShadowDate === "function") {
+    return _getNextAllowedShadowDate(new Date());
+  }
+  return { month: currentShadowMonth, day: currentShadowDay };
+}
+
+function getSimpleSolarDateLabel() {
+  const date = getSimpleSolarDate();
+  return formatSolarDateLabelFor(date.month, date.day);
+}
+
+function getComplexSolarValue(props) {
   const value = Number(props[getSolarPropertyName()]);
   return Number.isFinite(value) ? value : null;
+}
+
+function getDailyAverageSolarValue(props) {
+  const date = getSimpleSolarDate();
+  const hours = Array.isArray(SHADOW_HOURS) ? SHADOW_HOURS : [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  const values = hours
+    .map((hour) => Number(props[getSolarPropertyName(date.month, date.day, hour)]))
+    .filter(Number.isFinite);
+
+  if (!values.length) return null;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function getSolarValue(props) {
+  return simpleMode ? getDailyAverageSolarValue(props) : getComplexSolarValue(props);
 }
 
 function hasSolarValue(props) {
@@ -136,7 +172,7 @@ function getSolarClassInfo(props) {
     value,
     index,
     color: SOLAR_CLASS_COLORS[index],
-    label: SOLAR_CLASS_LABELS[index],
+    label: typeof t === "function" ? t(SOLAR_CLASS_LABELS[index]) : SOLAR_CLASS_LABELS[index],
     range: scheme.ranges[index]
   };
 }
@@ -157,9 +193,7 @@ function isSolarClassVisible(feature, activeSolarClasses = getActiveSolarClasses
 }
 
 function formatSolarDateLabel() {
-  const dayLabel = currentShadowDay === 1 ? "Anfang" : "Mitte";
-  const month = SHADOW_DATE_MONTHS.find((entry) => entry.month === currentShadowMonth);
-  return `${dayLabel} ${month ? month.label : String(currentShadowMonth).padStart(2, "0")}`;
+  return formatSolarDateLabelFor(currentShadowMonth, currentShadowDay);
 }
 
 function getSolarValueText(props) {
@@ -170,19 +204,26 @@ function getSolarValueText(props) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 1
   });
+  if (simpleMode) {
+    return `${t("dailyAverage", { date: getSimpleSolarDateLabel() })}: ${formattedValue} ${SOLAR_VALUE_UNIT}`;
+  }
   const hour = String(currentShadowHour).padStart(2, "0");
-  return `Solarwert ${formatSolarDateLabel()}, ${hour}:00 Uhr: ${formattedValue} ${SOLAR_VALUE_UNIT}`;
+  return `${t("solarAtTime", { date: formatSolarDateLabel(), hour })}: ${formattedValue} ${SOLAR_VALUE_UNIT}`;
 }
 
 function getSolarPopupHTML(props) {
   const info = getSolarClassInfo(props);
   const hour = String(currentShadowHour).padStart(2, "0");
+  const simpleDateLabel = getSimpleSolarDateLabel();
 
   if (!info) {
+    const missingText = simpleMode
+      ? t("noDailySolar", { date: simpleDateLabel })
+      : t("noHourlySolar", { date: formatSolarDateLabel(), hour });
     return `
       <div class="solar-popup solar-popup-empty" data-solar-value>
-        <strong>Keine Sonnenbelastungsdaten</strong>
-        <span>Keine Daten fuer ${formatSolarDateLabel()}, ${hour}:00 Uhr</span>
+        <strong>${t("noSolarData")}</strong>
+        <span>${missingText}</span>
       </div>`;
   }
 
@@ -197,8 +238,20 @@ function getSolarPopupHTML(props) {
         <span class="solar-popup-swatch" style="background:${info.color}"></span>
         <strong>${info.label}</strong>
       </div>
-      <div class="solar-popup-meta">${formatSolarDateLabel()}, ${hour}.00 Uhr: <strong>${formattedValue} ${SOLAR_VALUE_UNIT}</strong></div>
+      <div class="solar-popup-meta">${simpleMode ? t("dailyAverage", { date: simpleDateLabel }) : t("solarAtTime", { date: formatSolarDateLabel(), hour })}: <strong>${formattedValue} ${SOLAR_VALUE_UNIT}</strong></div>
     </div>`;
+}
+
+function getSolarDetailLinkHTML(props, map) {
+  if (!simpleMode || !shouldShowSolarValue(props) || !getSolarClassInfo(props)) return "";
+  const href = typeof buildMapLink === "function"
+    ? buildMapLink(map, { mode: "complex", popupId: props._id, skipIntro: true })
+    : "#";
+
+  return `
+    <a class="popup-detail-link" href="${escapeHTML(href)}">
+      ${t("detailComplex")}
+    </a>`;
 }
 
 function isSolarBenchVisible(feature) {
@@ -251,10 +304,78 @@ function createMarkerEl(category, props) {
   el.style.backgroundColor = getSolarMarkerColor(props);
   const img = document.createElement("img");
   img.src = symbolUrl(category.icon);
-  img.alt = category.label;
+  img.alt = getCategoryLabel(category);
   img.className = "poi-marker-icon";
   el.appendChild(img);
   return el;
+}
+
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getWebsiteUrl(props) {
+  return props.website || props["contact:website"] || null;
+}
+
+function formatAddress(props) {
+  const street = [props["addr:street"], props["addr:housenumber"]].filter(Boolean).join(" ");
+  const city = [props["addr:postcode"], props["addr:city"]].filter(Boolean).join(" ");
+  const suburb = props["addr:suburb"];
+  return [street, city, suburb].filter(Boolean).join(", ");
+}
+
+function formatOSMValue(value) {
+  const keys = {
+    yes: "yes",
+    no: "no",
+    limited: "limited",
+    christian: "christian",
+    protestant: "protestant",
+    roman_catholic: "roman_catholic",
+    catholic: "catholic",
+    oecumenic: "oecumenic",
+    place_of_worship: "place_of_worship",
+    library: "category_library",
+    museum: "category_museum",
+    chapel: "chapel",
+    church: "church",
+    residential: "residential",
+    building: "historic_building",
+    sandstone: "sandstone"
+  };
+  return keys[value] && typeof t === "function" ? t(keys[value]) : String(value).replace(/_/g, " ");
+}
+
+function addDetail(extra, label, value) {
+  if (value === undefined || value === null || value === "") return;
+  extra.push(`<span class="popup-detail-label">${escapeHTML(label)}:</span> ${escapeHTML(value)}`);
+}
+
+function addBuildingDetails(extra, props, category) {
+  const isChurch = category?.cat === "church";
+  addDetail(extra, t("address"), formatAddress(props));
+  addDetail(extra, t("costAccess"), props["beschränkung"] || props["beschrÃ¤nkung"] || props["beschraenkung"]);
+  if (props.wheelchair) addDetail(extra, t("wheelchair"), formatOSMValue(props.wheelchair));
+  if (props["toilets:wheelchair"]) addDetail(extra, t("wheelchairToilet"), formatOSMValue(props["toilets:wheelchair"]));
+  if (!isChurch) addDetail(extra, t("operator"), props.operator);
+  if (props.denomination) addDetail(extra, t("denomination"), formatOSMValue(props.denomination));
+  if (props.religion) addDetail(extra, t("religion"), formatOSMValue(props.religion));
+  if (!isChurch && props.historic) addDetail(extra, t("historic"), formatOSMValue(props.historic));
+  if (!isChurch && props.building) addDetail(extra, t("buildingType"), formatOSMValue(props.building));
+  if (props["building:material"]) addDetail(extra, t("material"), formatOSMValue(props["building:material"]));
+  if (props["building:use"]) addDetail(extra, t("use"), formatOSMValue(props["building:use"]));
+
+  const website = isChurch ? null : getWebsiteUrl(props);
+  if (website) {
+    extra.push(`<a href="${escapeHTML(website)}" target="_blank" rel="noopener" style="color:#1a6b3c">${t("website")}</a>`);
+  }
+  if (!isChurch && props.wikipedia) addDetail(extra, "Wikipedia", props.wikipedia);
 }
 
 // Build popup HTML.
@@ -294,6 +415,47 @@ function buildPopupHTML(category, props) {
     </div>`;
 }
 
+function buildEnhancedPopupHTML(category, props, map) {
+  const name = props._name;
+  const extra = [];
+  const solarHTML = category.cat === "bench" || category.cat === "playground" || category.cat === "park"
+    ? getSolarPopupHTML(props)
+    : "";
+
+  if (solarHTML) extra.push(solarHTML);
+
+  if (props.opening_hours) addDetail(extra, t("openingHours"), props.opening_hours);
+  if (BUILDING_CATEGORIES.has(category.cat)) {
+    addBuildingDetails(extra, props, category);
+  } else {
+    if (props.wheelchair === "yes") extra.push(t("wheelchairAccessible"));
+    const website = getWebsiteUrl(props);
+    if (website) extra.push(`<a href="${escapeHTML(website)}" target="_blank" rel="noopener" style="color:#1a6b3c">${t("website")}</a>`);
+  }
+  if (category.cat !== "bench" && props.seats) addDetail(extra, t("seats"), props.seats);
+  if (category.cat !== "bench" && props.material) addDetail(extra, t("material"), props.material);
+  if (props.description) addDetail(extra, t("info"), props.description);
+  const detailLinkHTML = getSolarDetailLinkHTML(props, map);
+  if (detailLinkHTML) extra.push(detailLinkHTML);
+
+  const titleHTML = name
+    ? `<strong style="font-size:14px">${escapeHTML(name)}</strong>
+       <br><span style="color:#888;font-size:12px">${escapeHTML(getCategoryLabel(category))}</span>`
+    : `<strong style="font-size:14px">${escapeHTML(getCategoryLabel(category))}</strong>`;
+
+  const extraHTML = extra.length
+    ? `<hr style="margin:6px 0;border:none;border-top:1px solid #eee">${extra.join("<br>")}`
+    : "";
+
+  return `
+    <div style="font-family:sans-serif;font-size:13px;line-height:1.6;text-align:center">
+      <img src="${symbolUrl(category.icon)}"
+           style="width:28px;height:28px;display:block;margin:0 auto 6px" />
+      ${titleHTML}
+      <div style="text-align:left">${extraHTML}</div>
+    </div>`;
+}
+
 function updateSolarPopupValue(popup, feature) {
   if (!popup || !feature || !shouldShowSolarValue(feature.properties)) return;
 
@@ -306,6 +468,13 @@ function updateSolarPopupValue(popup, feature) {
 
 function syncCurrentPopupSolarValue() {
   updateSolarPopupValue(currentPopup, currentPopupFeature);
+}
+
+function syncCurrentPopupHTML() {
+  if (!currentPopup || !currentPopupFeature || !currentPopupMap) return;
+  const category = getCategoryByKey(currentPopupFeature.properties._cat);
+  if (!category) return;
+  currentPopup.setHTML(buildEnhancedPopupHTML(category, currentPopupFeature.properties, currentPopupMap));
 }
 
 function syncMarkerSolarStyles() {
@@ -323,7 +492,16 @@ function syncSolarActionButton() {
     .every((cb) => !cb.checked);
 
   button.setAttribute("aria-pressed", String(highHidden));
-  button.textContent = highHidden ? "Alle Sonnenklassen anzeigen" : "Nur kühlere Orte anzeigen";
+  button.textContent = highHidden ? t("showAllSolar") : t("showCoolerOnly");
+}
+
+function syncSimpleSolarLegendNote() {
+  const note = document.getElementById("simple-solar-date-note");
+  if (!note) return;
+  const dateLabel = escapeHTML(getSimpleSolarDateLabel());
+  note.innerHTML = getLanguage() === "en"
+    ? `Colors show the daily average sun exposure for <strong>${dateLabel}</strong>. Date and time can be adjusted in advanced view.`
+    : `Farben zeigen den Tagesdurchschnitt der Sonnenbelastung für <strong>${dateLabel}</strong>. Datum und Uhrzeit können in der komplexen Ansicht angepasst werden.`;
 }
 
 function getCategoryGroupCheckboxes(group) {
@@ -341,7 +519,7 @@ function syncCategoryGroupButtons() {
     const hasAnyChecked = checkboxes.some((cb) => cb.checked);
 
     if (button) button.setAttribute("aria-pressed", String(hasAnyChecked));
-    if (state) state.textContent = hasAnyChecked ? "ausblenden" : "einblenden";
+    if (state) state.textContent = hasAnyChecked ? t("hide") : t("show");
   });
 }
 
@@ -358,8 +536,8 @@ function createMarkers(map) {
     if (!category) return;
 
     const el    = createMarkerEl(category, f.properties);
-    const popup = new maplibregl.Popup({ offset: 18, maxWidth: "240px", closeButton: true })
-      .setHTML(buildPopupHTML(category, f.properties));
+    const popup = new maplibregl.Popup({ offset: 18, maxWidth: "260px", closeButton: true })
+      .setHTML(buildEnhancedPopupHTML(category, f.properties, map));
 
     const marker = new maplibregl.Marker({ element: el, anchor: "center" })
       .setLngLat(f.geometry.coordinates)
@@ -370,6 +548,8 @@ function createMarkers(map) {
       if (currentPopup && currentPopup !== popup) currentPopup.remove();
       currentPopup = popup;
       currentPopupFeature = f;
+      currentPopupMap = map;
+      popup.setHTML(buildEnhancedPopupHTML(category, f.properties, map));
       updateSolarPopupValue(popup, f);
     });
 
@@ -377,12 +557,34 @@ function createMarkers(map) {
       if (currentPopup === popup) {
         currentPopup = null;
         currentPopupFeature = null;
+        currentPopupMap = null;
       }
     });
 
     el.style.display = "none";
     allMarkers.push({ marker, el, id: f.properties._id, cat: f.properties._cat, feature: f });
   });
+}
+
+function openLinkedPopupFromURL(map) {
+  const popupId = window.__INITIAL_MAP_STATE?.popupId;
+  if (!popupId) return;
+
+  const item = allMarkers.find(({ id }) => String(id) === String(popupId));
+  if (!item) return;
+
+  const coordinates = item.feature.geometry.coordinates;
+  map.easeTo({ center: coordinates, duration: 450 });
+
+  window.setTimeout(() => {
+    const popup = item.marker.getPopup();
+    if (popup && !popup.isOpen()) item.marker.togglePopup();
+    const url = new URL(window.location.href);
+    url.searchParams.delete("poi");
+    url.searchParams.delete("skipIntro");
+    window.history.replaceState({}, "", url);
+    window.__INITIAL_MAP_STATE.popupId = "";
+  }, 500);
 }
 
 // Show/hide individual markers based on cluster state and active filters
@@ -527,8 +729,8 @@ function syncClusterButtons() {
 
   button.setAttribute("aria-pressed", String(allClusteringEnabled));
   button.textContent = allClusteringEnabled
-    ? "Orte beim Zoomen nicht zusammenfassen"
-    : "Orte beim Zoomen zusammenfassen";
+    ? t("clusterSeparate")
+    : t("clusterCombine");
 }
 
 function getRenderedClusterAtPoint(map, point) {
@@ -570,6 +772,7 @@ function loadPOIs(map) {
       geojsonData = merged;
       setupPOILayers(map);
       createMarkers(map);
+      openLinkedPopupFromURL(map);
       syncClusterButtons();
       attachClusterEvents(map);
       map.on("render", () => {
@@ -627,6 +830,7 @@ function initFilterControls(map) {
   });
 
   syncSolarActionButton();
+  syncSimpleSolarLegendNote();
   syncCategoryGroupButtons();
 }
 

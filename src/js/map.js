@@ -14,12 +14,14 @@ function parseInitialMapState() {
   const zoomParam = params.get("z") ?? params.get("zoom");
   const zoom = zoomParam === null ? NaN : Number(zoomParam);
   const rawMode = (params.get("ansicht") || params.get("mode") || "").toLowerCase();
-  const mode = rawMode === "komplex" || rawMode === "complex" ? "complex" : "simple";
+  const mode = rawMode === "komplex" || rawMode === "complex" || rawMode === "advanced" ? "complex" : "simple";
+  const popupId = params.get("poi") || "";
 
   return {
     center: Number.isFinite(lng) && Number.isFinite(lat) ? [lng, lat] : [8.807, 49.39],
     zoom: Number.isFinite(zoom) ? zoom : 13,
-    mode
+    mode,
+    popupId
   };
 }
 
@@ -33,7 +35,7 @@ const map = new maplibregl.Map({
   zoom: INITIAL_MAP_STATE.zoom,
   pitch: SIMPLE_CAMERA.pitch,
   bearing: SIMPLE_CAMERA.bearing,
-  canvasContextAttributes: { antialias: true, preserveDrawingBuffer: true }
+  canvasContextAttributes: { antialias: true }
 });
 
 map.addControl(
@@ -52,6 +54,23 @@ function buildCurrentMapLink(map) {
   params.set("lat", center.lat.toFixed(6));
   params.set("z", map.getZoom().toFixed(2));
   params.set("ansicht", simpleMode ? "einfach" : "komplex");
+  params.set("lang", getLanguage());
+  return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+}
+
+function buildMapLink(map, options = {}) {
+  const center = map.getCenter();
+  const params = new URLSearchParams(window.location.search);
+  params.set("lng", center.lng.toFixed(6));
+  params.set("lat", center.lat.toFixed(6));
+  params.set("z", map.getZoom().toFixed(2));
+  params.set("ansicht", options.mode === "complex" ? "komplex" : (simpleMode ? "einfach" : "komplex"));
+  params.set("lang", getLanguage());
+
+  if (options.popupId) params.set("poi", options.popupId);
+  else params.delete("poi");
+  if (options.skipIntro) params.set("skipIntro", "1");
+
   return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 }
 
@@ -66,7 +85,7 @@ async function copyCurrentMapLink(map) {
   const url = buildCurrentMapLink(map);
   try {
     await navigator.clipboard.writeText(url);
-    setMapActionStatus("Link kopiert");
+    setMapActionStatus(t("linkCopied"));
   } catch (err) {
     const textarea = document.createElement("textarea");
     textarea.value = url;
@@ -77,154 +96,27 @@ async function copyCurrentMapLink(map) {
     textarea.select();
     document.execCommand("copy");
     textarea.remove();
-    setMapActionStatus("Link kopiert");
+    setMapActionStatus(t("linkCopied"));
   }
 }
 
 function initMapActionControls(map) {
-  const printButton = document.getElementById("map-print-button");
   const copyButton = document.getElementById("map-copy-link-button");
-  const layer = document.getElementById("print-selection-layer");
-  const box = document.getElementById("print-selection-box");
-  const confirmButton = document.getElementById("print-selection-confirm");
-  const cancelButton = document.getElementById("print-selection-cancel");
-  const hint = document.getElementById("print-selection-hint");
-  const mapContainer = map.getContainer();
-
-  if (!printButton || !copyButton || !layer || !box || !confirmButton || !cancelButton) return;
-
-  let start = null;
-  let selection = null;
-
-  function setBox(rect) {
-    box.style.left = `${rect.left}px`;
-    box.style.top = `${rect.top}px`;
-    box.style.width = `${rect.width}px`;
-    box.style.height = `${rect.height}px`;
-    confirmButton.disabled = rect.width < 32 || rect.height < 32;
-  }
-
-  function resetSelection() {
-    selection = null;
-    start = null;
-    setBox({ left: 0, top: 0, width: 0, height: 0 });
-    confirmButton.disabled = true;
-    if (hint) hint.textContent = "Bereich in der Karte aufziehen";
-  }
-
-  function enterPrintSelection() {
-    resetSelection();
-    layer.hidden = false;
-    layer.setAttribute("aria-hidden", "false");
-    printButton.setAttribute("aria-pressed", "true");
-    map.dragPan.disable();
-  }
-
-  function exitPrintSelection() {
-    layer.hidden = true;
-    layer.setAttribute("aria-hidden", "true");
-    printButton.setAttribute("aria-pressed", "false");
-    if (!map.dragPan.isEnabled()) map.dragPan.enable();
-    resetSelection();
-  }
-
-  function pointFromEvent(event) {
-    const rect = mapContainer.getBoundingClientRect();
-    return {
-      x: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
-      y: Math.max(0, Math.min(rect.height, event.clientY - rect.top))
-    };
-  }
-
-  function rectFromPoints(a, b) {
-    const left = Math.min(a.x, b.x);
-    const top = Math.min(a.y, b.y);
-    return {
-      left,
-      top,
-      width: Math.abs(a.x - b.x),
-      height: Math.abs(a.y - b.y)
-    };
-  }
-
-  function printSelection() {
-    if (!selection || selection.width < 32 || selection.height < 32) return;
-
-    const printRect = { ...selection };
-    const mapRect = mapContainer.getBoundingClientRect();
-    const root = document.documentElement;
-
-    exitPrintSelection();
-    root.style.setProperty("--print-map-width", `${mapRect.width.toFixed(2)}px`);
-    root.style.setProperty("--print-map-height", `${mapRect.height.toFixed(2)}px`);
-    root.style.setProperty("--print-map-left", `${(-printRect.left).toFixed(2)}px`);
-    root.style.setProperty("--print-map-top", `${(-printRect.top).toFixed(2)}px`);
-    root.style.setProperty("--print-selection-width", `${printRect.width.toFixed(2)}px`);
-    root.style.setProperty("--print-selection-height", `${printRect.height.toFixed(2)}px`);
-    document.body.classList.add("map-print-active");
-
-    let printStarted = false;
-    let restored = false;
-
-    const restoreAfterPrint = () => {
-      if (restored) return;
-      restored = true;
-      window.removeEventListener("afterprint", restoreAfterPrint);
-      document.body.classList.remove("map-print-active");
-      root.style.removeProperty("--print-map-width");
-      root.style.removeProperty("--print-map-height");
-      root.style.removeProperty("--print-map-left");
-      root.style.removeProperty("--print-map-top");
-      root.style.removeProperty("--print-selection-width");
-      root.style.removeProperty("--print-selection-height");
-    };
-
-    const startPrint = () => {
-      if (printStarted) return;
-      printStarted = true;
-      window.addEventListener("afterprint", restoreAfterPrint, { once: true });
-      window.print();
-      window.setTimeout(() => {
-        if (!document.body.classList.contains("map-print-active")) return;
-        restoreAfterPrint();
-      }, 2000);
-    };
-
-    requestAnimationFrame(() => window.setTimeout(startPrint, 120));
-  }
+  if (!copyButton) return;
 
   copyButton.addEventListener("click", () => copyCurrentMapLink(map));
-  printButton.addEventListener("click", enterPrintSelection);
-  cancelButton.addEventListener("click", exitPrintSelection);
-  confirmButton.addEventListener("click", printSelection);
+}
 
-  layer.addEventListener("pointerdown", (event) => {
-    if (event.target.closest(".print-selection-panel")) return;
-    layer.setPointerCapture(event.pointerId);
-    start = pointFromEvent(event);
-    selection = { left: start.x, top: start.y, width: 0, height: 0 };
-    setBox(selection);
-    if (hint) hint.textContent = "Loslassen und Auswahl drucken";
-  });
-
-  layer.addEventListener("pointermove", (event) => {
-    if (!start) return;
-    selection = rectFromPoints(start, pointFromEvent(event));
-    setBox(selection);
-  });
-
-  layer.addEventListener("pointerup", (event) => {
-    if (!start) return;
-    selection = rectFromPoints(start, pointFromEvent(event));
-    setBox(selection);
-    start = null;
-    if (hint) hint.textContent = confirmButton.disabled
-      ? "Bereich etwas groesser aufziehen"
-      : "Auswahl drucken oder abbrechen";
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !layer.hidden) exitPrintSelection();
+function initGlobalButtonBehavior() {
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    const threeDHint = document.getElementById("three-d-hint");
+    if (!button || !threeDHint || button.id === "three-d-hint-toggle") return;
+    threeDHint.classList.add("collapsed");
+    const toggle = document.getElementById("three-d-hint-toggle");
+    toggle?.setAttribute("aria-expanded", "false");
+    const label = toggle?.querySelector(".three-d-toggle-label");
+    if (label) label.innerHTML = "❮ 3D";
   });
 }
 
@@ -474,7 +366,7 @@ function setAddressSearchStatus(message, isError = false) {
 async function searchAddress(query) {
   const params = new URLSearchParams({
     format: "jsonv2",
-    q: `${query}, Neckargemünd, Baden-Württemberg, Deutschland`,
+    q: `${query}, ${t("nominatimQuerySuffix")}`,
     limit: "1",
     addressdetails: "1",
     countrycodes: "de",
@@ -495,29 +387,29 @@ function initAddressSearch(map) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (simpleMode) {
-      setAddressSearchStatus("Adresssuche ist in der komplexen Ansicht verfügbar.", true);
+      setAddressSearchStatus(t("addressComplexOnly"), true);
       return;
     }
 
     const query = input.value.trim();
     if (!query) {
-      setAddressSearchStatus("Bitte eine Straße oder Adresse eingeben.", true);
+      setAddressSearchStatus(t("addressMissing"), true);
       return;
     }
 
-    setAddressSearchStatus("Adresse wird gesucht ...");
+    setAddressSearchStatus(t("addressSearching"));
     try {
       const results = await searchAddress(query);
       const result = results[0];
       if (!result) {
-        setAddressSearchStatus("Keine passende Adresse in Neckargemünd gefunden.", true);
+        setAddressSearchStatus(t("addressNotFound"), true);
         return;
       }
 
       const lng = Number(result.lon);
       const lat = Number(result.lat);
       if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
-        setAddressSearchStatus("Suchergebnis ohne gültige Koordinate.", true);
+        setAddressSearchStatus(t("addressInvalid"), true);
         return;
       }
 
@@ -529,10 +421,10 @@ function initAddressSearch(map) {
 
       map.easeTo({ center: [lng, lat], zoom: 17, duration: 900 });
       addressSearchMarker.togglePopup();
-      setAddressSearchStatus("Adresse gefunden.");
+      setAddressSearchStatus(t("addressFound"));
     } catch (err) {
       console.error("Address search error:", err);
-      setAddressSearchStatus("Adresssuche momentan nicht verfügbar.", true);
+      setAddressSearchStatus(t("addressUnavailable"), true);
     }
   });
 }
@@ -548,6 +440,7 @@ map.on("load", () => {
     add3DBuildings();
     initSidebar();
     initMapActionControls(map);
+    initGlobalButtonBehavior();
     initAddressSearch(map);
     initShadowControls(map);
     initDisplayMode(map);

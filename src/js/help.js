@@ -46,7 +46,10 @@ function initHelpModal() {
     if (event.key === "Escape" && !modal.hidden) closeHelpModal();
   });
 
-  window.setTimeout(openHelpModal, 200);
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("skipIntro") !== "1") {
+    window.setTimeout(openHelpModal, 200);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initHelpModal);

@@ -47,14 +47,14 @@ function _formatDateValue(month, day) {
 }
 
 function _formatDateLabel(monthLabel, day) {
-  return `${day === 1 ? "Anfang" : "Mitte"} ${monthLabel}`;
+  return `${t(day === 1 ? "beginning" : "middle")} ${monthLabel}`;
 }
 
 function _getAllowedShadowDates(year) {
   return SHADOW_DATE_MONTHS.flatMap(({ month, label }) =>
     SHADOW_DATE_DAYS.map((day) => ({
       value: _formatDateValue(month, day),
-      label: _formatDateLabel(label, day),
+      label: _formatDateLabel(t(`month_${month}`) || label, day),
       month,
       day,
       date: new Date(year, month - 1, day, 12)
@@ -63,9 +63,20 @@ function _getAllowedShadowDates(year) {
 }
 
 function _getNextAllowedShadowDate(date) {
-  const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const options = _getAllowedShadowDates(date.getFullYear());
-  return options.find((option) => option.date >= today) || options[0];
+  const currentTime = date.getTime();
+
+  if (currentTime <= options[0].date.getTime()) return options[0];
+  if (currentTime >= options[options.length - 1].date.getTime()) return options[options.length - 1];
+
+  for (let i = 0; i < options.length - 1; i += 1) {
+    const current = options[i];
+    const next = options[i + 1];
+    const midpoint = current.date.getTime() + (next.date.getTime() - current.date.getTime()) / 2;
+    if (currentTime <= midpoint) return current;
+  }
+
+  return options[options.length - 1];
 }
 
 function _populateShadowDateSelect(select, referenceDate) {
@@ -90,6 +101,24 @@ function _syncDateInput(date) {
   input.value = next.value;
   currentShadowMonth = next.month;
   currentShadowDay   = next.day;
+}
+
+function _getRoundedCurrentShadowHour(date) {
+  const roundedHour = date.getHours() + (date.getMinutes() >= 30 ? 1 : 0);
+  return Math.max(SHADOW_HOURS[0], Math.min(SHADOW_HOURS[SHADOW_HOURS.length - 1], roundedHour));
+}
+
+async function setShadowToCurrentTime(map) {
+  const now = new Date();
+  _stopAnimation();
+  _syncDateInput(now);
+  currentShadowHour = _getRoundedCurrentShadowHour(now);
+  _syncTimeDisplay(currentShadowHour);
+  _syncSlider(currentShadowHour);
+
+  const updated = await _rebuildShadowSource(map);
+  if (updated && typeof updatePOISource === "function") updatePOISource(map);
+  return updated;
 }
 
 // ── Source / Layer management ──────────────────────────────
@@ -295,7 +324,9 @@ async function updateShadowDate(map, month, day) {
 
 function _syncTimeDisplay(hour) {
   const el = document.getElementById("shadow-time");
-  if (el) el.textContent = `${String(hour).padStart(2, "0")}:00 Uhr`;
+  if (el) el.textContent = getLanguage() === "en"
+    ? `${String(hour).padStart(2, "0")}:00`
+    : `${String(hour).padStart(2, "0")}:00 Uhr`;
 }
 
 function _syncSlider(hour) {
@@ -380,6 +411,14 @@ function initShadowControls(map) {
   _syncDateInput(new Date());
   _rebuildShadowSource(map, { fade: false });
 
+  document.addEventListener("i18n:changed", () => {
+    const selectedValue = dateInput.value;
+    _populateShadowDateSelect(dateInput, new Date());
+    dateInput.value = selectedValue;
+    _syncTimeDisplay(currentShadowHour);
+    if (typeof updatePOISource === "function") updatePOISource(map);
+  });
+
   slider.addEventListener("input", (e) => {
     _stopAnimation();
     updateShadowLayer(map, SHADOW_HOURS[Number(e.target.value)]);
@@ -392,10 +431,7 @@ function initShadowControls(map) {
   });
 
   currentBtn.addEventListener("click", async () => {
-    _stopAnimation();
-    _syncDateInput(new Date());
-    const updated = await _rebuildShadowSource(map);
-    if (updated && typeof updatePOISource === "function") updatePOISource(map);
+    await setShadowToCurrentTime(map);
   });
 
   playBtn.addEventListener("click", () => {

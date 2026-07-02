@@ -38,6 +38,11 @@ const POI_CATEGORIES = [
   { cat: "museum",     file: "Museum.geojson",             icon: "009-museum-art.png", label: "Museum",      color: "#FF9800" }
 ];
 
+function getCategoryLabel(categoryOrCat) {
+  const cat = typeof categoryOrCat === "string" ? categoryOrCat : categoryOrCat?.cat;
+  return typeof t === "function" ? t(`category_${cat}`) : (getCategoryByKey(cat)?.label || "Ort");
+}
+
 function getCategoryByKey(cat) {
   return POI_CATEGORIES.find((c) => c.cat === cat) || null;
 }
@@ -93,7 +98,7 @@ function initDisplayMode(map) {
 
   function setLabelState(isComplex) {
     document.querySelectorAll(".mode-label, .mobile-mode-label").forEach((label) => {
-      const isSimple = label.textContent.trim() === "Einfach";
+      const isSimple = label.dataset.mode === "simple";
       const active = isSimple ? !isComplex : isComplex;
       label.classList.toggle("active", active);
       label.classList.toggle("inactive", !active);
@@ -147,6 +152,7 @@ function initDisplayMode(map) {
       if (clusterControlSection) clusterControlSection.style.display = "grid";
       threeDHint?.classList.remove("hidden");
       showShadowLayer(map);
+      if (typeof setShadowToCurrentTime === "function") setShadowToCurrentTime(map);
       setBuildingVisibility("visible");
       setMapTiltEnabled(true);
       setMapPerspective(COMPLEX_CAMERA);
@@ -166,6 +172,7 @@ function initDisplayMode(map) {
       setMapPerspective(SIMPLE_CAMERA);
     }
 
+    if (typeof syncSimpleSolarLegendNote === "function") syncSimpleSolarLegendNote();
     if (typeof updatePOISource === "function") updatePOISource(map);
   }
 
@@ -181,4 +188,15 @@ function initDisplayMode(map) {
   applyMode(initialComplex);
   syncModeToggles(initialComplex);
   syncThreeDHintToggle();
+
+  document.addEventListener("i18n:changed", () => {
+    setLabelState(!simpleMode);
+    syncThreeDHintToggle();
+    if (typeof syncSimpleSolarLegendNote === "function") syncSimpleSolarLegendNote();
+    if (typeof syncSolarActionButton === "function") syncSolarActionButton();
+    if (typeof syncClusterButtons === "function") syncClusterButtons();
+    if (typeof syncCategoryGroupButtons === "function") syncCategoryGroupButtons();
+    if (typeof syncCurrentPopupHTML === "function") syncCurrentPopupHTML();
+    if (typeof updatePOISource === "function") updatePOISource(map);
+  });
 }
