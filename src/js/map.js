@@ -118,8 +118,6 @@ function initGlobalButtonBehavior() {
     threeDHint.classList.add("collapsed");
     const toggle = document.getElementById("three-d-hint-toggle");
     toggle?.setAttribute("aria-expanded", "false");
-    const label = toggle?.querySelector(".three-d-toggle-label");
-    if (label) label.innerHTML = "❮ 3D";
   });
 }
 

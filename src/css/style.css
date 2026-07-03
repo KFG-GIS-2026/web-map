@@ -603,9 +603,9 @@ input:checked + .slider::before {
 }
 
 .cluster-toggle[aria-pressed="false"] {
-  background: #f4f4f4;
-  border-color: rgba(0,0,0,0.12);
-  color: #666;
+  background: #f7fbf8;
+  border-color: rgba(26,107,60,0.18);
+  color: #155c32;
 }
 
 .floating-help-button {
@@ -669,14 +669,15 @@ input:checked + .slider::before {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  border: 1px solid rgba(26,107,60,0.18);
+  border: 1px solid rgba(26,107,60,0.32);
   border-radius: 4px;
   padding: 0;
-  background: rgba(255,255,255,0.96);
-  box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-  color: #155c32;
+  background: #1a6b3c;
+  box-shadow: 0 4px 14px rgba(26,107,60,0.28);
+  color: #fff;
   cursor: pointer;
-  transition: background .15s, box-shadow .15s, transform .1s;
+  transition: background .15s, box-shadow .15s, transform .16s ease;
+  animation: shadowButtonPop .26s ease-out;
 }
 
 .floating-shadow-button svg {
@@ -730,8 +731,8 @@ input:checked + .slider::before {
 }
 
 .floating-shadow-button:hover {
-  background: #e6f2ea;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  background: #155c32;
+  box-shadow: 0 8px 22px rgba(26,107,60,0.34);
 }
 
 .floating-shadow-button:active {
@@ -740,6 +741,17 @@ input:checked + .slider::before {
 
 .floating-shadow-button.hidden {
   display: none;
+}
+
+@keyframes shadowButtonPop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px) scale(.88);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
 }
 
 /* Close (X) button inside sidebar header */
@@ -994,6 +1006,15 @@ input:checked + .slider::before {
   box-shadow: 0 4px 18px rgba(0,0,0,0.18) !important;
 }
 
+.solar-map-popup {
+  max-width: calc(100vw - 48px) !important;
+}
+
+.solar-map-popup .maplibregl-popup-content {
+  width: max-content;
+  max-width: calc(100vw - 56px);
+}
+
 .maplibregl-popup-close-button {
   top: 5px !important;
   right: 6px !important;
@@ -1018,6 +1039,8 @@ input:checked + .slider::before {
   background: #f7faf8;
   border: 1px solid rgba(26,107,60,0.16);
   text-align: left;
+  width: max-content;
+  max-width: 100%;
 }
 
 .solar-popup-head {
@@ -1026,6 +1049,11 @@ input:checked + .slider::before {
   gap: 6px;
   margin-bottom: 3px;
   color: #23402d;
+}
+
+.solar-popup-head strong,
+.solar-popup-meta {
+  white-space: nowrap;
 }
 
 .solar-popup-swatch {
@@ -1048,6 +1076,18 @@ input:checked + .slider::before {
   color: #66756b;
   font-size: 11px;
   line-height: 1.35;
+}
+
+@media (max-width: 420px) {
+  .solar-map-popup .maplibregl-popup-content {
+    width: auto;
+    max-width: calc(100vw - 56px);
+  }
+
+  .solar-popup-head strong,
+  .solar-popup-meta {
+    white-space: normal;
+  }
 }
 
 /* ── Navigation controls: top-right ── */
@@ -1152,11 +1192,11 @@ input:checked + .slider::before {
   position: absolute;
   height: 54px;
   top: 194px;
-  right: 13px;
+  right: 19px;
   z-index: 10;
   display: flex;
   align-items: center;
-  max-width: 226px;
+  max-width: 211px;
   background: rgba(255,255,255,0.69);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(26,107,60,0.14);
@@ -1170,7 +1210,7 @@ input:checked + .slider::before {
 #three-d-hint.hidden { display: none; }
 
 #three-d-hint.collapsed {
-  max-width: 44px;
+  max-width: 31px;
   height: 54px;
 }
 
@@ -1180,7 +1220,7 @@ input:checked + .slider::before {
 }
 
 #three-d-hint-toggle {
-  width: 44px;
+  width: 31px;
   height: 54px;
   padding: 0;
   border: none;
@@ -1200,15 +1240,23 @@ input:checked + .slider::before {
 }
 
 .three-d-toggle-label {
-  font-size: 14px;
-  font-weight: 700;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   line-height: 1;
-  letter-spacing: .02em;
 }
 
-#three-d-hint.collapsed .three-d-toggle-label {
-  font-size: 13px;
-  font-weight: 650;
+.three-d-toggle-question {
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.three-d-toggle-text {
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .02em;
 }
 
 .three-d-hint-content {
@@ -1314,6 +1362,118 @@ input:checked + .slider::before {
 }
 
 #shadow-bar:hover { box-shadow: 0 6px 30px rgba(0,0,0,0.24); }
+
+#shadow-bar.minimizing {
+  animation: shadowBarMinimize .24s ease-in forwards;
+  pointer-events: none;
+}
+
+#shadow-bar.restoring {
+  animation: shadowBarRestore .26s ease-out;
+}
+
+@keyframes shadowBarMinimize {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(22px) scale(.72);
+  }
+}
+
+@keyframes shadowBarRestore {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(22px) scale(.72);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1380px) {
+  #shadow-bar {
+    left: calc(376px + (100vw - 488px) / 2);
+    width: min(760px, calc(100vw - 488px));
+    min-width: 0;
+  }
+
+  #sidebar.collapsed ~ #shadow-bar {
+    left: calc((100vw - 112px) / 2);
+    width: min(760px, calc(100vw - 144px));
+  }
+
+  #shadow-panel {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .shadow-slider-wrap {
+    width: clamp(150px, 22vw, 232px);
+  }
+
+  .shadow-date-control {
+    min-width: 0;
+  }
+
+  .shadow-date-control select {
+    width: clamp(104px, 13vw, 134px);
+  }
+
+  #shadow-current {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  #shadow-toggle-control {
+    gap: 6px;
+    padding-left: 9px;
+    padding-right: 10px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 760px) {
+  #sidebar {
+    left: 8px;
+    width: 330px;
+  }
+
+  #shadow-bar {
+    left: calc(354px + (100vw - 466px) / 2);
+    width: min(430px, calc(100vw - 466px));
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  #shadow-bar {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  #shadow-panel {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    padding-bottom: 10px;
+  }
+
+  .shadow-slider-wrap {
+    flex: 1 1 170px;
+    width: auto;
+  }
+
+  #shadow-toggle-control {
+    width: 100%;
+    justify-content: flex-end;
+    border-left: none;
+    border-top: 1px solid rgba(26,107,60,0.12);
+  }
+}
 
 #shadow-toggle-control {
   display: flex;
@@ -2078,6 +2238,11 @@ input:checked + .slider::before {
     transform: none;
     border-radius: 18px;
     flex-wrap: wrap;
+  }
+
+  #shadow-bar.minimizing,
+  #shadow-bar.restoring {
+    animation: none;
   }
 
   #shadow-panel {

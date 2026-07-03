@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260702-40" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260702-46" />
 </head>
 <body>
 
@@ -381,7 +381,10 @@
 
   <div id="three-d-hint" aria-label="Hinweis zur 3D Steuerung">
     <button id="three-d-hint-toggle" type="button" aria-expanded="true" title="3D Hinweis ein-/ausklappen">
-      <span class="three-d-toggle-label">❯</span>
+      <span class="three-d-toggle-label" aria-hidden="true">
+        <span class="three-d-toggle-question">?</span>
+        <span class="three-d-toggle-text">3D</span>
+      </span>
     </button>
 
     <div class="three-d-hint-content">
@@ -453,12 +456,12 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/i18n.js?v=20260702-40"></script>
-  <script src="src/js/config.js?v=20260702-40"></script>
-  <script src="src/js/boundary.js?v=20260702-40"></script>
-  <script src="src/js/shadow.js?v=20260702-40"></script>
-  <script src="src/js/pois.js?v=20260702-40"></script>
-  <script src="src/js/help.js?v=20260702-40"></script>
-  <script src="src/js/map.js?v=20260702-40"></script>
+  <script src="src/js/i18n.js?v=20260702-46"></script>
+  <script src="src/js/config.js?v=20260702-46"></script>
+  <script src="src/js/boundary.js?v=20260702-46"></script>
+  <script src="src/js/shadow.js?v=20260702-46"></script>
+  <script src="src/js/pois.js?v=20260702-46"></script>
+  <script src="src/js/help.js?v=20260702-46"></script>
+  <script src="src/js/map.js?v=20260702-46"></script>
 </body>
 </html>

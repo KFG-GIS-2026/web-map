@@ -458,8 +458,13 @@ function initShadowControls(map) {
   closeBtn?.addEventListener("click", () => {
     _stopAnimation();
     if (shadowBar) {
-      shadowBar.classList.remove("open");
-      shadowBar.style.display = "none";
+      shadowBar.classList.remove("open", "restoring");
+      shadowBar.classList.add("minimizing");
+      window.setTimeout(() => {
+        if (!shadowBar.classList.contains("minimizing")) return;
+        shadowBar.style.display = "none";
+        shadowBar.classList.remove("minimizing");
+      }, 240);
     }
     if (!simpleMode && !window.matchMedia("(max-width: 600px)").matches) {
       openBtn?.classList.remove("hidden");
@@ -468,8 +473,12 @@ function initShadowControls(map) {
 
   openBtn?.addEventListener("click", () => {
     if (shadowBar) {
-      shadowBar.classList.remove("open");
+      shadowBar.classList.remove("open", "minimizing");
       shadowBar.style.display = window.matchMedia("(max-width: 600px)").matches ? "none" : "flex";
+      if (shadowBar.style.display !== "none") {
+        shadowBar.classList.add("restoring");
+        window.setTimeout(() => shadowBar.classList.remove("restoring"), 260);
+      }
     }
     openBtn.classList.add("hidden");
   });
