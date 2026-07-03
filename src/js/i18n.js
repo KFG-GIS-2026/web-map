@@ -80,6 +80,7 @@ const TRANSLATIONS = {
     start: "Loslegen",
     rotate3d: "3D drehen",
     rotate3dText: "Rechte Maustaste halten u. ziehen.",
+    rotate3dTextMobile: "Zwei Finger auflegen und bewegen",
     shadow: "Schatten",
     shadowTitle: "Schatten ein-/ausblenden",
     shadowTooltip: "Modellierter Schattenwurf zur angegebenen Zeit. Angenäherte Werte bei wolkenfreiem Himmel. Der Zeitpunkt kann unter \"Zeitpunkt\" in der Sidebar geändert werden.",
@@ -215,6 +216,7 @@ const TRANSLATIONS = {
     start: "Start",
     rotate3d: "Rotate 3D",
     rotate3dText: "Hold right mouse button and drag.",
+    rotate3dTextMobile: "Place two fingers and move",
     shadow: "Shadow",
     shadowTitle: "Show/hide shadow",
     shadowTooltip: "Modelled shadow for the selected time. Approximate values under clear-sky conditions. The time can be changed under “Time” in the sidebar.",
@@ -379,7 +381,8 @@ function applyStaticTranslations() {
   setText(".help-info-demo-tooltip", "shortHint");
   setText("#help-start", "start");
   setText(".three-d-hint-text strong", "rotate3d");
-  setText(".three-d-hint-text span", "rotate3dText");
+  setText(".three-d-text-desktop", "rotate3dText");
+  setText(".three-d-text-mobile", "rotate3dTextMobile");
   setText(".shadow-toggle-label", "shadow");
 
   document.querySelector("#solar-legend-section .info-tooltip").textContent = t("solarSimpleTooltip");

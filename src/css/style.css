@@ -1327,6 +1327,11 @@ body.simple-mode #shadow-bar-open {
   color: #4d5a52;
 }
 
+.three-d-hint-text .three-d-text-mobile,
+.preview-touch-gesture {
+  display: none;
+}
+
 .three-d-preview {
   position: relative;
   width: 46px;
@@ -1360,6 +1365,42 @@ body.simple-mode #shadow-bar-open {
 .building-a { left: 10px; height: 18px; }
 .building-b { left: 22px; height: 25px; background: linear-gradient(180deg, #7fa1b1, #4f7487); }
 .building-c { left: 34px; height: 14px; }
+
+.preview-touch-gesture {
+  position: absolute;
+  inset: 0;
+}
+
+.touch-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #1a6b3c;
+  box-shadow: 0 0 0 4px rgba(26,107,60,0.12);
+}
+
+.touch-dot-a {
+  left: 9px;
+  top: 7px;
+}
+
+.touch-dot-b {
+  left: 23px;
+  top: 15px;
+}
+
+.touch-motion-line {
+  position: absolute;
+  left: 10px;
+  top: 23px;
+  width: 25px;
+  height: 8px;
+  border-bottom: 2px solid rgba(26,107,60,0.72);
+  border-right: 2px solid rgba(26,107,60,0.72);
+  border-radius: 0 0 12px 0;
+  transform: rotate(-16deg);
+}
 
 /* ============================================================
    Shadow + time controls
@@ -2267,6 +2308,23 @@ body.simple-mode #shadow-bar-open {
   .three-d-preview {
     width: 42px;
     height: 34px;
+  }
+
+  .three-d-text-desktop {
+    display: none !important;
+  }
+
+  .three-d-hint-text .three-d-text-mobile {
+    display: block;
+  }
+
+  .three-d-preview .preview-ground,
+  .three-d-preview .preview-building {
+    display: none;
+  }
+
+  .preview-touch-gesture {
+    display: block;
   }
 
   .three-d-hint-content {
