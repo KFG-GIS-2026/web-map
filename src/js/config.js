@@ -91,8 +91,6 @@ function initDisplayMode(map) {
   function syncThreeDHintToggle() {
     if (!threeDHint || !threeDHintToggle) return;
     const isCollapsed = threeDHint.classList.contains("collapsed");
-    const label = threeDHintToggle.querySelector(".three-d-toggle-label");
-    if (label) label.innerHTML = isCollapsed ? "❮ 3D" : "❯";
     threeDHintToggle.setAttribute("aria-expanded", String(!isCollapsed));
   }
 

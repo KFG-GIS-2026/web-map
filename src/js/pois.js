@@ -481,6 +481,15 @@ function getCurrentPopupFeatureId() {
   return currentPopupFeature?.properties?._id || "";
 }
 
+function clearPopupURLParams() {
+  const url = new URL(window.location.href);
+  const hadPopupParams = url.searchParams.has("poi") || url.searchParams.has("skipIntro");
+  if (!hadPopupParams) return;
+
+  window.history.replaceState({}, "", `${url.origin}${url.pathname}`);
+  if (window.__INITIAL_MAP_STATE) window.__INITIAL_MAP_STATE.popupId = "";
+}
+
 function syncMarkerSolarStyles() {
   allMarkers.forEach(({ el, feature }) => {
     el.style.backgroundColor = getSolarMarkerColor(feature.properties);
@@ -540,7 +549,13 @@ function createMarkers(map) {
     if (!category) return;
 
     const el    = createMarkerEl(category, f.properties);
-    const popup = new maplibregl.Popup({ offset: 18, maxWidth: "260px", closeButton: true })
+    const hasSolarInfo = category.cat === "bench" || category.cat === "playground" || category.cat === "park";
+    const popup = new maplibregl.Popup({
+      offset: 18,
+      maxWidth: hasSolarInfo ? "none" : "260px",
+      closeButton: true,
+      className: hasSolarInfo ? "solar-map-popup" : ""
+    })
       .setHTML(buildEnhancedPopupHTML(category, f.properties, map));
 
     const marker = new maplibregl.Marker({ element: el, anchor: "center" })
@@ -563,6 +578,7 @@ function createMarkers(map) {
         currentPopupFeature = null;
         currentPopupMap = null;
       }
+      clearPopupURLParams();
     });
 
     el.style.display = "none";
@@ -583,11 +599,7 @@ function openLinkedPopupFromURL(map) {
   window.setTimeout(() => {
     const popup = item.marker.getPopup();
     if (popup && !popup.isOpen()) item.marker.togglePopup();
-    const url = new URL(window.location.href);
-    url.searchParams.delete("poi");
-    url.searchParams.delete("skipIntro");
-    window.history.replaceState({}, "", url);
-    window.__INITIAL_MAP_STATE.popupId = "";
+    clearPopupURLParams();
   }, 500);
 }
 
