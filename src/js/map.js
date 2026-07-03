@@ -35,8 +35,27 @@ const map = new maplibregl.Map({
   zoom: INITIAL_MAP_STATE.zoom,
   pitch: SIMPLE_CAMERA.pitch,
   bearing: SIMPLE_CAMERA.bearing,
+  attributionControl: false,
   canvasContextAttributes: { antialias: true }
 });
+
+map.addControl(
+  new maplibregl.AttributionControl({
+    compact: true
+  }),
+  "bottom-right"
+);
+
+function collapseMapAttribution() {
+  document.querySelectorAll(".maplibregl-ctrl-attrib").forEach((control) => {
+    control.classList.add("maplibregl-compact");
+    control.classList.remove("maplibregl-compact-show");
+    control.querySelector("button")?.setAttribute("aria-expanded", "false");
+  });
+}
+
+requestAnimationFrame(collapseMapAttribution);
+map.once("load", () => requestAnimationFrame(collapseMapAttribution));
 
 map.addControl(
   new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true, showCompass: true }),
@@ -112,12 +131,11 @@ function initMapActionControls(map) {
 
 function initGlobalButtonBehavior() {
   document.addEventListener("click", (event) => {
-    const button = event.target.closest("button");
     const threeDHint = document.getElementById("three-d-hint");
-    if (!button || !threeDHint || button.id === "three-d-hint-toggle") return;
-    threeDHint.classList.add("collapsed");
     const toggle = document.getElementById("three-d-hint-toggle");
-    toggle?.setAttribute("aria-expanded", "false");
+    if (!threeDHint || !toggle || toggle.contains(event.target)) return;
+    threeDHint.classList.add("collapsed");
+    toggle.setAttribute("aria-expanded", "false");
   });
 }
 
@@ -350,6 +368,12 @@ function initSidebar() {
   document.getElementById("mobile-action-sidebar")?.addEventListener("click", () => _toggleMobilePanel("sidebar"));
   document.getElementById("mobile-action-shadow")?.addEventListener("click", () => _toggleMobilePanel("shadow"));
   document.getElementById("mobile-action-mode")?.addEventListener("click", () => _toggleMobilePanel("mode"));
+
+  map.on("click", () => {
+    if (!window.matchMedia("(max-width: 600px)").matches) return;
+    if (mobileActivePanel !== "mode") return;
+    _closeMobilePanels();
+  });
 
   _closeMobilePanels();
 }

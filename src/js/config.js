@@ -133,6 +133,8 @@ function initDisplayMode(map) {
 
   function applyMode(isComplex) {
     simpleMode = !isComplex;
+    document.body.classList.toggle("simple-mode", simpleMode);
+    document.body.classList.toggle("complex-mode", isComplex);
     setLabelState(isComplex);
     syncModeToggles(isComplex);
 

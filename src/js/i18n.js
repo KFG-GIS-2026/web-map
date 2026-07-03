@@ -12,9 +12,9 @@ const TRANSLATIONS = {
     languageLabel: "Sprache",
     chooseLanguage: "Sprache auswählen",
     solarLoad: "Sonnenbelastung",
-    solarSimpleTooltip: "In der einfachen Ansicht zeigen die Farben den Tagesdurchschnitt für den zeitlich passendsten Stichtag. Datum und Uhrzeit können in der komplexen Ansicht genauer eingestellt werden.",
-    solarComplexTooltip: "Die Farben zeigen den Solarwert zum gewählten Datum und zur gewählten Uhrzeit. Blau steht für geringe, Rot für sehr hohe Sonnenbelastung.",
-    solarComplexNote: "Die Farben zeigen die aktuelle Sonnenbelastung von Parks, Sitzbänken und Spielplätzen: Blau ist kühler, Rot ist belasteter.",
+    solarSimpleTooltip: "In der einfachen Ansicht zeigen die Farben den Tagesdurchschnitt für den zeitlich passendsten Tag. Datum und Uhrzeit können in der komplexen Ansicht eingestellt werden.",
+    solarComplexTooltip: "Die Farben zeigen die aktuelle Sonnenbelastung von Parks, Sitzbänken und Spielplätzen zum gewählten Zeitpunkt: Blau ist kühler, Rot ist belasteter. Angenäherte Werte bei wolkenfreiem Himmel.",
+    solarComplexNote: "",
     veryLowShort: "sehr gering",
     lowShort: "gering",
     mediumShort: "mittel",
@@ -28,7 +28,7 @@ const TRANSLATIONS = {
     showAllSolar: "Alle Sonnenklassen anzeigen",
     showCoolerOnly: "Nur kühlere Orte anzeigen",
     timePoint: "Zeitpunkt",
-    timePointTooltip: "der Zeitpunkt für die Schattenmodellierung und für die Solarwerte der POIs",
+    timePointTooltip: "Zeitpunkt für die Schattenmodellierung und für die Solarwerte der POIs",
     date: "Datum",
     chooseDate: "Datum auswählen",
     current: "aktuell",
@@ -148,8 +148,8 @@ const TRANSLATIONS = {
     chooseLanguage: "Choose language",
     solarLoad: "Sun exposure",
     solarSimpleTooltip: "In simple view, colors show the daily average for the closest available reference date. Date and time can be adjusted more precisely in advanced view.",
-    solarComplexTooltip: "Colors show the solar value for the selected date and time. Blue means low exposure, red means very high exposure.",
-    solarComplexNote: "Colors show current sun exposure for parks, benches and playgrounds: blue is cooler, red is more exposed.",
+    solarComplexTooltip: "Colors show current sun exposure for parks, benches and playgrounds at the selected time: blue is cooler, red is more exposed. Approximate values for a cloudless sky.",
+    solarComplexNote: "",
     veryLowShort: "very low",
     lowShort: "low",
     mediumShort: "medium",
@@ -384,7 +384,9 @@ function applyStaticTranslations() {
 
   document.querySelector("#solar-legend-section .info-tooltip").textContent = t("solarSimpleTooltip");
   document.querySelector("#solar-filter-section .info-tooltip").textContent = t("solarComplexTooltip");
-  document.querySelector("#solar-filter-section .solar-filter-note").textContent = t("solarComplexNote");
+  const solarFilterNote = document.querySelector("#solar-filter-section .solar-filter-note");
+  solarFilterNote.textContent = "";
+  solarFilterNote.hidden = true;
   document.querySelector("#shadow-date-section .info-tooltip").textContent = t("timePointTooltip");
   document.querySelector("#shadow-toggle-control .info-tooltip").textContent = t("shadowTooltip");
 

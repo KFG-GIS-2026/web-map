@@ -510,11 +510,16 @@ function syncSolarActionButton() {
 
 function syncSimpleSolarLegendNote() {
   const note = document.getElementById("simple-solar-date-note");
-  if (!note) return;
+  const tooltip = document.getElementById("simple-solar-info-tooltip");
+  const headingDate = document.getElementById("simple-solar-heading-date");
+  if (!note || !tooltip || !headingDate) return;
   const dateLabel = escapeHTML(getSimpleSolarDateLabel());
-  note.innerHTML = getLanguage() === "en"
-    ? `Colors show the daily average sun exposure for <strong>${dateLabel}</strong>. Date and time can be adjusted in advanced view.`
-    : `Farben zeigen den Tagesdurchschnitt der Sonnenbelastung für <strong>${dateLabel}</strong>. Datum und Uhrzeit können in der komplexen Ansicht angepasst werden.`;
+  headingDate.innerHTML = dateLabel;
+  tooltip.innerHTML = getLanguage() === "en"
+    ? `The colors show the daily average sun exposure for <strong>${dateLabel}</strong>. Date and time can be adjusted in advanced view. Approximate values for a cloudless sky.`
+    : `Die Farben zeigen den Tagesdurchschnitt der Sonnenbelastung für <strong>${dateLabel}</strong>. Datum und Uhrzeit können in der komplexen Ansicht angepasst werden. Angenäherte Werte bei wolkenfreiem Himmel.`;
+  note.hidden = true;
+  note.textContent = "";
 }
 
 function getCategoryGroupCheckboxes(group) {

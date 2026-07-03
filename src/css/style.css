@@ -380,6 +380,26 @@ input:checked + .slider::before {
   margin: 0 0 2px;
 }
 
+.section-title-with-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.section-date-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(26,107,60,0.08);
+  color: #66756b;
+  font-size: 10.5px;
+  font-weight: 750;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
 .solar-filter-note {
   margin: -2px 0 0;
   color: #66756b;
@@ -1397,17 +1417,19 @@ input:checked + .slider::before {
 @media (min-width: 601px) and (max-width: 1380px) {
   #shadow-bar {
     left: calc(376px + (100vw - 488px) / 2);
-    width: min(760px, calc(100vw - 488px));
+    width: max-content;
+    max-width: calc(100vw - 488px);
     min-width: 0;
   }
 
   #sidebar.collapsed ~ #shadow-bar {
     left: calc((100vw - 112px) / 2);
-    width: min(760px, calc(100vw - 144px));
+    width: max-content;
+    max-width: calc(100vw - 144px);
   }
 
   #shadow-panel {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
     gap: 8px;
     padding-left: 10px;
@@ -1446,7 +1468,8 @@ input:checked + .slider::before {
 
   #shadow-bar {
     left: calc(354px + (100vw - 466px) / 2);
-    width: min(430px, calc(100vw - 466px));
+    width: max-content;
+    max-width: calc(100vw - 466px);
   }
 }
 
@@ -2178,7 +2201,7 @@ input:checked + .slider::before {
 
   #map-action-controls {
     right: 20px;
-    top: 104px;
+    top: 152px;
     bottom: auto;
   }
 
@@ -2195,6 +2218,10 @@ input:checked + .slider::before {
 
   #mobile-action-bar {
     display: flex;
+  }
+
+  body.simple-mode #mobile-action-shadow {
+    display: none;
   }
 
   #mode-switch-container {
@@ -2215,7 +2242,7 @@ input:checked + .slider::before {
   #three-d-hint {
     top: auto;
     right: 10px;
-    bottom: 138px;
+    bottom: 152px;
     max-width: 214px;
   }
 
@@ -2230,14 +2257,15 @@ input:checked + .slider::before {
   transition: opacity .15s ease;
   }
 
-  /* Shadow and time controls: wider, larger touch targets */
+  /* Shadow and time controls: compact mobile panel */
   #shadow-bar {
-    bottom: 84px;
-    width: calc(100% - 24px);
-    left: 12px;
-    transform: none;
-    border-radius: 18px;
+    bottom: 82px;
+    width: min(360px, calc(100% - 28px));
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 13px;
     flex-wrap: wrap;
+    padding-right: 28px;
   }
 
   #shadow-bar.minimizing,
@@ -2246,31 +2274,61 @@ input:checked + .slider::before {
   }
 
   #shadow-panel {
-    flex: 1 1 100%;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px 14px 14px;
-    border-left: none;
+    display: contents;
   }
 
   #shadow-toggle-control {
-    width: 100%;
+    order: 4;
+    flex: 1 1 auto;
+    width: auto;
     justify-content: flex-end;
-    padding: 10px 14px;
+    min-height: 34px;
+    gap: 6px;
+    padding: 8px 10px 10px 2px;
     border-left: none;
-    border-top: 1px solid rgba(0,0,0,0.09);
+    border-top: none;
   }
 
   .shadow-slider-wrap {
-    width: 100%;
-    order: 3;
+    order: 1;
+    flex: 1 1 calc(100% - 20px);
+    width: auto;
+    margin: 10px 10px 4px;
   }
 
-  #shadow-time  { font-size: 16px; min-width: auto; }
-  .shadow-date-control { flex: 1; min-width: 190px; }
-  .shadow-date-control select { width: 100%; font-size: 14px; }
-  #shadow-current { font-size: 14px; padding: 8px 11px; }
-  #shadow-play  { width: 42px; height: 42px; font-size: 16px; }
+  #shadow-time  {
+    order: 3;
+    align-self: center;
+    margin-left: 0;
+    margin-right: 8px;
+    font-size: 14px;
+    min-width: 68px;
+    text-align: left;
+  }
+  .shadow-date-control {
+    flex: 1 1 150px;
+    min-width: 0;
+    min-height: 34px;
+    padding: 4px 7px 4px 8px;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .shadow-date-control select { width: 100%; font-size: 12px; }
+  #shadow-current { min-height: 34px; font-size: 12px; padding: 6px 9px; }
+  #shadow-play  {
+    order: 2;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    align-self: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+  }
+  .shadow-toggle-label { font-size: 12px; }
+  .shadow-switch { width: 46px; height: 24px; }
+  .shadow-switch .slider::before { width: 18px; height: 18px; }
+  .shadow-switch input:checked + .slider::before { transform: translateX(22px); }
 
   .help-modal {
     align-items: stretch;
