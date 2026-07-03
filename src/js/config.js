@@ -167,6 +167,7 @@ function initDisplayMode(map) {
       threeDHint?.classList.add("hidden");
       if (typeof _stopAnimation === "function") _stopAnimation();
       hideShadowLayer(map);
+      if (typeof forceClusteringEnabled === "function") forceClusteringEnabled(map);
       setBuildingVisibility("none");
       setMapTiltEnabled(false);
       setMapPerspective(SIMPLE_CAMERA);

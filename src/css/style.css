@@ -679,7 +679,7 @@ input:checked + .slider::before {
 .floating-shadow-button {
   position: absolute;
   left: 50%;
-  bottom: 56px;
+  bottom: 28px;
   z-index: 24;
   transform: translateX(-50%);
   width: 76px;
@@ -761,6 +761,11 @@ input:checked + .slider::before {
 
 .floating-shadow-button.hidden {
   display: none;
+}
+
+body.simple-mode #shadow-bar,
+body.simple-mode #shadow-bar-open {
+  display: none !important;
 }
 
 @keyframes shadowButtonPop {
@@ -1378,7 +1383,7 @@ input:checked + .slider::before {
 }
 
 #shadow-bar {
-  bottom: 56px;
+  bottom: 28px;
 }
 
 #shadow-bar:hover { box-shadow: 0 6px 30px rgba(0,0,0,0.24); }
@@ -2156,21 +2161,34 @@ input:checked + .slider::before {
 
 /* ── GitHub badge ── */
 #gh-link {
-  position: absolute;
-  bottom: 16px; left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(6px);
-  border-radius: 20px;
-  padding: 5px 14px;
+  border-radius: 999px;
+  padding: 5px 9px;
   font-size: 12px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.15);
   display: flex; align-items: center; gap: 6px;
   text-decoration: none;
   color: #24292f;
+  transform: translateY(2px);
 }
 #gh-link:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+
+#map-footer-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin: 0 10px 10px 0;
+  float: right;
+  clear: both;
+}
+
+#map-footer-controls .maplibregl-ctrl,
+#map-footer-controls .maplibregl-ctrl-attrib {
+  margin: 0;
+  float: none;
+  clear: none;
+}
 
 /* ============================================================
    Responsive – mobile (max-width: 600px)
@@ -2366,6 +2384,5 @@ input:checked + .slider::before {
     padding: 12px 16px 16px;
   }
 
-  /* GitHub badge: push up above shadow bar */
-  #gh-link { bottom: 20px; font-size: 11px; }
+  #gh-link { font-size: 11px; }
 }

@@ -754,6 +754,13 @@ function syncClusterButtons() {
     : t("clusterCombine");
 }
 
+function forceClusteringEnabled(map) {
+  allClusteringEnabled = true;
+  benchClusteringEnabled = true;
+  syncClusterButtons();
+  if (map && geojsonData) updatePOISource(map, { rebuild: true });
+}
+
 function getRenderedClusterAtPoint(map, point) {
   const clusterLayers = [POI_CLUSTER_LAYER_ID, BENCH_CLUSTER_LAYER_ID].filter((layerId) =>
     map.getLayer(layerId)

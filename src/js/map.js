@@ -54,8 +54,31 @@ function collapseMapAttribution() {
   });
 }
 
-requestAnimationFrame(collapseMapAttribution);
-map.once("load", () => requestAnimationFrame(collapseMapAttribution));
+function placeGitHubLinkWithAttribution() {
+  const link = document.getElementById("gh-link");
+  const attribution = document.querySelector(".maplibregl-ctrl-attrib");
+  const corner = document.querySelector(".maplibregl-ctrl-bottom-right");
+  if (!link || !attribution || !corner) return;
+
+  let group = document.getElementById("map-footer-controls");
+  if (!group) {
+    group = document.createElement("div");
+    group.id = "map-footer-controls";
+    group.className = "maplibregl-ctrl";
+  }
+
+  if (link.parentElement !== group) group.appendChild(link);
+  if (attribution.parentElement !== group) group.appendChild(attribution);
+  if (group.parentElement !== corner) corner.appendChild(group);
+}
+
+function syncMapFooterControls() {
+  placeGitHubLinkWithAttribution();
+  collapseMapAttribution();
+}
+
+requestAnimationFrame(syncMapFooterControls);
+map.once("load", () => requestAnimationFrame(syncMapFooterControls));
 
 map.addControl(
   new maplibregl.NavigationControl({ visualizePitch: true, showZoom: true, showCompass: true }),
@@ -319,7 +342,7 @@ function initSidebar() {
     const shadowBar = document.getElementById("shadow-bar");
     if (!shadowBar) return;
     shadowBar.classList.remove("open");
-    if (window.matchMedia("(max-width: 600px)").matches) {
+    if (simpleMode || window.matchMedia("(max-width: 600px)").matches) {
       shadowBar.style.display = "none";
     } else {
       shadowBar.style.display = "flex";

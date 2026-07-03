@@ -472,6 +472,11 @@ function initShadowControls(map) {
   });
 
   openBtn?.addEventListener("click", () => {
+    if (simpleMode) {
+      if (shadowBar) shadowBar.style.display = "none";
+      openBtn.classList.add("hidden");
+      return;
+    }
     if (shadowBar) {
       shadowBar.classList.remove("open", "minimizing");
       shadowBar.style.display = window.matchMedia("(max-width: 600px)").matches ? "none" : "flex";
