@@ -335,6 +335,10 @@ function formatOSMValue(value) {
     yes: "yes",
     no: "no",
     limited: "limited",
+    public: "publicAccess",
+    private: "privateAccess",
+    permissive: "permissiveAccess",
+    customers: "customersAccess",
     christian: "christian",
     protestant: "protestant",
     roman_catholic: "roman_catholic",
@@ -352,9 +356,18 @@ function formatOSMValue(value) {
   return keys[value] && typeof t === "function" ? t(keys[value]) : String(value).replace(/_/g, " ");
 }
 
+function getAccessText(props) {
+  const values = [];
+  if (props.access) values.push(formatOSMValue(props.access));
+  if (props["access:conditional"]) values.push(formatOSMValue(props["access:conditional"]));
+  if (props.fee) values.push(`${t("fee")}: ${formatOSMValue(props.fee)}`);
+  if (props.charge) values.push(`${t("charge")}: ${props.charge}`);
+  return values.length ? values.join(", ") : null;
+}
+
 function addDetail(extra, label, value) {
   if (value === undefined || value === null || value === "") return;
-  extra.push(`<span class="popup-detail-label">${escapeHTML(label)}:</span> ${escapeHTML(value)}`);
+  extra.push(`<span class="popup-detail-row"><span class="popup-detail-label">${escapeHTML(label)}:</span> <span class="popup-detail-value">${escapeHTML(value)}</span></span>`);
 }
 
 function addBuildingDetails(extra, props, category) {
@@ -385,6 +398,7 @@ function buildPopupHTML(category, props) {
   const name = props._name;
 
   const extra = [];
+  if (category.cat !== "bench") addDetail(extra, t("access"), getAccessText(props) || t("notSpecified"));
   if (props.opening_hours) extra.push(`🕐 ${props.opening_hours}`);
   if (props.wheelchair === "yes") extra.push("♿ Rollstuhlgerecht");
   if (props.website)
@@ -407,11 +421,11 @@ function buildPopupHTML(category, props) {
     : "";
 
   return `
-    <div style="font-family:sans-serif;font-size:13px;line-height:1.6;text-align:center">
+    <div class="poi-popup-content" style="font-family:sans-serif;font-size:13px;line-height:1.6;text-align:center">
       <img src="${symbolUrl(category.icon)}"
            style="width:28px;height:28px;display:block;margin:0 auto 6px" />
       ${titleHTML}
-      <div style="text-align:left">${extraHTML}</div>
+      <div class="popup-details" style="text-align:left">${extraHTML}</div>
     </div>`;
 }
 
@@ -424,6 +438,7 @@ function buildEnhancedPopupHTML(category, props, map) {
 
   if (solarHTML) extra.push(solarHTML);
 
+  if (category.cat !== "bench") addDetail(extra, t("access"), getAccessText(props) || t("notSpecified"));
   if (props.opening_hours) addDetail(extra, t("openingHours"), props.opening_hours);
   if (BUILDING_CATEGORIES.has(category.cat)) {
     addBuildingDetails(extra, props, category);
@@ -448,11 +463,11 @@ function buildEnhancedPopupHTML(category, props, map) {
     : "";
 
   return `
-    <div style="font-family:sans-serif;font-size:13px;line-height:1.6;text-align:center">
+    <div class="poi-popup-content" style="font-family:sans-serif;font-size:13px;line-height:1.6;text-align:center">
       <img src="${symbolUrl(category.icon)}"
            style="width:28px;height:28px;display:block;margin:0 auto 6px" />
       ${titleHTML}
-      <div style="text-align:left">${extraHTML}</div>
+      <div class="popup-details" style="text-align:left">${extraHTML}</div>
     </div>`;
 }
 
@@ -533,10 +548,13 @@ function syncCategoryGroupButtons() {
   document.querySelectorAll(".category-group").forEach((group) => {
     const button = group.querySelector(".category-group-toggle");
     const state = group.querySelector(".category-group-state");
+    const groupCheckbox = group.querySelector(".category-group-checkbox");
     const checkboxes = getCategoryGroupCheckboxes(group);
     const hasAnyChecked = checkboxes.some((cb) => cb.checked);
 
-    if (button) button.setAttribute("aria-pressed", String(hasAnyChecked));
+    group.classList.toggle("category-group-hidden", !hasAnyChecked);
+    if (button) button.setAttribute("aria-checked", String(hasAnyChecked));
+    if (groupCheckbox) groupCheckbox.checked = hasAnyChecked;
     if (state) state.textContent = hasAnyChecked ? t("hide") : t("show");
   });
 }
@@ -821,11 +839,11 @@ function initFilterControls(map) {
     });
   });
 
-  document.querySelectorAll(".category-group-toggle").forEach((button) => {
-    button.addEventListener("click", () => {
-      const group = button.closest(".category-group");
+  document.querySelectorAll(".category-group-checkbox").forEach((groupCheckbox) => {
+    groupCheckbox.addEventListener("change", () => {
+      const group = groupCheckbox.closest(".category-group");
       const checkboxes = group ? getCategoryGroupCheckboxes(group) : [];
-      const shouldShow = !checkboxes.some((cb) => cb.checked);
+      const shouldShow = groupCheckbox.checked;
 
       checkboxes.forEach((cb) => {
         cb.checked = shouldShow;

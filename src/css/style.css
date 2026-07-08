@@ -889,6 +889,10 @@ body.simple-mode #shadow-bar-open {
   gap: 10px;
 }
 
+#mobile-language-slot:empty {
+  display: none;
+}
+
 #mode-switch-container {
   display: block;
 }
@@ -930,9 +934,24 @@ body.simple-mode #shadow-bar-open {
   border-color: rgba(26,107,60,0.28);
 }
 
-.category-group-toggle[aria-pressed="false"] {
+.category-group.category-group-hidden .category-group-toggle {
   color: #7a817d;
   border-color: rgba(0,0,0,0.1);
+}
+
+.category-group-action {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-group-checkbox {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: #1a6b3c;
+  cursor: pointer;
 }
 
 .category-group-state {
@@ -1029,6 +1048,7 @@ body.simple-mode #shadow-bar-open {
   border-radius: 10px !important;
   padding: 14px 18px 12px !important;
   box-shadow: 0 4px 18px rgba(0,0,0,0.18) !important;
+  max-width: min(340px, calc(100vw - 56px)) !important;
 }
 
 .solar-map-popup {
@@ -1036,8 +1056,8 @@ body.simple-mode #shadow-bar-open {
 }
 
 .solar-map-popup .maplibregl-popup-content {
-  width: max-content;
-  max-width: calc(100vw - 56px);
+  width: fit-content;
+  max-width: min(340px, calc(100vw - 56px));
 }
 
 .maplibregl-popup-close-button {
@@ -1121,6 +1141,25 @@ body.simple-mode #shadow-bar-open {
 .popup-detail-label {
   color: #526057;
   font-weight: 750;
+  white-space: nowrap;
+}
+
+.poi-popup-content {
+  max-width: min(304px, calc(100vw - 92px));
+}
+
+.popup-details {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.popup-detail-row {
+  display: block;
+  max-width: 100%;
+}
+
+.popup-detail-value {
+  overflow-wrap: anywhere;
 }
 
 .popup-detail-link {
@@ -2236,32 +2275,79 @@ body.simple-mode #shadow-bar-open {
    ============================================================ */
 @media (max-width: 600px) {
 
-  /* Sidebar: full-width strip at the top when open */
+  /* Sidebar: mobile panel, visually aligned with the help overview */
   #sidebar {
-    top: 0; left: 0; bottom: 84px;
-    width: 100%;
+    top: 12px;
+    left: 12px;
+    bottom: 76px;
+    width: calc(100% - 24px);
     height: auto;
-    max-height: calc(100vh - 84px);
-    border-radius: 0 0 16px 16px;
-    padding: 10px 14px 14px;
+    max-height: calc(100vh - 88px);
+    border: 1px solid rgba(26,107,60,0.16);
+    border-radius: 14px;
+    padding: 14px 16px 16px;
+    background: #fbfdfb;
+    box-shadow: 0 18px 56px rgba(0,0,0,0.22);
     overflow-x: clip;
     overflow-y: auto;
   }
 
-  .floating-help-button {
-    right: 10px;
-    bottom: 78px;
+  #sidebar-header {
+    position: sticky;
+    top: -14px;
+    z-index: 2;
+    margin: -14px -16px 12px;
+    padding: 13px 16px 11px;
+    background: rgba(251,253,251,0.97);
+    border-bottom: 1px solid rgba(26,107,60,0.12);
+    border-radius: 14px 14px 0 0;
   }
 
-  #language-control {
+  .floating-help-button {
     right: 10px;
-    bottom: 114px;
+    bottom: 68px;
+    min-width: 34px;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    border-radius: 8px;
+    gap: 0;
+  }
+
+  .floating-help-button span:last-child {
+    display: none;
+  }
+
+  .floating-help-button .sidebar-help-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+  }
+
+  #sidebar:not(.collapsed) ~ .floating-help-button {
+    display: none;
+  }
+
+  #mobile-mode-panel #language-control {
+    position: static;
+    width: 78px;
+    height: 31px;
+    min-width: 78px;
+    min-height: 31px;
+    margin: 12px auto 0;
+    box-shadow: none;
+    background: #f7fbf8;
   }
 
   #map-action-controls {
     right: 20px;
     top: 152px;
     bottom: auto;
+  }
+
+  #sidebar:not(.collapsed) ~ #map-action-controls {
+    display: none;
   }
 
   .floating-shadow-button {
@@ -2277,6 +2363,29 @@ body.simple-mode #shadow-bar-open {
 
   #mobile-action-bar {
     display: flex;
+    bottom: 8px;
+    gap: 8px;
+    padding: 5px 7px;
+  }
+
+  .mobile-action-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .mobile-panel {
+    bottom: 64px;
+    padding: 12px 14px;
+    border-radius: 15px;
+  }
+
+  #mobile-language-slot {
+    margin-top: 11px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(26,107,60,0.1);
+    display: flex;
+    justify-content: center;
   }
 
   body.simple-mode #mobile-action-shadow {
@@ -2301,12 +2410,23 @@ body.simple-mode #shadow-bar-open {
   #three-d-hint {
     top: auto;
     right: 10px;
-    bottom: 152px;
-    max-width: 214px;
+    bottom: 108px;
+    height: 60px;
+    max-width: 226px;
+  }
+
+  #three-d-hint.collapsed {
+    max-width: 34px;
+    height: 60px;
+  }
+
+  #three-d-hint-toggle {
+    width: 34px;
+    height: 60px;
   }
 
   .three-d-preview {
-    width: 42px;
+    width: 38px;
     height: 34px;
   }
 
@@ -2328,9 +2448,25 @@ body.simple-mode #shadow-bar-open {
   }
 
   .three-d-hint-content {
-  width: 178px;
-  overflow: hidden;
-  transition: opacity .15s ease;
+    width: 186px;
+    grid-template-columns: 38px 1fr;
+    gap: 8px;
+    padding: 7px 8px;
+    overflow: hidden;
+    transition: opacity .15s ease;
+  }
+
+  .three-d-hint-text {
+    width: 124px;
+  }
+
+  .three-d-hint-text strong {
+    font-size: 12px;
+  }
+
+  .three-d-hint-text span {
+    font-size: 10.5px;
+    line-height: 1.2;
   }
 
   /* Shadow and time controls: compact mobile panel */

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260702-68" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260702-72" />
 </head>
 <body class="simple-mode">
 
@@ -126,10 +126,13 @@
 
     <div id="sidebar-content">
       <div class="category-group" data-category-cats="playground park bench">
-        <button class="category-group-toggle" type="button" aria-pressed="true">
-          <span>Freizeit &amp; Erholung</span>
-          <span class="category-group-state">ausblenden</span>
-        </button>
+        <label class="category-group-toggle">
+          <span class="category-group-title">Freizeit &amp; Erholung</span>
+          <span class="category-group-action">
+            <input type="checkbox" class="category-group-checkbox" checked />
+            <span class="category-group-state">ausblenden</span>
+          </span>
+        </label>
         <div class="category-items">
           <label class="filter-item" id="lbl-playground">
             <input type="checkbox" class="filter-cb" data-cat="playground" checked />
@@ -152,10 +155,13 @@
       </div>
 
       <div class="category-group" data-category-cats="drinking fountain toilet">
-        <button class="category-group-toggle" type="button" aria-pressed="true">
-          <span>Wasser</span>
-          <span class="category-group-state">ausblenden</span>
-        </button>
+        <label class="category-group-toggle">
+          <span class="category-group-title">Wasser</span>
+          <span class="category-group-action">
+            <input type="checkbox" class="category-group-checkbox" checked />
+            <span class="category-group-state">ausblenden</span>
+          </span>
+        </label>
         <p class="sidebar-disclaimer">Alle Angaben ohne Gewähr. Die Angaben basieren auf öffentlichen Daten.</p>
         <div class="category-items">
           <label class="filter-item" id="lbl-drinking">
@@ -179,10 +185,13 @@
       </div>
 
       <div class="category-group" data-category-cats="church library museum">
-        <button class="category-group-toggle" type="button" aria-pressed="true">
-          <span>Gebäude</span>
-          <span class="category-group-state">ausblenden</span>
-        </button>
+        <label class="category-group-toggle">
+          <span class="category-group-title">Gebäude</span>
+          <span class="category-group-action">
+            <input type="checkbox" class="category-group-checkbox" checked />
+            <span class="category-group-state">ausblenden</span>
+          </span>
+        </label>
         <div class="category-items">
 
           <label class="filter-item" id="lbl-church">
@@ -267,6 +276,7 @@
       </label>
       <span class="mobile-mode-label active" data-mode="complex">Komplex</span>
     </div>
+    <div id="mobile-language-slot"></div>
   </div>
 
   <div id="mobile-action-bar" class="mobile-action-bar" aria-label="Mobile Schnellzugriff">
@@ -465,12 +475,12 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/i18n.js?v=20260702-66"></script>
-  <script src="src/js/config.js?v=20260702-66"></script>
-  <script src="src/js/boundary.js?v=20260702-66"></script>
-  <script src="src/js/shadow.js?v=20260702-66"></script>
-  <script src="src/js/pois.js?v=20260702-66"></script>
-  <script src="src/js/help.js?v=20260702-66"></script>
-  <script src="src/js/map.js?v=20260702-66"></script>
+  <script src="src/js/i18n.js?v=20260702-70"></script>
+  <script src="src/js/config.js?v=20260702-70"></script>
+  <script src="src/js/boundary.js?v=20260702-70"></script>
+  <script src="src/js/shadow.js?v=20260702-70"></script>
+  <script src="src/js/pois.js?v=20260702-70"></script>
+  <script src="src/js/help.js?v=20260702-70"></script>
+  <script src="src/js/map.js?v=20260702-70"></script>
 </body>
 </html>

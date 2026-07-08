@@ -291,6 +291,25 @@ function initSidebar() {
   const sidebar   = document.getElementById("sidebar");
   const openBtn   = document.getElementById("sidebar-open");
   const toggleBtn = document.getElementById("sidebar-toggle");
+  const languageControl = document.getElementById("language-control");
+  const mobileLanguageSlot = document.getElementById("mobile-language-slot");
+  const languageHome = languageControl?.parentElement || null;
+  const languageNextSibling = languageControl?.nextSibling || null;
+
+  function syncMobileLanguagePlacement() {
+    if (!languageControl || !mobileLanguageSlot || !languageHome) return;
+    if (window.matchMedia("(max-width: 600px)").matches) {
+      if (languageControl.parentElement !== mobileLanguageSlot) mobileLanguageSlot.appendChild(languageControl);
+      return;
+    }
+
+    if (languageControl.parentElement === languageHome) return;
+    if (languageNextSibling && languageNextSibling.parentElement === languageHome) {
+      languageHome.insertBefore(languageControl, languageNextSibling);
+    } else {
+      languageHome.appendChild(languageControl);
+    }
+  }
 
   function closeSidebar() {
     sidebar.classList.add("collapsed");
@@ -303,6 +322,7 @@ function initSidebar() {
 
   toggleBtn.addEventListener("click", closeSidebar);
   openBtn.addEventListener("click", openSidebar);
+  syncMobileLanguagePlacement();
   if (window.innerWidth < 600) closeSidebar();
 
   function _setActionButtonState(buttonId, active) {
@@ -377,6 +397,7 @@ function initSidebar() {
   }
 
   window.addEventListener("resize", () => {
+    syncMobileLanguagePlacement();
     // When switching to desktop size, ensure mobile-only panels are closed
     // but keep the sidebar open. When switching to mobile, collapse sidebar.
     if (!window.matchMedia("(max-width: 600px)").matches) {

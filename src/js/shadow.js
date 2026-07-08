@@ -345,6 +345,12 @@ function _syncShadowToggle() {
 
 const ANIMATION_SPEED = 1000;
 
+function _getNextAnimationHour() {
+  const currentIdx = SHADOW_HOURS.indexOf(currentShadowHour);
+  if (currentIdx < 0 || currentIdx >= SHADOW_HOURS.length - 1) return SHADOW_HOURS[0];
+  return SHADOW_HOURS[currentIdx + 1];
+}
+
 function _startAnimation(map) {
   if (_animationRunning) return;
   _animationRunning = true;
@@ -353,17 +359,18 @@ function _startAnimation(map) {
 
   function tick() {
     if (!_animationRunning) return;
-    const currentIdx = SHADOW_HOURS.indexOf(currentShadowHour);
-    const nextHour = currentIdx < 0 || currentIdx >= SHADOW_HOURS.length - 1
-      ? _animationStartHour
-      : SHADOW_HOURS[currentIdx + 1];
+    const nextHour = _getNextAnimationHour();
     const shouldStopAfterUpdate = nextHour === _animationStartHour && currentShadowHour !== _animationStartHour;
     updateShadowLayer(map, nextHour)
       .then(() => {
-        if (shouldStopAfterUpdate) _stopAnimation();
+        if (!_animationRunning) return;
+        if (shouldStopAfterUpdate) {
+          _stopAnimation();
+        } else {
+          _animationTimer = setTimeout(tick, ANIMATION_SPEED);
+        }
       })
       .catch((err) => console.error("Shadow update error:", err));
-    if (_animationRunning && !shouldStopAfterUpdate) _animationTimer = setTimeout(tick, ANIMATION_SPEED);
   }
 
   _animationTimer = setTimeout(tick, ANIMATION_SPEED);

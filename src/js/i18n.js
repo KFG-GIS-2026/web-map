@@ -102,6 +102,9 @@ const TRANSLATIONS = {
     detailComplex: "Details in komplexer Ansicht",
     openingHours: "Öffnungszeiten",
     address: "Adresse",
+    access: "Zugang",
+    fee: "Gebühr",
+    charge: "Kosten",
     costAccess: "Kosten/Zugang",
     wheelchair: "Barrierefreiheit",
     wheelchairToilet: "Rollstuhl-WC",
@@ -119,6 +122,11 @@ const TRANSLATIONS = {
     yes: "ja",
     no: "nein",
     limited: "eingeschränkt",
+    notSpecified: "keine Angabe",
+    publicAccess: "öffentlich",
+    privateAccess: "privat",
+    permissiveAccess: "geduldet",
+    customersAccess: "nur Kundschaft",
     christian: "christlich",
     protestant: "evangelisch",
     roman_catholic: "römisch-katholisch",
@@ -238,6 +246,9 @@ const TRANSLATIONS = {
     detailComplex: "Details in advanced view",
     openingHours: "Opening hours",
     address: "Address",
+    access: "Access",
+    fee: "Fee",
+    charge: "Charge",
     costAccess: "Cost/access",
     wheelchair: "Accessibility",
     wheelchairToilet: "Wheelchair-accessible toilet",
@@ -255,6 +266,11 @@ const TRANSLATIONS = {
     yes: "yes",
     no: "no",
     limited: "limited",
+    notSpecified: "not specified",
+    publicAccess: "public",
+    privateAccess: "private",
+    permissiveAccess: "permissive",
+    customersAccess: "customers only",
     christian: "Christian",
     protestant: "Protestant",
     roman_catholic: "Roman Catholic",
@@ -342,9 +358,9 @@ function applyStaticTranslations() {
   setText(".simple-solar-legend-item:nth-child(5) span:last-child", "veryHighShort");
   setText(".solar-class-labels span:first-child", "veryLowShort");
   setText(".solar-class-labels span:last-child", "veryHighShort");
-  setText(".category-group[data-category-cats='playground park bench'] .category-group-toggle span:first-child", "leisure");
-  setText(".category-group[data-category-cats='drinking fountain toilet'] .category-group-toggle span:first-child", "water");
-  setText(".category-group[data-category-cats='church library museum'] .category-group-toggle span:first-child", "buildings");
+  setText(".category-group[data-category-cats='playground park bench'] .category-group-title", "leisure");
+  setText(".category-group[data-category-cats='drinking fountain toilet'] .category-group-title", "water");
+  setText(".category-group[data-category-cats='church library museum'] .category-group-title", "buildings");
   setText(".sidebar-disclaimer", "disclaimer");
   setText("#lbl-playground .filter-label", "category_playground");
   setText("#lbl-park .filter-label", "category_park");
