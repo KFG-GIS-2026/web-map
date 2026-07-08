@@ -2529,18 +2529,19 @@ body.simple-mode #shadow-bar-open {
   #shadow-current { min-height: 34px; font-size: 12px; padding: 6px 9px; }
   #shadow-play  {
     order: 2;
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+    line-height: 1;
     align-self: center;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 2px;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 0;
   }
   .shadow-toggle-label { font-size: 12px; }
-  .shadow-switch { width: 46px; height: 24px; }
-  .shadow-switch .slider::before { width: 18px; height: 18px; }
-  .shadow-switch input:checked + .slider::before { transform: translateX(22px); }
+  .shadow-switch { width: 52px; height: 28px; }
+  .shadow-switch .slider::before { width: 20px; height: 20px; }
+  .shadow-switch input:checked + .slider::before { transform: translateX(24px); }
 
   .help-modal {
     align-items: stretch;
