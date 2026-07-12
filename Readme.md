@@ -20,7 +20,7 @@ Die Anwendung läuft vollständig im Browser. Sie benötigt keinen Build-Prozess
 - Einfache Ansicht für einen schnellen Überblick sowie komplexe Ansicht mit erweiterten Filtern
 - Filterung nach POI-Kategorie und Sonnenbelastung
 - Cluster-Darstellung bei kleineren Zoomstufen
-- Adresssuche innerhalb Neckargemünds
+- Adresssuche innerhalb Neckargemünds mit lokalen Straßenvorschlägen
 - 3D-Gebäude und Standortbestimmung
 - Teilbare Links zur aktuellen Kartenansicht
 - Responsive Bedienung auf Desktop- und Mobilgeräten
@@ -89,7 +89,8 @@ web-map/
 │       ├── i18n.js            # Deutsche und englische Übersetzungen
 │       ├── map.js             # Karteninitialisierung und zentrale Steuerung
 │       ├── pois.js            # POIs, Marker, Pop-ups, Filter und Cluster
-│       └── shadow.js          # Schattenebene, Datum und Zeitanimation
+│       ├── shadow.js          # Schattenebene, Datum und Zeitanimation
+│       └── streets.js         # Lokale Straßenvorschläge für die Adresssuche
 ├── analysis/
 │   └── solarwerte/csv/        # Analyse- und Solarwerttabellen
 └── docs/

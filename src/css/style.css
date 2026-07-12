@@ -325,6 +325,10 @@ input:checked + .slider::before {
   font-weight: 850;
 }
 
+.address-search-collapsible[open] summary span {
+  color: #1a6b3c;
+}
+
 #address-search-form {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -332,7 +336,13 @@ input:checked + .slider::before {
   margin-top: 9px;
 }
 
+.address-search-input-wrap {
+  position: relative;
+  min-width: 0;
+}
+
 #address-search-input {
+  width: 100%;
   min-width: 0;
   height: 38px;
   border: 1px solid rgba(26,107,60,0.18);
@@ -341,6 +351,48 @@ input:checked + .slider::before {
   font-size: 13px;
   color: #26332a;
   background: #fff;
+}
+
+.address-search-suggestions {
+  position: fixed;
+  z-index: 40;
+  width: 260px;
+  max-height: 272px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid rgba(26,107,60,0.18);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 7px 18px rgba(31, 48, 37, 0.16);
+}
+
+.address-search-suggestions[hidden] {
+  display: none;
+}
+
+.address-search-suggestion {
+  box-sizing: border-box;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  color: #26332a;
+  font-size: 13px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.address-search-suggestion + .address-search-suggestion {
+  border-top: 1px solid rgba(26,107,60,0.09);
+}
+
+.address-search-suggestion:hover,
+.address-search-suggestion[aria-selected="true"] {
+  background: #edf6f0;
+  color: #1a6b3c;
 }
 
 #address-search-form button {

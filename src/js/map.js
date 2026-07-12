@@ -449,12 +449,145 @@ async function searchAddress(query) {
 }
 
 function initAddressSearch(map) {
+  const addressSearchSection = document.getElementById("address-search-section");
   const form = document.getElementById("address-search-form");
   const input = document.getElementById("address-search-input");
+  const streetSuggestions = document.getElementById("neckargemuend-streets");
   if (!form || !input) return;
+
+  // Move the popup outside the scrollable sidebar so it cannot be clipped.
+  if (streetSuggestions && streetSuggestions.parentElement !== document.body) {
+    document.body.appendChild(streetSuggestions);
+  }
+
+  addressSearchSection?.addEventListener("toggle", () => {
+    if (!addressSearchSection.open) return;
+    requestAnimationFrame(() => {
+      addressSearchSection.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest"
+      });
+    });
+  });
+
+  let matchingStreets = [];
+  let activeSuggestion = -1;
+
+  function closeStreetSuggestions() {
+    if (!streetSuggestions) return;
+    streetSuggestions.hidden = true;
+    streetSuggestions.replaceChildren();
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
+    matchingStreets = [];
+    activeSuggestion = -1;
+  }
+
+  function selectStreetSuggestion(street) {
+    input.value = street;
+    closeStreetSuggestions();
+    input.focus();
+  }
+
+  function placeStreetSuggestions() {
+    if (!streetSuggestions || streetSuggestions.hidden) return;
+
+    const inputRect = input.getBoundingClientRect();
+    const formRect = form.getBoundingClientRect();
+    const gap = 10;
+    const viewportPadding = 8;
+    const preferredWidth = 260;
+    const availableRight = window.innerWidth - formRect.right - gap - viewportPadding;
+    const bottomAlignedTop = inputRect.bottom - streetSuggestions.offsetHeight;
+
+    if (availableRight >= 190) {
+      streetSuggestions.style.left = `${formRect.right + gap}px`;
+      streetSuggestions.style.top = `${bottomAlignedTop}px`;
+      streetSuggestions.style.width = `${Math.min(preferredWidth, availableRight)}px`;
+    } else {
+      // On narrow screens there is no usable space beside the form.
+      streetSuggestions.style.left = `${inputRect.left}px`;
+      streetSuggestions.style.top = `${bottomAlignedTop}px`;
+      streetSuggestions.style.width = `${inputRect.width}px`;
+    }
+  }
+
+  function renderStreetSuggestions() {
+    if (!streetSuggestions || matchingStreets.length === 0) {
+      closeStreetSuggestions();
+      return;
+    }
+
+    const options = document.createDocumentFragment();
+    matchingStreets.forEach((street, index) => {
+      const option = document.createElement("div");
+      option.id = `address-street-option-${index}`;
+      option.className = "address-search-suggestion";
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", String(index === activeSuggestion));
+      option.textContent = street;
+      option.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        selectStreetSuggestion(street);
+      });
+      options.appendChild(option);
+    });
+
+    streetSuggestions.replaceChildren(options);
+    streetSuggestions.hidden = false;
+    placeStreetSuggestions();
+    input.setAttribute("aria-expanded", "true");
+    if (activeSuggestion >= 0) {
+      input.setAttribute("aria-activedescendant", `address-street-option-${activeSuggestion}`);
+      streetSuggestions.children[activeSuggestion]?.scrollIntoView({ block: "nearest" });
+    } else {
+      input.removeAttribute("aria-activedescendant");
+    }
+  }
+
+  function updateStreetSuggestions() {
+    const query = input.value.trimStart().toLocaleLowerCase("de-DE");
+    if (!query || typeof NECKARGEMUEND_STREETS === "undefined") {
+      closeStreetSuggestions();
+      return;
+    }
+
+    matchingStreets = NECKARGEMUEND_STREETS
+      .filter((street) => street.toLocaleLowerCase("de-DE").startsWith(query));
+    activeSuggestion = -1;
+    renderStreetSuggestions();
+  }
+
+  input.addEventListener("input", updateStreetSuggestions);
+  input.addEventListener("focus", updateStreetSuggestions);
+  input.addEventListener("blur", closeStreetSuggestions);
+  window.addEventListener("resize", placeStreetSuggestions);
+  document.addEventListener("scroll", placeStreetSuggestions, true);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeStreetSuggestions();
+      return;
+    }
+    if (matchingStreets.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      activeSuggestion = (activeSuggestion + 1) % matchingStreets.length;
+      renderStreetSuggestions();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      activeSuggestion = (activeSuggestion - 1 + matchingStreets.length) % matchingStreets.length;
+      renderStreetSuggestions();
+    } else if (e.key === "Enter" && activeSuggestion >= 0) {
+      e.preventDefault();
+      selectStreetSuggestion(matchingStreets[activeSuggestion]);
+    }
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    closeStreetSuggestions();
     if (simpleMode) {
       setAddressSearchStatus(t("addressComplexOnly"), true);
       return;

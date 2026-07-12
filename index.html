@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260709-01" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260712-76" />
 </head>
 <body class="simple-mode">
 
@@ -227,7 +227,11 @@
     <details id="address-search-section" class="address-search-collapsible">
       <summary><span>Adresssuche</span></summary>
       <form id="address-search-form" autocomplete="off">
-        <input id="address-search-input" type="search" placeholder="Straße, Hausnummer" aria-label="Adresse suchen" />
+        <div class="address-search-input-wrap">
+          <input id="address-search-input" type="search" placeholder="Straße, Hausnummer" aria-label="Adresse suchen"
+                 aria-autocomplete="list" aria-controls="neckargemuend-streets" aria-expanded="false" />
+          <div id="neckargemuend-streets" class="address-search-suggestions" role="listbox" hidden></div>
+        </div>
         <button type="submit">Suchen</button>
       </form>
       <div id="address-search-status" role="status" aria-live="polite"></div>
@@ -484,6 +488,7 @@
   <script src="src/js/shadow.js?v=20260702-70"></script>
   <script src="src/js/pois.js?v=20260702-70"></script>
   <script src="src/js/help.js?v=20260702-70"></script>
-  <script src="src/js/map.js?v=20260702-70"></script>
+  <script src="src/js/streets.js?v=20260712-71"></script>
+  <script src="src/js/map.js?v=20260712-76"></script>
 </body>
 </html>
