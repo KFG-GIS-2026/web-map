@@ -351,11 +351,18 @@ function _getNextAnimationHour() {
   return SHADOW_HOURS[currentIdx + 1];
 }
 
+function _syncAnimationButton(isRunning) {
+  const btn = document.getElementById("shadow-play");
+  if (!btn) return;
+  btn.dataset.running = String(isRunning);
+  btn.setAttribute("aria-pressed", String(isRunning));
+}
+
 function _startAnimation(map) {
   if (_animationRunning) return;
   _animationRunning = true;
   _animationStartHour = currentShadowHour;
-  document.getElementById("shadow-play").textContent = "⏸";
+  _syncAnimationButton(true);
 
   function tick() {
     if (!_animationRunning) return;
@@ -381,8 +388,7 @@ function _stopAnimation() {
   clearTimeout(_animationTimer);
   _animationTimer = null;
   _animationStartHour = null;
-  const btn = document.getElementById("shadow-play");
-  if (btn) btn.textContent = "▶";
+  _syncAnimationButton(false);
 }
 
 // ── Visibility ────────────────────────────────────────────

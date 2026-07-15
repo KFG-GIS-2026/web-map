@@ -921,6 +921,16 @@ body.simple-mode #shadow-bar-open {
   transform: translateY(-1px);
 }
 
+.mobile-mode-icon {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .mobile-panel {
   position: fixed;
   left: 50%;
@@ -1772,6 +1782,22 @@ body.simple-mode #shadow-bar-open {
   transition: background .15s, transform .1s;
 }
 #shadow-play:hover { background: #155c32; transform: scale(1.08); }
+
+#shadow-play svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  fill: currentColor;
+}
+
+#shadow-play .shadow-pause-icon,
+#shadow-play[data-running="true"] .shadow-play-icon {
+  display: none;
+}
+
+#shadow-play[data-running="true"] .shadow-pause-icon {
+  display: block;
+}
 
 /* Timeline slider */
 .shadow-slider-wrap {
