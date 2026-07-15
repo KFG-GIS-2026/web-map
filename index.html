@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260715-77" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260715-78" />
 </head>
 <body class="simple-mode">
 
@@ -240,7 +240,9 @@
 
   <!-- Floating button to reopen sidebar when collapsed -->
   <button id="sidebar-open" title="Legende öffnen" aria-label="Legende öffnen">
-    🗂️
+    <svg class="sidebar-menu-icon" aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
   </button>
 
   <div id="language-control" class="floating-language-control" role="group" aria-label="Sprache auswählen">
@@ -287,7 +289,11 @@
   </div>
 
   <div id="mobile-action-bar" class="mobile-action-bar" aria-label="Mobile Schnellzugriff">
-    <button id="mobile-action-sidebar" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Legende öffnen">🗂️</button>
+    <button id="mobile-action-sidebar" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Legende öffnen">
+      <svg class="sidebar-menu-icon" aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
     <button id="mobile-action-shadow" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Schatten öffnen">🌤️</button>
     <button id="mobile-action-mode" class="mobile-action-btn" type="button" aria-pressed="false" aria-label="Einfach/Komplex Modus">
       <svg class="mobile-mode-icon" aria-hidden="true" viewBox="0 0 24 24">

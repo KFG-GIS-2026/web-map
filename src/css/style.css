@@ -870,6 +870,7 @@ body.simple-mode #shadow-bar-open {
   z-index: 20;
   border: none;
   background: rgba(255,255,255,0.96);
+  color: #1a6b3c;
   backdrop-filter: blur(8px);
   border-radius: 12px;
   padding: 8px 12px;
@@ -881,6 +882,16 @@ body.simple-mode #shadow-bar-open {
 }
 #sidebar-open.visible { display: block; }
 #sidebar-open:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.22); }
+
+.sidebar-menu-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
 
 #mobile-action-bar {
   position: absolute;
