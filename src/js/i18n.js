@@ -8,6 +8,7 @@ const TRANSLATIONS = {
     simple: "Einfach",
     complex: "Komplex",
     sidebarMain: "Kühle-Orte-Karte",
+    sidebarProjectNote: "Forschungsprojekt · Universität Heidelberg",
     sidebarToggle: "Legende ein-/ausblenden",
     languageLabel: "Sprache",
     chooseLanguage: "Sprache auswählen",
@@ -68,6 +69,7 @@ const TRANSLATIONS = {
     closeHelp: "Hilfe schließen",
     whatMapShows: "Was zeigt die Karte?",
     helpIntro: "Die Karte zeigt kühle Orte in Neckargemünd: Parks, Spielplätze, Sitzbänke, Wasserstellen, Toiletten und öffentliche Gebäude. Ein Klick auf einen Punkt öffnet weitere Informationen.",
+    projectCredit: "Erstellt für die Stadt Neckargemünd im Rahmen eines studentischen Forschungsprojekts an der Ruprecht-Karls-Universität Heidelberg.",
     symbolExamples: "Beispiele für Kartensymbole",
     modeHelpTitle: "Einfach starten",
     modeHelpText: "Die einfache Ansicht ist voreingestellt. Sie zeigt die wichtigsten Orte und eine einfache Sonnenbewertung. In der komplexen Ansicht können Datum, Uhrzeit, Schatten, Suche und Filter genauer eingestellt werden.",
@@ -152,6 +154,7 @@ const TRANSLATIONS = {
     simple: "Simple",
     complex: "Advanced",
     sidebarMain: "Cool Places Map",
+    sidebarProjectNote: "Research project · Heidelberg University",
     sidebarToggle: "Show/hide legend",
     languageLabel: "Language",
     chooseLanguage: "Choose language",
@@ -212,6 +215,7 @@ const TRANSLATIONS = {
     closeHelp: "Close help",
     whatMapShows: "What does the map show?",
     helpIntro: "The map shows cool places in Neckargemünd: parks, playgrounds, benches, water points, toilets and public buildings. Click a point to open more information.",
+    projectCredit: "Created for the City of Neckargemünd as part of a student research project at Heidelberg University.",
     symbolExamples: "Examples of map symbols",
     modeHelpTitle: "Start simple",
     modeHelpText: "Simple view is the default. It shows the most important places and a simple sun-exposure rating. In advanced view, date, time, shadows, search and filters can be adjusted more precisely.",
@@ -346,6 +350,7 @@ function applyStaticTranslations() {
   setText(".mode-label[data-mode='simple'], .mobile-mode-label[data-mode='simple']", "simple");
   setText(".mode-label[data-mode='complex'], .mobile-mode-label[data-mode='complex']", "complex");
   setText(".sidebar-title-main", "sidebarMain");
+  setText(".sidebar-project-note", "sidebarProjectNote");
   setText("#solar-legend-section .section-title-text", "solarLoad");
   setText("#solar-filter-section .section-title-text", "solarLoad");
   setText("#shadow-date-section .section-title-text", "timePoint");
@@ -378,7 +383,8 @@ function applyStaticTranslations() {
   setText(".help-kicker", "helpKicker");
   setText("#help-title", "appTitle");
   setText(".help-intro h3", "whatMapShows");
-  setText(".help-intro p:not(.help-disclaimer)", "helpIntro");
+  setText(".help-intro-text", "helpIntro");
+  setText(".help-project-credit", "projectCredit");
   setText(".help-disclaimer", "disclaimer");
   setText(".help-card:nth-child(1) h3", "modeHelpTitle");
   setText(".help-card:nth-child(1) p", "modeHelpText");

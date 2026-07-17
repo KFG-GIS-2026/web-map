@@ -246,6 +246,16 @@ input:checked + .slider::before {
   color: #3f4642;
   letter-spacing: 0;
 }
+
+.sidebar-project-note {
+  margin: -2px 0 0;
+  color: #68746d;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
 #sidebar h3 {
   margin: 18px 0 8px;
   font-size: 12px;
@@ -1098,7 +1108,7 @@ body.simple-mode #shadow-bar-open {
 
 /* ── Legend icon circles ── */
 .legend-icon {
-  width: 30px; height: 30px;
+  width: 34px; height: 34px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: #ffffff;
@@ -1107,7 +1117,7 @@ body.simple-mode #shadow-bar-open {
   flex-shrink: 0;
 }
 .legend-icon img {
-  width: 16px; height: 16px;
+  width: 20px; height: 20px;
   object-fit: contain;
 }
 .filter-item.disabled .legend-icon  { opacity: 0.35; filter: grayscale(0.6); }
@@ -1910,9 +1920,9 @@ body.simple-mode #shadow-bar-open {
   left: 50%;
   top: 11px;
   transform: translateX(-50%);
-  color: #9aa39d;
-  font-size: 9px;
-  font-weight: 600;
+  color: #727d76;
+  font-size: 11px;
+  font-weight: 700;
   line-height: 1;
   white-space: nowrap;
 }
@@ -2058,6 +2068,18 @@ body.simple-mode #shadow-bar-open {
   margin-top: 5px !important;
   color: #7a837d !important;
   font-size: 11px !important;
+}
+
+.help-project-credit {
+  margin-top: 9px !important;
+  padding: 7px 9px;
+  border-left: 3px solid rgba(26,107,60,0.55);
+  border-radius: 0 6px 6px 0;
+  background: rgba(26,107,60,0.055);
+  color: #405047 !important;
+  font-size: 12.5px !important;
+  font-weight: 650;
+  line-height: 1.4 !important;
 }
 
 .help-map-visual {

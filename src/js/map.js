@@ -488,6 +488,7 @@ function initAddressSearch(map) {
     input.value = street;
     closeStreetSuggestions();
     input.focus();
+    form.requestSubmit();
   }
 
   function placeStreetSuggestions() {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kühle Karte Neckargemünd</title>
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260715-78" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260717-80" />
 </head>
 <body class="simple-mode">
 
@@ -30,6 +30,7 @@
           <span class="sidebar-title-main">Kühle-Orte-Karte</span>
           <span class="sidebar-title-sub">Neckargemünd</span>
         </h2>
+        <p class="sidebar-project-note" title="Forschungsprojekt der Ruprecht-Karls-Universität Heidelberg">Forschungsprojekt · Universität Heidelberg</p>
       </div>
       <button id="sidebar-toggle" title="Legende ein-/ausblenden" aria-label="Legende ein-/ausblenden">
         ✕
@@ -339,9 +340,10 @@
           </div>
           <div>
             <h3>Was zeigt die Karte?</h3>
-            <p>
+            <p class="help-intro-text">
               Die Karte zeigt kühle Orte in Neckargemünd: Parks, Spielplätze, Sitzbänke, Wasserstellen, Toiletten und öffentliche Gebäude. Ein Klick auf einen Punkt öffnet weitere Informationen.
             </p>
+            <p class="help-project-credit">Erstellt für die Stadt Neckargemünd im Rahmen eines studentischen Forschungsprojekts an der Ruprecht-Karls-Universität Heidelberg.</p>
             <p class="help-disclaimer">Alle Angaben ohne Gewähr. Die Angaben basieren auf öffentlichen Daten.</p>
             <div class="help-symbol-strip" aria-label="Beispiele für Kartensymbole">
               <img src="https://kfg-gis-2026.github.io/web-map-data/poi_symbols/001-slide.png" alt="Spielplatz" />
@@ -501,13 +503,13 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/i18n.js?v=20260702-70"></script>
-  <script src="src/js/config.js?v=20260702-70"></script>
+  <script src="src/js/i18n.js?v=20260717-73"></script>
+  <script src="src/js/config.js?v=20260717-71"></script>
   <script src="src/js/boundary.js?v=20260702-70"></script>
   <script src="src/js/shadow.js?v=20260715-71"></script>
   <script src="src/js/pois.js?v=20260702-70"></script>
   <script src="src/js/help.js?v=20260702-70"></script>
   <script src="src/js/streets.js?v=20260712-71"></script>
-  <script src="src/js/map.js?v=20260712-76"></script>
+  <script src="src/js/map.js?v=20260717-77"></script>
 </body>
 </html>

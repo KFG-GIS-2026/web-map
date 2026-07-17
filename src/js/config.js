@@ -117,8 +117,12 @@ function initDisplayMode(map) {
       map.setLayoutProperty("3d-buildings", "visibility", visibility);
   }
 
-  function setMapPerspective(camera) {
-    map.easeTo({ pitch: camera.pitch, bearing: camera.bearing, duration: 500 });
+  function setMapPerspective(camera, minimumZoom = null) {
+    const cameraOptions = { pitch: camera.pitch, bearing: camera.bearing, duration: 500 };
+    if (Number.isFinite(minimumZoom)) {
+      cameraOptions.zoom = Math.max(map.getZoom(), minimumZoom);
+    }
+    map.easeTo(cameraOptions);
   }
 
   function setMapTiltEnabled(enabled) {
@@ -155,7 +159,7 @@ function initDisplayMode(map) {
       if (typeof setShadowToCurrentTime === "function") setShadowToCurrentTime(map);
       setBuildingVisibility("visible");
       setMapTiltEnabled(true);
-      setMapPerspective(COMPLEX_CAMERA);
+      setMapPerspective(COMPLEX_CAMERA, SHADOW_MIN_ZOOM);
     } else {
       shadowBar.style.display = "none";
       shadowBarOpen?.classList.add("hidden");
