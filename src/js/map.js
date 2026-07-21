@@ -396,17 +396,17 @@ function initSidebar() {
     if (panel === "mode") _openMobileModePanel();
   }
 
+  let wasMobileLayout = window.matchMedia("(max-width: 600px)").matches;
+
   window.addEventListener("resize", () => {
     syncMobileLanguagePlacement();
-    // When switching to desktop size, ensure mobile-only panels are closed
-    // but keep the sidebar open. When switching to mobile, collapse sidebar.
-    if (!window.matchMedia("(max-width: 600px)").matches) {
-      // desktop: close shadow/mode panels but keep sidebar
-      _closeMobilePanels();
-    } else {
-      // mobile: ensure sidebar is collapsed to match mobile UX
-      _closeMobilePanels();
-    }
+    const isMobileLayout = window.matchMedia("(max-width: 600px)").matches;
+    if (isMobileLayout === wasMobileLayout) return;
+
+    // Only reset panels when actually crossing the mobile breakpoint. A mobile
+    // keyboard also resizes the viewport and must not close the address panel.
+    wasMobileLayout = isMobileLayout;
+    _closeMobilePanels();
   });
 
   document.getElementById("mobile-action-sidebar")?.addEventListener("click", () => _toggleMobilePanel("sidebar"));
@@ -517,11 +517,17 @@ function initAddressSearch(map) {
     const availableRight = window.innerWidth - formRect.right - gap - viewportPadding;
 
     if (isMobile) {
+      const visualViewport = window.visualViewport;
+      const suggestionTop = inputRect.bottom + 6;
+      const viewportBottom = visualViewport
+        ? visualViewport.offsetTop + visualViewport.height
+        : window.innerHeight;
+
       streetSuggestions.style.position = "fixed";
       streetSuggestions.style.left = `${Math.max(viewportPadding, inputRect.left)}px`;
-      streetSuggestions.style.top = `${Math.min(inputRect.bottom + 6, window.innerHeight - 24)}px`;
+      streetSuggestions.style.top = `${suggestionTop}px`;
       streetSuggestions.style.width = `${Math.min(inputRect.width, window.innerWidth - viewportPadding * 2)}px`;
-      streetSuggestions.style.maxHeight = `${Math.max(140, window.innerHeight * 0.4)}px`;
+      streetSuggestions.style.maxHeight = `${Math.max(72, Math.min(272, viewportBottom - suggestionTop - viewportPadding))}px`;
       return;
     }
 
@@ -596,6 +602,8 @@ function initAddressSearch(map) {
   input.addEventListener("focus", updateStreetSuggestions);
   input.addEventListener("blur", scheduleCloseStreetSuggestions);
   window.addEventListener("resize", placeStreetSuggestions);
+  window.visualViewport?.addEventListener("resize", placeStreetSuggestions);
+  window.visualViewport?.addEventListener("scroll", placeStreetSuggestions);
   document.addEventListener("scroll", placeStreetSuggestions, true);
   input.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
