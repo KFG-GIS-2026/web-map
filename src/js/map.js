@@ -463,6 +463,10 @@ function initAddressSearch(map) {
   addressSearchSection?.addEventListener("toggle", () => {
     if (!addressSearchSection.open) return;
     requestAnimationFrame(() => {
+      if (window.matchMedia("(max-width: 600px)").matches) {
+        addressSearchSection.scrollIntoView({ behavior: "auto", block: "start" });
+        return;
+      }
       addressSearchSection.scrollIntoView({
         behavior: "smooth",
         block: "end",
@@ -473,6 +477,7 @@ function initAddressSearch(map) {
 
   let matchingStreets = [];
   let activeSuggestion = -1;
+  let closeSuggestionsTimeout = null;
 
   function closeStreetSuggestions() {
     if (!streetSuggestions) return;
@@ -482,6 +487,15 @@ function initAddressSearch(map) {
     input.removeAttribute("aria-activedescendant");
     matchingStreets = [];
     activeSuggestion = -1;
+  }
+
+  function scheduleCloseStreetSuggestions() {
+    window.clearTimeout(closeSuggestionsTimeout);
+    closeSuggestionsTimeout = window.setTimeout(() => {
+      const activeElement = document.activeElement;
+      if (activeElement === input || form.contains(activeElement)) return;
+      closeStreetSuggestions();
+    }, 120);
   }
 
   function selectStreetSuggestion(street) {
@@ -499,18 +513,30 @@ function initAddressSearch(map) {
     const gap = 10;
     const viewportPadding = 8;
     const preferredWidth = 260;
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
     const availableRight = window.innerWidth - formRect.right - gap - viewportPadding;
+
+    if (isMobile) {
+      streetSuggestions.style.position = "fixed";
+      streetSuggestions.style.left = `${Math.max(viewportPadding, inputRect.left)}px`;
+      streetSuggestions.style.top = `${Math.min(inputRect.bottom + 6, window.innerHeight - 24)}px`;
+      streetSuggestions.style.width = `${Math.min(inputRect.width, window.innerWidth - viewportPadding * 2)}px`;
+      streetSuggestions.style.maxHeight = `${Math.max(140, window.innerHeight * 0.4)}px`;
+      return;
+    }
+
     const bottomAlignedTop = inputRect.bottom - streetSuggestions.offsetHeight;
 
     if (availableRight >= 190) {
-      streetSuggestions.style.left = `${formRect.right + gap}px`;
-      streetSuggestions.style.top = `${bottomAlignedTop}px`;
+      streetSuggestions.style.position = "fixed";
+      streetSuggestions.style.left = `${Math.max(viewportPadding, formRect.right + gap)}px`;
+      streetSuggestions.style.top = `${Math.max(viewportPadding, bottomAlignedTop)}px`;
       streetSuggestions.style.width = `${Math.min(preferredWidth, availableRight)}px`;
     } else {
-      // On narrow screens there is no usable space beside the form.
-      streetSuggestions.style.left = `${inputRect.left}px`;
-      streetSuggestions.style.top = `${bottomAlignedTop}px`;
-      streetSuggestions.style.width = `${inputRect.width}px`;
+      streetSuggestions.style.position = "fixed";
+      streetSuggestions.style.left = `${Math.max(viewportPadding, inputRect.left)}px`;
+      streetSuggestions.style.top = `${Math.max(viewportPadding, bottomAlignedTop)}px`;
+      streetSuggestions.style.width = `${Math.min(inputRect.width, window.innerWidth - viewportPadding * 2)}px`;
     }
   }
 
@@ -528,10 +554,16 @@ function initAddressSearch(map) {
       option.setAttribute("role", "option");
       option.setAttribute("aria-selected", String(index === activeSuggestion));
       option.textContent = street;
-      option.addEventListener("mousedown", (e) => {
+      const handleSuggestionSelection = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        window.clearTimeout(closeSuggestionsTimeout);
         selectStreetSuggestion(street);
-      });
+      };
+
+      option.addEventListener("mousedown", handleSuggestionSelection);
+      option.addEventListener("pointerdown", handleSuggestionSelection);
+      option.addEventListener("touchstart", handleSuggestionSelection, { passive: false });
       options.appendChild(option);
     });
 
@@ -562,7 +594,7 @@ function initAddressSearch(map) {
 
   input.addEventListener("input", updateStreetSuggestions);
   input.addEventListener("focus", updateStreetSuggestions);
-  input.addEventListener("blur", closeStreetSuggestions);
+  input.addEventListener("blur", scheduleCloseStreetSuggestions);
   window.addEventListener("resize", placeStreetSuggestions);
   document.addEventListener("scroll", placeStreetSuggestions, true);
   input.addEventListener("keydown", (e) => {

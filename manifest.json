@@ -1,0 +1,18 @@
+{
+  "name": "Kühle Karte Neckargemünd",
+  "short_name": "Kühle Karte",
+  "description": "Interaktive Karte mit kühlen Orten in Neckargemünd",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#1a6b3c",
+  "icons": [
+    {
+      "src": "./docs/images/ngd_logo.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
