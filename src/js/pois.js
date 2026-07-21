@@ -357,6 +357,14 @@ function formatOSMValue(value) {
 }
 
 function getAccessText(props) {
+  const restriction = props["beschränkung"]
+    || props["Beschränkung"]
+    || props["beschraenkung"]
+    || props["Beschraenkung"]
+    || props["beschrÃ¤nkung"]
+    || props["beschr\u00e4nkung"];
+  if (restriction) return String(restriction);
+
   const values = [];
   if (props.access) values.push(formatOSMValue(props.access));
   if (props["access:conditional"]) values.push(formatOSMValue(props["access:conditional"]));
@@ -373,7 +381,6 @@ function addDetail(extra, label, value) {
 function addBuildingDetails(extra, props, category) {
   const isChurch = category?.cat === "church";
   addDetail(extra, t("address"), formatAddress(props));
-  addDetail(extra, t("costAccess"), props["beschränkung"] || props["beschrÃ¤nkung"] || props["beschraenkung"]);
   if (props.wheelchair) addDetail(extra, t("wheelchair"), formatOSMValue(props.wheelchair));
   if (props["toilets:wheelchair"]) addDetail(extra, t("wheelchairToilet"), formatOSMValue(props["toilets:wheelchair"]));
   if (!isChurch) addDetail(extra, t("operator"), props.operator);
