@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="./docs/images/webapp.png" />
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260717-80" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260721-83" />
 </head>
 <body class="simple-mode">
 
@@ -241,7 +241,13 @@
         </div>
         <button type="submit">Suchen</button>
       </form>
-      <div id="address-search-status" role="status" aria-live="polite"></div>
+      <div class="address-search-result">
+        <div id="address-search-status" role="status" aria-live="polite"></div>
+        <button id="address-search-marker-clear" type="button" hidden aria-label="Markierung entfernen">
+          <span aria-hidden="true">×</span>
+          <span class="address-search-marker-clear-label">Markierung entfernen</span>
+        </button>
+      </div>
     </details>
   </div>
 
@@ -509,7 +515,7 @@
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@3/dist/pmtiles.js"></script>
-  <script src="src/js/i18n.js?v=20260717-73"></script>
+  <script src="src/js/i18n.js?v=20260721-75"></script>
   <script src="src/js/config.js?v=20260717-71"></script>
   <script src="src/js/boundary.js?v=20260702-70"></script>
   <script src="src/js/shadow.js?v=20260715-71"></script>
@@ -517,6 +523,6 @@
   <script src="src/js/help.js?v=20260702-70"></script>
   <script src="src/js/streets.js?v=20260712-71"></script>
   <script src="src/js/pwa.js?v=20260721-01"></script>
-  <script src="src/js/map.js?v=20260721-78"></script>
+  <script src="src/js/map.js?v=20260721-82"></script>
 </body>
 </html>

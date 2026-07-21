@@ -1,4 +1,4 @@
-const CACHE_NAME = "kfg-map-cache-v20260721-2";
+const CACHE_NAME = "kfg-map-cache-v20260721-7";
 const PRECACHE_URLS = [
   "./",
   "./index.html",

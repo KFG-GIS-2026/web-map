@@ -417,10 +417,47 @@ input:checked + .slider::before {
 }
 
 #address-search-status {
+  flex: 1 1 90px;
   min-height: 15px;
   font-size: 11px;
   line-height: 1.35;
   color: #66756b;
+}
+
+.address-search-result {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin-top: 5px;
+}
+
+#address-search-marker-clear {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 4px 9px;
+  border: 1px solid rgba(179,58,43,0.24);
+  border-radius: 7px;
+  background: #fff7f5;
+  color: #943426;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#address-search-marker-clear:hover,
+#address-search-marker-clear:focus-visible {
+  border-color: rgba(179,58,43,0.42);
+  background: #ffebe7;
+}
+
+#address-search-marker-clear[hidden] {
+  display: none;
 }
 
 #cluster-control-section {
@@ -1174,6 +1211,28 @@ body.simple-mode #shadow-bar-open {
 .maplibregl-popup-close-button:hover {
   background: rgba(0,0,0,0.07) !important;
   color: #303632 !important;
+}
+
+.address-search-marker-popup .maplibregl-popup-content {
+  padding-right: 46px !important;
+}
+
+.address-search-marker-popup .maplibregl-popup-close-button {
+  top: 7px !important;
+  right: 8px !important;
+  width: 28px !important;
+  height: 28px !important;
+  border: 1px solid rgba(179,58,43,0.2) !important;
+  background: #fff7f5 !important;
+  color: #943426 !important;
+  line-height: 25px !important;
+}
+
+.address-search-marker-popup .maplibregl-popup-close-button:hover,
+.address-search-marker-popup .maplibregl-popup-close-button:focus-visible {
+  border-color: rgba(179,58,43,0.42) !important;
+  background: #ffebe7 !important;
+  color: #7d291e !important;
 }
 
 .solar-popup {
@@ -2401,6 +2460,24 @@ body.simple-mode #shadow-bar-open {
    Responsive – mobile (max-width: 600px)
    ============================================================ */
 @media (max-width: 600px) {
+
+  #address-search-form {
+    align-items: start;
+  }
+
+  #address-search-form button {
+    height: 38px;
+  }
+
+  .address-search-suggestions {
+    position: static;
+    width: 100%;
+    max-height: 192px;
+    max-height: min(192px, 32dvh);
+    margin-top: 6px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 
   /* Sidebar: mobile panel, visually aligned with the help overview */
   #sidebar {

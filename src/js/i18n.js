@@ -146,6 +146,8 @@ const TRANSLATIONS = {
     addressNotFound: "Keine passende Adresse in Neckargemünd gefunden.",
     addressInvalid: "Suchergebnis ohne gültige Koordinate.",
     addressFound: "Adresse gefunden.",
+    removeAddressMarker: "Markierung entfernen",
+    addressMarkerRemoved: "Markierung entfernt.",
     addressUnavailable: "Adresssuche momentan nicht verfügbar.",
     nominatimQuerySuffix: "Neckargemünd, Baden-Württemberg, Deutschland"
   },
@@ -292,6 +294,8 @@ const TRANSLATIONS = {
     addressNotFound: "No matching address found in Neckargemünd.",
     addressInvalid: "Search result has no valid coordinate.",
     addressFound: "Address found.",
+    removeAddressMarker: "Remove marker",
+    addressMarkerRemoved: "Marker removed.",
     addressUnavailable: "Address search is currently unavailable.",
     nominatimQuerySuffix: "Neckargemünd, Baden-Württemberg, Germany"
   }
@@ -378,6 +382,7 @@ function applyStaticTranslations() {
   setText("#lbl-museum .filter-label", "category_museum");
   setText("#address-search-section summary span", "addressSearch");
   setText("#address-search-form button", "search");
+  setText(".address-search-marker-clear-label", "removeAddressMarker");
   setText("#help-open span:last-child", "help");
   setText("#mobile-mode-panel .mobile-panel-header", "modeChoice");
   setText(".help-kicker", "helpKicker");
@@ -422,6 +427,9 @@ function applyStaticTranslations() {
   setAttr("#shadow-current", "title", "currentTitle");
   setAttr("#address-search-input", "placeholder", "addressPlaceholder");
   setAttr("#address-search-input", "aria-label", "addressSearch");
+  setAttr("#address-search-marker-clear", "aria-label", "removeAddressMarker");
+  setAttr(".address-search-marker-popup .maplibregl-popup-close-button", "aria-label", "removeAddressMarker");
+  setAttr(".address-search-marker-popup .maplibregl-popup-close-button", "title", "removeAddressMarker");
   setAttr("#sidebar-open", "title", "openLegend");
   setAttr("#sidebar-open", "aria-label", "openLegend");
   setAttr("#help-open", "aria-label", "openHelp");

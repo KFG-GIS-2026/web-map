@@ -412,6 +412,7 @@ function initSidebar() {
   document.getElementById("mobile-action-sidebar")?.addEventListener("click", () => _toggleMobilePanel("sidebar"));
   document.getElementById("mobile-action-shadow")?.addEventListener("click", () => _toggleMobilePanel("shadow"));
   document.getElementById("mobile-action-mode")?.addEventListener("click", () => _toggleMobilePanel("mode"));
+  document.addEventListener("mobile-map:reveal", _closeMobilePanels);
 
   map.on("click", () => {
     if (!window.matchMedia("(max-width: 600px)").matches) return;
@@ -452,13 +453,41 @@ function initAddressSearch(map) {
   const addressSearchSection = document.getElementById("address-search-section");
   const form = document.getElementById("address-search-form");
   const input = document.getElementById("address-search-input");
+  const inputWrap = input?.closest(".address-search-input-wrap");
   const streetSuggestions = document.getElementById("neckargemuend-streets");
+  const clearMarkerButton = document.getElementById("address-search-marker-clear");
   if (!form || !input) return;
 
-  // Move the popup outside the scrollable sidebar so it cannot be clipped.
-  if (streetSuggestions && streetSuggestions.parentElement !== document.body) {
-    document.body.appendChild(streetSuggestions);
+  function removeAddressSearchMarker(announce = true) {
+    if (!addressSearchMarker) return;
+    const marker = addressSearchMarker;
+    addressSearchMarker = null;
+    marker.remove();
+    if (clearMarkerButton) clearMarkerButton.hidden = true;
+    if (announce) setAddressSearchStatus(t("addressMarkerRemoved"));
   }
+
+  clearMarkerButton?.addEventListener("click", () => removeAddressSearchMarker());
+
+  function syncStreetSuggestionsContainer() {
+    if (!streetSuggestions || !inputWrap) return false;
+
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    const target = isMobile ? inputWrap : document.body;
+    if (streetSuggestions.parentElement !== target) target.appendChild(streetSuggestions);
+
+    if (isMobile) {
+      // On iOS, fixed elements use a different viewport while the keyboard is
+      // open. Keeping the list in the form anchors it reliably below the input.
+      ["position", "left", "top", "width", "max-height"].forEach((property) => {
+        streetSuggestions.style.removeProperty(property);
+      });
+    }
+
+    return isMobile;
+  }
+
+  syncStreetSuggestionsContainer();
 
   addressSearchSection?.addEventListener("toggle", () => {
     if (!addressSearchSection.open) return;
@@ -506,30 +535,17 @@ function initAddressSearch(map) {
   }
 
   function placeStreetSuggestions() {
-    if (!streetSuggestions || streetSuggestions.hidden) return;
+    if (!streetSuggestions) return;
+
+    const isMobile = syncStreetSuggestionsContainer();
+    if (streetSuggestions.hidden || isMobile) return;
 
     const inputRect = input.getBoundingClientRect();
     const formRect = form.getBoundingClientRect();
     const gap = 10;
     const viewportPadding = 8;
     const preferredWidth = 260;
-    const isMobile = window.matchMedia("(max-width: 600px)").matches;
     const availableRight = window.innerWidth - formRect.right - gap - viewportPadding;
-
-    if (isMobile) {
-      const visualViewport = window.visualViewport;
-      const suggestionTop = inputRect.bottom + 6;
-      const viewportBottom = visualViewport
-        ? visualViewport.offsetTop + visualViewport.height
-        : window.innerHeight;
-
-      streetSuggestions.style.position = "fixed";
-      streetSuggestions.style.left = `${Math.max(viewportPadding, inputRect.left)}px`;
-      streetSuggestions.style.top = `${suggestionTop}px`;
-      streetSuggestions.style.width = `${Math.min(inputRect.width, window.innerWidth - viewportPadding * 2)}px`;
-      streetSuggestions.style.maxHeight = `${Math.max(72, Math.min(272, viewportBottom - suggestionTop - viewportPadding))}px`;
-      return;
-    }
 
     const bottomAlignedTop = inputRect.bottom - streetSuggestions.offsetHeight;
 
@@ -656,15 +672,34 @@ function initAddressSearch(map) {
         return;
       }
 
-      if (addressSearchMarker) addressSearchMarker.remove();
+      removeAddressSearchMarker(false);
+      const addressPopup = new maplibregl.Popup({
+        offset: 24,
+        closeButton: true,
+        closeOnClick: false,
+        className: "address-search-marker-popup"
+      }).setText(result.display_name);
+
       addressSearchMarker = new maplibregl.Marker({ color: "#1a6b3c" })
         .setLngLat([lng, lat])
-        .setPopup(new maplibregl.Popup({ offset: 24, closeButton: false }).setText(result.display_name))
+        .setPopup(addressPopup)
         .addTo(map);
 
       map.easeTo({ center: [lng, lat], zoom: 17, duration: 900 });
       addressSearchMarker.togglePopup();
+      const popupRemoveButton = addressPopup.getElement()?.querySelector(".maplibregl-popup-close-button");
+      if (popupRemoveButton) {
+        popupRemoveButton.setAttribute("aria-label", t("removeAddressMarker"));
+        popupRemoveButton.setAttribute("title", t("removeAddressMarker"));
+        popupRemoveButton.addEventListener("click", () => removeAddressSearchMarker());
+      }
+      if (clearMarkerButton) clearMarkerButton.hidden = false;
       setAddressSearchStatus(t("addressFound"));
+
+      if (window.matchMedia("(max-width: 600px)").matches) {
+        input.blur();
+        document.dispatchEvent(new Event("mobile-map:reveal"));
+      }
     } catch (err) {
       console.error("Address search error:", err);
       setAddressSearchStatus(t("addressUnavailable"), true);
