@@ -9,7 +9,7 @@
   "theme_color": "#1a6b3c",
   "icons": [
     {
-      "src": "./docs/images/ngd_logo.jpg",
+      "src": "./docs/images/webapp.png",
       "sizes": "any",
       "type": "image/jpeg",
       "purpose": "any"

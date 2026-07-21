@@ -3,7 +3,7 @@ const PRECACHE_URLS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./docs/images/ngd_logo.jpg",
+  "./docs/images/webmapp.png",
   "./src/css/style.css",
   "./src/js/i18n.js",
   "./src/js/config.js",
