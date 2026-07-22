@@ -2469,14 +2469,25 @@ body.simple-mode #shadow-bar-open {
     height: 38px;
   }
 
+  #address-search-input {
+    /* iOS zooms the page when an input with less than 16 px receives focus. */
+    font-size: 16px;
+    touch-action: manipulation;
+  }
+
   .address-search-suggestions {
     position: static;
     width: 100%;
-    max-height: 192px;
-    max-height: min(192px, 32dvh);
+    max-height: 260px;
+    max-height: min(260px, 45dvh);
     margin-top: 6px;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+
+  .address-search-suggestion {
+    touch-action: pan-y;
   }
 
   /* Sidebar: mobile panel, visually aligned with the help overview */
@@ -2494,6 +2505,20 @@ body.simple-mode #shadow-bar-open {
     box-shadow: 0 18px 56px rgba(0,0,0,0.22);
     overflow-x: clip;
     overflow-y: auto;
+  }
+
+  /* Use the space normally reserved for the mobile action bar while searching. */
+  #sidebar.address-search-active {
+    bottom: auto;
+    height: calc(100vh - 24px);
+    height: calc(100dvh - 24px);
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    scroll-padding-bottom: 18px;
+  }
+
+  #sidebar.address-search-active ~ #mobile-action-bar {
+    display: none;
   }
 
   #sidebar-header {

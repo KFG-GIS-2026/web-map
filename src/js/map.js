@@ -451,12 +451,18 @@ async function searchAddress(query) {
 
 function initAddressSearch(map) {
   const addressSearchSection = document.getElementById("address-search-section");
+  const sidebar = document.getElementById("sidebar");
   const form = document.getElementById("address-search-form");
   const input = document.getElementById("address-search-input");
   const inputWrap = input?.closest(".address-search-input-wrap");
   const streetSuggestions = document.getElementById("neckargemuend-streets");
   const clearMarkerButton = document.getElementById("address-search-marker-clear");
   if (!form || !input) return;
+
+  function setMobileAddressSearchActive(active) {
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    sidebar?.classList.toggle("address-search-active", Boolean(active && isMobile));
+  }
 
   function removeAddressSearchMarker(announce = true) {
     if (!addressSearchMarker) return;
@@ -490,7 +496,10 @@ function initAddressSearch(map) {
   syncStreetSuggestionsContainer();
 
   addressSearchSection?.addEventListener("toggle", () => {
-    if (!addressSearchSection.open) return;
+    if (!addressSearchSection.open) {
+      setMobileAddressSearchActive(false);
+      return;
+    }
     requestAnimationFrame(() => {
       if (window.matchMedia("(max-width: 600px)").matches) {
         addressSearchSection.scrollIntoView({ behavior: "auto", block: "start" });
@@ -516,6 +525,7 @@ function initAddressSearch(map) {
     input.removeAttribute("aria-activedescendant");
     matchingStreets = [];
     activeSuggestion = -1;
+    if (document.activeElement !== input) setMobileAddressSearchActive(false);
   }
 
   function scheduleCloseStreetSuggestions() {
@@ -583,14 +593,14 @@ function initAddressSearch(map) {
         selectStreetSuggestion(street);
       };
 
-      option.addEventListener("mousedown", handleSuggestionSelection);
-      option.addEventListener("pointerdown", handleSuggestionSelection);
-      option.addEventListener("touchstart", handleSuggestionSelection, { passive: false });
+      // Select on click so a touch gesture can scroll the suggestion list.
+      option.addEventListener("click", handleSuggestionSelection);
       options.appendChild(option);
     });
 
     streetSuggestions.replaceChildren(options);
     streetSuggestions.hidden = false;
+    setMobileAddressSearchActive(true);
     placeStreetSuggestions();
     input.setAttribute("aria-expanded", "true");
     if (activeSuggestion >= 0) {
@@ -615,7 +625,14 @@ function initAddressSearch(map) {
   }
 
   input.addEventListener("input", updateStreetSuggestions);
-  input.addEventListener("focus", updateStreetSuggestions);
+  input.addEventListener("focus", () => {
+    setMobileAddressSearchActive(true);
+    updateStreetSuggestions();
+    requestAnimationFrame(() => {
+      if (!window.matchMedia("(max-width: 600px)").matches) return;
+      addressSearchSection?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
+  });
   input.addEventListener("blur", scheduleCloseStreetSuggestions);
   window.addEventListener("resize", placeStreetSuggestions);
   window.visualViewport?.addEventListener("resize", placeStreetSuggestions);
