@@ -368,8 +368,7 @@ input:checked + .slider::before {
   z-index: 40;
   width: 260px;
   max-height: 272px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   border: 1px solid rgba(26,107,60,0.18);
   border-radius: 8px;
   background: #fff;
@@ -378,6 +377,58 @@ input:checked + .slider::before {
 
 .address-search-suggestions[hidden] {
   display: none;
+}
+
+.address-search-suggestion-list {
+  max-height: inherit;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: auto;
+  scrollbar-color: #4b8061 #edf3ef;
+}
+
+.address-search-suggestion-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.address-search-suggestion-list::-webkit-scrollbar-track {
+  background: #edf3ef;
+  border-radius: 999px;
+}
+
+.address-search-suggestion-list::-webkit-scrollbar-thumb {
+  min-height: 32px;
+  border: 2px solid #edf3ef;
+  border-radius: 999px;
+  background: #4b8061;
+}
+
+.address-search-suggestion-list::-webkit-scrollbar-thumb:hover {
+  background: #1a6b3c;
+}
+
+.address-search-scroll-indicator {
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  right: 4px;
+  bottom: 7px;
+  display: none;
+  width: 4px;
+  border-radius: 999px;
+  background: rgba(26,107,60,0.15);
+  pointer-events: none;
+}
+
+.address-search-scroll-thumb {
+  display: block;
+  width: 100%;
+  height: var(--address-scroll-thumb-height, 32px);
+  border-radius: inherit;
+  background: rgba(26,107,60,0.72);
+  transform: translateY(var(--address-scroll-thumb-top, 0));
 }
 
 .address-search-suggestion {
@@ -2498,11 +2549,14 @@ body.simple-mode #shadow-bar-open {
   }
 
   .address-search-suggestions {
-    position: static;
+    position: relative;
     width: 100%;
     max-height: 260px;
     max-height: min(260px, 45dvh);
     margin-top: 6px;
+  }
+
+  .address-search-suggestion-list {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: pan-y;
@@ -2510,6 +2564,20 @@ body.simple-mode #shadow-bar-open {
 
   .address-search-suggestion {
     touch-action: pan-y;
+  }
+
+  .address-search-suggestion-list {
+    padding-right: 10px;
+    scrollbar-width: none;
+  }
+
+  .address-search-suggestion-list::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .address-search-suggestions.is-scrollable .address-search-scroll-indicator {
+    display: block;
   }
 
   /* Sidebar: mobile panel, visually aligned with the help overview */

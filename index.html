@@ -12,7 +12,7 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="./docs/images/webapp.png" />
   <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="src/css/style.css?v=20260723-84" />
+  <link rel="stylesheet" href="src/css/style.css?v=20260723-85" />
 </head>
 <body class="simple-mode">
 
@@ -238,7 +238,12 @@
         <div class="address-search-input-wrap">
           <input id="address-search-input" type="search" placeholder="Straße, Hausnummer" aria-label="Adresse suchen"
                  aria-autocomplete="list" aria-controls="neckargemuend-streets" aria-expanded="false" />
-          <div id="neckargemuend-streets" class="address-search-suggestions" role="listbox" hidden></div>
+          <div id="neckargemuend-streets" class="address-search-suggestions" role="listbox" hidden>
+            <div class="address-search-suggestion-list"></div>
+            <div class="address-search-scroll-indicator" aria-hidden="true">
+              <span class="address-search-scroll-thumb"></span>
+            </div>
+          </div>
         </div>
         <button type="submit">Suchen</button>
       </form>
@@ -524,6 +529,6 @@
   <script src="src/js/help.js?v=20260702-70"></script>
   <script src="src/js/streets.js?v=20260712-71"></script>
   <script src="src/js/pwa.js?v=20260721-01"></script>
-  <script src="src/js/map.js?v=20260723-83"></script>
+  <script src="src/js/map.js?v=20260723-84"></script>
 </body>
 </html>
