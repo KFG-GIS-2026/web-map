@@ -459,9 +459,40 @@ function initAddressSearch(map) {
   const clearMarkerButton = document.getElementById("address-search-marker-clear");
   if (!form || !input) return;
 
+  function isMobileAddressSearch() {
+    return window.matchMedia("(max-width: 600px)").matches;
+  }
+
+  function syncMobileVisualViewport() {
+    const root = document.documentElement;
+    if (!isMobileAddressSearch()) {
+      root.style.removeProperty("--mobile-viewport-height");
+      root.style.removeProperty("--mobile-viewport-offset-top");
+      return;
+    }
+
+    const viewport = window.visualViewport;
+    const height = viewport?.height || window.innerHeight;
+    const offsetTop = viewport?.offsetTop || 0;
+    root.style.setProperty("--mobile-viewport-height", `${Math.round(height)}px`);
+    root.style.setProperty("--mobile-viewport-offset-top", `${Math.round(offsetTop)}px`);
+  }
+
+  function scrollAddressSearchWithinSidebar() {
+    if (!isMobileAddressSearch() || !sidebar || !addressSearchSection) return;
+
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const sectionRect = addressSearchSection.getBoundingClientRect();
+    const headerHeight = document.getElementById("sidebar-header")?.getBoundingClientRect().height || 0;
+    const desiredTop = sidebarRect.top + headerHeight + 8;
+    const nextScrollTop = sidebar.scrollTop + sectionRect.top - desiredTop;
+    sidebar.scrollTo({ top: Math.max(0, nextScrollTop), behavior: "auto" });
+  }
+
   function setMobileAddressSearchActive(active) {
-    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    const isMobile = isMobileAddressSearch();
     sidebar?.classList.toggle("address-search-active", Boolean(active && isMobile));
+    if (active && isMobile) syncMobileVisualViewport();
   }
 
   function removeAddressSearchMarker(announce = true) {
@@ -501,8 +532,8 @@ function initAddressSearch(map) {
       return;
     }
     requestAnimationFrame(() => {
-      if (window.matchMedia("(max-width: 600px)").matches) {
-        addressSearchSection.scrollIntoView({ behavior: "auto", block: "start" });
+      if (isMobileAddressSearch()) {
+        scrollAddressSearchWithinSidebar();
         return;
       }
       addressSearchSection.scrollIntoView({
@@ -602,6 +633,7 @@ function initAddressSearch(map) {
     streetSuggestions.hidden = false;
     setMobileAddressSearchActive(true);
     placeStreetSuggestions();
+    requestAnimationFrame(scrollAddressSearchWithinSidebar);
     input.setAttribute("aria-expanded", "true");
     if (activeSuggestion >= 0) {
       input.setAttribute("aria-activedescendant", `address-street-option-${activeSuggestion}`);
@@ -628,15 +660,19 @@ function initAddressSearch(map) {
   input.addEventListener("focus", () => {
     setMobileAddressSearchActive(true);
     updateStreetSuggestions();
-    requestAnimationFrame(() => {
-      if (!window.matchMedia("(max-width: 600px)").matches) return;
-      addressSearchSection?.scrollIntoView({ behavior: "auto", block: "start" });
-    });
+    requestAnimationFrame(scrollAddressSearchWithinSidebar);
   });
   input.addEventListener("blur", scheduleCloseStreetSuggestions);
-  window.addEventListener("resize", placeStreetSuggestions);
-  window.visualViewport?.addEventListener("resize", placeStreetSuggestions);
-  window.visualViewport?.addEventListener("scroll", placeStreetSuggestions);
+  function handleAddressViewportChange() {
+    syncMobileVisualViewport();
+    placeStreetSuggestions();
+    if (document.activeElement === input) requestAnimationFrame(scrollAddressSearchWithinSidebar);
+  }
+
+  syncMobileVisualViewport();
+  window.addEventListener("resize", handleAddressViewportChange);
+  window.visualViewport?.addEventListener("resize", handleAddressViewportChange);
+  window.visualViewport?.addEventListener("scroll", handleAddressViewportChange);
   document.addEventListener("scroll", placeStreetSuggestions, true);
   input.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {

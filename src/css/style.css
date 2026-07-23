@@ -2461,6 +2461,28 @@ body.simple-mode #shadow-bar-open {
    ============================================================ */
 @media (max-width: 600px) {
 
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: #f5f7f5;
+  }
+
+  body {
+    position: fixed;
+    inset: 0;
+    background: #f5f7f5;
+  }
+
+  #map {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+  }
+
   #address-search-form {
     align-items: start;
   }
@@ -2492,6 +2514,7 @@ body.simple-mode #shadow-bar-open {
 
   /* Sidebar: mobile panel, visually aligned with the help overview */
   #sidebar {
+    position: fixed;
     top: 12px;
     left: 12px;
     bottom: 76px;
@@ -2505,15 +2528,16 @@ body.simple-mode #shadow-bar-open {
     box-shadow: 0 18px 56px rgba(0,0,0,0.22);
     overflow-x: clip;
     overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Use the space normally reserved for the mobile action bar while searching. */
+  /* Follow the visible iPhone viewport while the software keyboard is open. */
   #sidebar.address-search-active {
+    top: calc(var(--mobile-viewport-offset-top, 0px) + 12px);
     bottom: auto;
-    height: calc(100vh - 24px);
-    height: calc(100dvh - 24px);
-    max-height: calc(100vh - 24px);
-    max-height: calc(100dvh - 24px);
+    height: calc(var(--mobile-viewport-height, 100dvh) - 24px);
+    max-height: calc(var(--mobile-viewport-height, 100dvh) - 24px);
     scroll-padding-bottom: 18px;
   }
 
